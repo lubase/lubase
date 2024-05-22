@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcp.settingcache.mapper.CacheCoreTableMapper">
+
+    <resultMap id="tableInfo" type="com.lcp.coremodel.DbTable">
+        <result column="id" property="id"/>
+        <result column="table_code" property="code"/>
+        <result column="table_name" property="name"/>
+        <result column="database_id" property="databaseId"/>
+        <result column="database_type" property="databaseType"/>
+        <result column="custom_config" property="customConfig"/>
+        <result column="app_id" property="appId"/>
+    </resultMap>
+    <resultMap id="fieldInfo" type="com.lcp.coremodel.DbField">
+        <result column="id" property="id"/>
+        <result column="table_id" property="tableId"/>
+        <result column="table_code" property="tableCode"/>
+        <result column="col_code" property="code"/>
+        <result column="col_name" property="name"/>
+        <result column="data_type" property="dataType"/>
+        <result column="length" property="length"/>
+        <result column="allow_null" property="isNull"/>
+        <result column="col_default" property="colDefault"/>
+        <result column="data_format" property="dataFormat"/>
+        <result column="ele_type" property="eleType"/>
+        <result column="ele_distype" property="eleDisType"/>
+        <result column="is_multivalued" property="isMultivalued"/>
+        <result column="visible" property="visible"/>
+        <result column="code_type_id" property="codeTypeId"/>
+        <result column="lookup" property="lookup"/>
+        <result column="group_name" property="groupName"/>
+        <result column="input_desc" property="inputDesc"/>
+        <result column="tablefilter_sqlmode" property="tableFilter2SqlMode"/>
+        <result column="order_id" property="orderId"/>
+        <result column="row_span" property="rowSpan"/>
+        <result column="col_span" property="colSpan"/>
+        <result column="validate_expression" property="validateExpression"/>
+        <result column="validate_msg" property="validateMsg"/>
+        <result column="display_width" property="displayWidth"/>
+        <result column="need_log" property="needLog"/>
+        <result column="render_flag" property="renderFlag"/>
+        <result column="service_name" property="serviceName"/>
+        <result column="unique_value" property="uniqueValue"/>
+        <result column="values_count" property="valuesCount"/>
+        <result column="expression" property="expression"/>
+    </resultMap>
+    <resultMap id="codeData" type="com.lcp.coremodel.DbCode">
+        <result column="id" property="id"/>
+        <result column="code_type_id" property="code_type_id"/>
+        <result column="code_value" property="code"/>
+        <result column="code_name" property="name"/>
+        <result column="enable_tag" property="enable_tag"/>
+        <result column="order_id" property="order_id"/>
+    </resultMap>
+    <select id="getTableCodeAndIdInfo" resultMap="tableInfo">
+        select id, table_code, table_name, database_id, custom_config,app_id
+        from dm_table
+    </select>
+    <select id="initTableInfoById" parameterType="Long" resultMap="tableInfo">
+        select id,
+               table_code,
+               table_name,
+               database_id,
+               app_id,
+               custom_config,
+               (select database_type from dm_database where id = dm_table.database_id) as database_type
+        from dm_table
+        where id = #{id}
+    </select>
+    <select id="initColumnInfoById" parameterType="Long" resultMap="fieldInfo">
+        select *
+        from dm_column
+        where id = #{id}
+    </select>
+    <select id="initColumnInfoByTableId" parameterType="Long" resultMap="fieldInfo">
+        select *
+        from dm_column
+        where table_id = #{tableId}
+        order by order_id asc
+    </select>
+    <select id="initColumnInfoByTableCode" parameterType="string" resultMap="fieldInfo">
+        select *
+        from dm_column
+        where table_code = #{tableCode}
+        order by order_id asc
+    </select>
+    <select id="getCodeListByTypeId" parameterType="string" resultMap="codeData">
+        select *
+        from dm_code
+        where code_type_id = #{typeId}
+    </select>
+</mapper>

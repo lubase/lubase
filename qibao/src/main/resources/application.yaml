@@ -1,0 +1,131 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: fastdev2
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid-app:
+      #初始化连接数
+      initialSize: 6
+      #同时使用中 - 最大的连接数，未归还druid
+      maxActive: 21
+      #最小空闲连接数，
+      minIdle: 12
+      #从连接池获取连接的最大等待时间,可以自行调整
+      maxWait: 20000
+      filters: stat
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: 1234.com
+      url: jdbc:mysql://101.43.198.190:5677/lcp?allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+      #初始化连接数
+      initial-size: 5
+      #同时使用中 - 最大的连接数，未归还druid
+      max-active: 20
+      #最小空闲连接数，
+      min-idle: 10
+      #从连接池获取连接的最大等待时间,可以自行调整
+      max-wait: 20000
+      #一个物理连接的最大存活时间 120分钟
+      phy-timeout-millis: 7200000
+      #强行关闭从连接池获取而长时间未归还给druid的连接(认为异常连接）
+      remove-abandoned: true
+      #异常连接判断条件，超过180 秒 则认为是异常的，需要强行关闭
+      remove-abandoned-timeout: 180
+      #从连接池获取到连接后，如果超过被空闲剔除周期，是否做一次连接有效性检查
+      test-while-idle: true
+      #从连接池获取连接后，是否马上执行一次检查
+      test-on-borrow: false
+      #归还连接到连接池时是否马上做一次检查
+      test-on-return: false
+      #连接有效性检查的SQL
+      validation-query: select 1
+      #连接有效性检查的超时时间 1 秒
+      validation-query-timeout: 1
+      #周期性剔除长时间呆在池子里未被使用的空闲连接, 10秒一次
+      time-between-eviction-runs-millis: 10000
+      #空闲多久可以认为是空闲太长而需要剔除 44 秒
+      min-evictable-idle-time-millis: 44000
+      #如果空闲时间太长即使连接池所剩连接 < minIdle 也会被剔除 55 秒
+      max-evictable-idle-time-millis: 55000
+      #是否设置自动提交，相当于每个语句一个事务
+      default-auto-commit: true
+      # 记录被判定为异常的连接
+      log-abandoned: true
+      #网络读取超时，网络连接超时
+      #socketTimeout : 对于线上业务小于5s，对于BI等执行时间较长的业务的SQL，需要设置大一点
+      #connection-properties: socketTimeout=3000;connectTimeout=1200
+      #
+      filters: stat
+      filter:
+        stat:
+          enabled: true
+        wall:
+          enabled: true
+        log4j2:
+          enabled: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  cache:
+    type: redis
+  redis:
+    host: 101.43.198.190
+    port: 8085
+    password: 1234.com.cn
+    timeout: 5000
+    database: 6
+  rabbitmq:
+    host: 101.43.198.190
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: my_vhost
+#下面这些内容是为了让MyBatis映射
+mybatis:
+  #指定Mybatis的Mapper文件
+  mapper-locations: classpath:mapper/*xml
+  #指定Mybatis的实体目录
+  type-aliases-package: com.lcp.fastdev.mybatis.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: false
+rocketmq:
+  name-server: 101.43.198.190:9876
+  producer:
+    group: myGroup
+    send-message-timeout: 10000
+custom:
+  main-api-server: http://101.43.198.190:8084
+  # 是否启用流程引擎核调度功能
+  wf-engine:
+    enable-scheduled: 1
+  #是否启用电子签
+  sign-flag: 0
+  #是否记录调用外部接口日志
+  call-api-log: 1
+  #是否启用全文检索
+  enable-fulltext: 0
+  jwt-secret:
+  cache-server: http://101.43.198.190:8083
+  # 如果配置此路径，则从此路径获取扩展jar包
+  extend-path: /root/app/new-qibao/extend
+  extend-user-path:
+  file-upload:
+    # local  ftp  fastDfs
+    upload-type: local
+    #设置文件夹名称，可以多级,最前面没有\
+    local-path: upload/file
+    ftp-host: aa
+    ftp-user: bb
+    ftp-pwd: cc
+  # 系统默认密码
+  default-password: 12345.com
+  # 密码复杂度正则表达式
+  password-reg: "^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9~!@#$%^&*()\\-_+?/\\.]{8,16}$"
+  # 密码复杂度正则表达式 不匹配的提示语
+  password-tip: "密码不符合复杂度(需包括数字、小写字母、大写字母、特殊字符四种的三种，长度在8-16位)"
+  #单点登录配置（技术中心）

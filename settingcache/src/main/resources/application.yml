@@ -1,0 +1,31 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: lcp.core
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234.com
+    url: jdbc:mysql://101.43.198.190:5677/lcp?allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  cache:
+    type: redis
+  redis:
+    host: 101.43.198.190
+    port: 8085
+    password: 1234.com.cn
+    timeout: 10000
+    database: 6
+#下面这些内容是为了让MyBatis映射
+mybatis:
+  #指定Mybatis的Mapper文件
+  mapper-locations: classpath:mapper/*xml
+  #指定Mybatis的实体目录
+  type-aliases-package: com.lcp.core.mybatis.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: false
