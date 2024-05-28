@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.lcp</groupId>
+    <groupId>com.lubase</groupId>
     <artifactId>fastdev</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -17,10 +17,10 @@
     </properties>
 
     <modules>
-        <module>coremodel</module>
-        <module>settingcache</module>
-        <module>core</module>
-        <module>qibao</module>
+        <module>lubase-model</module>
+        <module>lubase-core</module>
+        <module>lubase-starter</module>
+        <module>lubase-cache</module>
     </modules>
 
     <dependencies>
