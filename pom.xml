@@ -20,7 +20,6 @@
         <module>lubase-model</module>
         <module>lubase-core</module>
         <module>lubase-starter</module>
-        <module>lubase-cache</module>
     </modules>
 
     <dependencies>
