@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication(scanBasePackages = {"com.lubase.*"})
 @EnableCaching
-@MapperScan("com.lubase.settingcache.mapper")
+@MapperScan("com.lubase.cache.mapper")
 public class SettingcacheApplication {
 
     public static void main(String[] args) {

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lubase.cache.mapper.CacheCoreTableMapper">
 
-    <resultMap id="tableInfo" type="com.lcp.coremodel.DbTable">
+    <resultMap id="tableInfo" type="com.lubase.model.DbTable">
         <result column="id" property="id"/>
         <result column="table_code" property="code"/>
         <result column="table_name" property="name"/>
@@ -11,7 +11,7 @@
         <result column="custom_config" property="customConfig"/>
         <result column="app_id" property="appId"/>
     </resultMap>
-    <resultMap id="fieldInfo" type="com.lcp.coremodel.DbField">
+    <resultMap id="fieldInfo" type="com.lubase.model.DbField">
         <result column="id" property="id"/>
         <result column="table_id" property="tableId"/>
         <result column="table_code" property="tableCode"/>
@@ -44,7 +44,7 @@
         <result column="values_count" property="valuesCount"/>
         <result column="expression" property="expression"/>
     </resultMap>
-    <resultMap id="codeData" type="com.lcp.coremodel.DbCode">
+    <resultMap id="codeData" type="com.lubase.model.DbCode">
         <result column="id" property="id"/>
         <result column="code_type_id" property="code_type_id"/>
         <result column="code_value" property="code"/>

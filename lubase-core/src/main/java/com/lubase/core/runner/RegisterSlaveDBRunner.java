@@ -72,9 +72,9 @@ public class RegisterSlaveDBRunner implements ApplicationRunner {
             coll = multiDatabaseMapper.getDatabaseSettingByAppId(appId);
             System.out.println("业务应用模式启动，应用ID:" + appId);
         }
-        if (!checkLicense(multiDatabaseMapper.getAppCount())) {
-            throw new InvokeCommonException("注册码校验失败，请联系管理员");
-        }
+//        if (!checkLicense(multiDatabaseMapper.getAppCount())) {
+//            throw new InvokeCommonException("注册码校验失败，请联系管理员");
+//        }
         for (DmDatabaseEntity dmDatabaseEntity : coll) {
             // 因为默认数据源就是主数据源，所以不用再次注册
             if (dmDatabaseEntity.getId() == 0L) {
