@@ -5,7 +5,7 @@
     <groupId>com.lubase</groupId>
     <artifactId>wfengine</artifactId>
     <version>2.0.0</version>
-    <name>wf-engine</name>
+    <name>wfengine-module</name>
     <description>wf-engine</description>
     <properties>
         <java.version>11</java.version>
