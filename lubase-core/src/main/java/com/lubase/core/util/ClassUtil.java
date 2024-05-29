@@ -20,7 +20,7 @@ import java.util.jar.JarFile;
  */
 public class ClassUtil {
 
-    public static final String BASE_JAR_PATH = "com.lcp";
+    public static final String BASE_JAR_PATH = "com.lubase";
 
     /**
      * 从包package中获取所有的Class
