@@ -3,7 +3,7 @@ package ${package.Entity};
 <#list table.importPackages as pkg>
     import ${pkg};
 </#list>
-import com.lcp.abstraction.TypeConverterUtils;
+import com.lcp.core.util.TypeConverterUtils;
 <#if swagger>
     import io.swagger.annotations.ApiModel;
     import io.swagger.annotations.ApiModelProperty;

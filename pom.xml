@@ -18,8 +18,9 @@
 
     <modules>
         <module>lubase-model</module>
+        <module>lubase-orm</module>
         <module>lubase-core</module>
-        <module>lubase-starter</module>
+        <module>cache-service</module>
     </modules>
 
     <dependencies>

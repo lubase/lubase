@@ -78,7 +78,7 @@
     <logger name="com.lcp.core.mapper" level="debug">
         <appender-ref ref="SQL"/>
     </logger>
-    <logger name="com.lubase.core.config.LoggingRequestInterceptor" additivity="false">
+    <logger name="com.lcp.core.config.LoggingRequestInterceptor" additivity="false">
         <appender-ref ref="HTTP"/>
     </logger>
 
