@@ -55,7 +55,7 @@ public class ExtendFileServiceImpl implements ExtendFileService {
     public List<ExtendFileModel> getExtendFileListFromDirectory(String path) {
         File file = new File(path);
         String fixStr = ".jar";
-        String defaultGroupIdPre = "com.lcp.%s";
+        String defaultGroupIdPre = "com.lubase.%s";
         if (file.listFiles() == null || !file.isDirectory()) {
             return new ArrayList<>();
         }

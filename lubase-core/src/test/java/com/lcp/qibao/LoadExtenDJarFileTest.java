@@ -42,7 +42,7 @@ public class LoadExtenDJarFileTest {
     void testGetJarFileInfo() throws IOException {
         List<ExtendFileModel> list = extendFileService.getExtendFileListFromDb();
         for (ExtendFileModel m : list) {
-            m.setFilePath("E:\\JavaCode\\fastdev\\qibao\\target");
+            m.setFilePath("E:\\JavaCode\\lubase\\wfengine-module\\target");
         }
         System.out.println(JSON.toJSON(list));
         assert list.size() == 3;
