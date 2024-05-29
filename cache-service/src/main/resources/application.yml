@@ -19,7 +19,7 @@ spring:
     port: 8085
     password: 1234.com.cn
     timeout: 10000
-    database: 6
+    database: 10
 #下面这些内容是为了让MyBatis映射
 mybatis:
   #指定Mybatis的Mapper文件

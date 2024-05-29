@@ -76,7 +76,7 @@ spring:
     port: 8085
     password: 1234.com.cn
     timeout: 5000
-    database: 6
+    database: 10
   rabbitmq:
     host: 101.43.198.190
     port: 5672
@@ -94,5 +94,4 @@ custom:
   enable-fulltext: 0
   call-api-log: 1
   jwt-secret:
-  #cache-server: http://localhost:8083
-  cache-server: http://101.43.198.190:8083
+  cache-server: http://101.43.198.190:9526
