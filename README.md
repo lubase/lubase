@@ -41,7 +41,6 @@ LuBase是以数据模型驱动，可视化表单和页面设计，内置工作�
 |  代码功能 | 仓库地址  |
 |---|---|
 |  后端-核心代码 | https://gitee.com/lubase/lu-base.git  |
-|  后端-流程引擎代码 |  https://gitee.com/lubase/lu-base-wf.git |
 |  前端-应用端代码 |  https://gitee.com/lubase/web-layui.git |
 
 管理端代码包含2个仓库，目前属于私有仓库，根据需要进行权限开放。
@@ -50,11 +49,6 @@ LuBase是以数据模型驱动，可视化表单和页面设计，内置工作�
 |  后端-管理端代码 | --  |
 |  前端-管理端代码 | -- |
 
-#### 获取系统演示地址
-因精力有限并没有提供自动化的演示环境，如有需求请加我微信获取系统演示信息。
-
-![输入图片说明](https://foruda.gitee.com/images/1716126115788797178/78e2a258_10523320.jpeg "3.jpg")
-
 #### 私有化部署步骤
 详见：https://gitee.com/lubase/lu-base/wikis/pages?sort_id=10926864&doc_id=5582776
 
@@ -62,6 +56,12 @@ LuBase是以数据模型驱动，可视化表单和页面设计，内置工作�
 |  使用者名称 |   应用范围  |
 |---|---|
 |  长城汽车-研发中心数字化团队 |  研发领域数字化项目建设   |
+
+#### 获取系统演示地址
+
+扫码入群获取演示环境地址：[微信扫码入群](https://gitee.com/lubase/lu-base/issues/I9TXZ3)
+
+![如失效，请联系群主微信](https://foruda.gitee.com/images/1716126115788797178/78e2a258_10523320.jpeg "3.jpg")
 
 #### 友情链接
 [layui - vue](http://www.layui-vue.com/)
