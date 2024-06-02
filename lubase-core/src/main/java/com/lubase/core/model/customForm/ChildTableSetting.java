@@ -10,5 +10,13 @@ public class ChildTableSetting {
      */
     private String serialNum;
 
+    /**
+     * 查询配置
+     */
     private QueryOption queryOption;
+
+    /**
+     * 搜索信息
+     */
+    private String searchInfo;
 }
