@@ -27,8 +27,8 @@ public class CustomFormDataServiceTest {
         String formId = "845296486580228096";
         DmCustomFormEntity customForm = customFormDataService.selectById(formId);
         // [{"id":"2233234234","required":1,"readonly":0}]
-        String fieldSetting = "[{\"id\":\"2022052821107755500\",\"required\":1,\"readonly\":1}]";
-        customForm.setField_info(fieldSetting);
+//        String fieldSetting = "[{\"id\":\"2022052821107755500\",\"required\":1,\"readonly\":1}]";
+//        customForm.setField_info(fieldSetting);
         List<DbField> fieldList = customFormDataService.getFormFieldSetting(customForm);
         System.out.println(JSON.toJSONString(fieldList));
     }
