@@ -39,7 +39,15 @@ import java.time.LocalDateTime;
     public static final String COL_UPDATE_TIME = "update_time";
     public static final String COL_FORM_CONFIG = "form_config";
     public static final String COL_TRIGGER_PATH = "trigger_path";
+    public static final String COL_FIELD_INFO = "field_info";
 
+    public String getField_info() {
+        return TypeConverterUtils.object2String(super.get("field_info"));
+    }
+
+    public void setField_info(String field_info) {
+        super.put("field_info",field_info);
+    }
     public Long getTable_id() {
         return TypeConverterUtils.object2Long(super.get("table_id"));
     }
