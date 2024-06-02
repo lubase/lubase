@@ -1,7 +1,11 @@
 package com.lubase.core.invoke;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.lubase.core.model.SearchCondition;
+import com.lubase.core.util.SearchCondition2TableFilterService;
 import com.lubase.orm.QueryOption;
+import com.lubase.orm.TableFilter;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
@@ -21,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 获取表单子表数据
@@ -32,6 +37,8 @@ public class GetFormChildTableData implements IInvokeMethod {
     @Autowired
     CustomFormServiceAdapter customFormServiceAdapter;
 
+    @Autowired
+    SearchCondition2TableFilterService searchCondition2TableFilterService;
 
     @Override
     public String getDescription() {
@@ -59,15 +66,10 @@ public class GetFormChildTableData implements IInvokeMethod {
     @Override
     @SneakyThrows
     public Object exe(HashMap<String, String> mapParam) {
-
-        for (String key : mapParam.keySet()) {
-            if (StringUtils.isBlank(mapParam.get(key))) {
-                throw new RuntimeException(String.format("%s 参数为空", key));
-            }
-        }
-        Long dataId = Long.parseLong(String.valueOf(mapParam.get("dataId")));
-        String serialNum = String.valueOf(mapParam.get("serialNum"));
-        Long formId = Long.parseLong(String.valueOf(mapParam.get("formId")));
+        // searchParam
+        Long dataId = Long.parseLong(checkAndGetParam("dataId", mapParam));
+        String serialNum = checkAndGetParam("serialNum", mapParam);
+        Long formId = Long.parseLong(checkAndGetParam("formId", mapParam));
         Integer pageSize = 0, pageIndex = 0;
         if (mapParam.containsKey("pageIndex") && !StringUtils.isEmpty(mapParam.get("pageIndex"))) {
             pageIndex = Math.max(1, Integer.parseInt(mapParam.get("pageIndex")));
@@ -75,7 +77,10 @@ public class GetFormChildTableData implements IInvokeMethod {
         if (mapParam.containsKey("pageSize") && !StringUtils.isEmpty(mapParam.get("pageSize"))) {
             pageSize = Math.max(1, Integer.parseInt(mapParam.get("pageSize")));
         }
-
+        String searchParamStr = "";
+        if (mapParam.containsKey("searchParam")) {
+            searchParamStr = mapParam.get("searchParam");
+        }
         //1、获取表单子表查询对象
         DbCollection collection = dataAccess.queryById(DmCustomFormEntity.TABLE_CODE, formId);
         if (collection.getTotalCount() != 1) {
@@ -117,7 +122,15 @@ public class GetFormChildTableData implements IInvokeMethod {
             if (StringUtils.isEmpty(queryOption.getFixField())) {
                 throw new WarnCommonException("未设置子表查询字段，请联系管理员配置");
             }
+            if (!org.springframework.util.StringUtils.isEmpty(searchParamStr)) {
+                List<SearchCondition> list = JSON.parseArray(searchParamStr, SearchCondition.class);
+                TableFilter searchFilter = searchCondition2TableFilterService.convertToTableFilter(list);
+                if (searchFilter != null) {
+                    filterWrapper.addFilter(searchFilter);
+                }
+            }
             queryOption.setTableFilter(filterWrapper.build());
+
             if (pageIndex > 0) {
                 queryOption.setPageIndex(pageIndex);
             }
