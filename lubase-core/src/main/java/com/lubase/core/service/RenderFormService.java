@@ -11,7 +11,7 @@ import com.lubase.core.util.ClientMacro;
  * 详情页面数据
  * </p>
  *
- * @author zhulz
+ * @author bluesky
  * @jdk 1.8
  */
 public interface RenderFormService {

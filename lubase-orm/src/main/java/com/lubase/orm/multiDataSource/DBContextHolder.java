@@ -15,7 +15,7 @@ public class DBContextHolder {
      * </p>
      *
      * @param dataSourceCode 数据源配置的code
-     * @author zhulz
+     * @author bluesky
      */
     public static void setDataSourceCode(String dataSourceCode) {
         dbContextHolder.set(dataSourceCode);
@@ -28,7 +28,7 @@ public class DBContextHolder {
      * </p>
      *
      * @return String
-     * @author zhulz
+     * @author bluesky
      */
     public static String getDataSourceCode() {
         return dbContextHolder.get();
@@ -39,7 +39,7 @@ public class DBContextHolder {
      * 返回主库
      * </p>
      *
-     * @author zhulz
+     * @author bluesky
      */
     public static void setMainDataSourceCode() {
         dbContextHolder.remove();

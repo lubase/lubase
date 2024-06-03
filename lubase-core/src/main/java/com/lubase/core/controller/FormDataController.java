@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * 详情数据渲染
  * </p>
  *
- * @author zhulz
+ * @author bluesky
  * @jdk 1.8
  */
 @RestController

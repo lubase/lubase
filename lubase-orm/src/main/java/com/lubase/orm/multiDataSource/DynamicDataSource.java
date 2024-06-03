@@ -76,7 +76,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      * @param username   username
      * @param password   password
      * @return boolean
-     * @author zhulz
+     * @author bluesky
      */
     public boolean testDatasource(String driveClass, String url, String username, String password) {
         try {

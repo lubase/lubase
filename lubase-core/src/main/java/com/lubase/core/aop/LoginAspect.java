@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * <p>
  * 切面处理类，登录日志记录处理
  * </p>
- * @author zhulz
+ * @author bluesky
  */
 @Aspect
 @Component

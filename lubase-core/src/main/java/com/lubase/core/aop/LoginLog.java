@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * <p>
  * 自定义登录日志
  * </p>
- * @author zhulz
+ * @author bluesky
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -6,7 +6,7 @@ import lombok.Data;
  * <p>
  *   文件上传，请求参数
  * </p>
- * @author zhulz
+ * @author bluesky
  * @jdk   1.8
  */
 @Data

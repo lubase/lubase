@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * <p>
  * ip工具类
  * </p>
- * @author zhulz
+ * @author bluesky
  */
 public class IPUtil {
     static final String  _UNKNOWN="unknown";
