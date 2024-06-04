@@ -17,14 +17,19 @@ import com.lubase.orm.service.query.LookupFieldParseService;
 import com.lubase.orm.service.query.TableFilterBuilder;
 import com.lubase.model.DbField;
 import com.lubase.model.DbTable;
+import com.lubase.orm.util.SpringUtil;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.sql.DataSource;
 import java.util.*;
 
+@Slf4j
 @Service
 public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreService {
     @Autowired
@@ -107,6 +112,20 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
                 collection.setTotalCount(collection.getData().size());
                 collection.setPageSize(0);
             }
+        }catch (BadSqlGrammarException badSqlGrammarException) {
+            System.out.println("查询数据错误：" + badSqlGrammarException.getMessage());
+            String monster = "";
+            try {
+                monster = dataAccessMapper.getMonster();
+            } catch (Exception e) {
+                log.error("getMonster 执行失败，未抓取到 ", e);
+            }
+            DataSource dataSource = SpringUtil.getApplicationContext().getBean(DataSource.class);
+            String currentDb = dataSource.getConnection().getCatalog();
+            String msg = String.format("当前数据库连接：%s，monster is %s，错误：%s", currentDb, monster, badSqlGrammarException.getMessage());
+            log.error(msg);
+            System.out.println(msg);
+            throw badSqlGrammarException;
         } catch (Exception ex) {
             System.out.println("查询数据错误：" + ex.getMessage());
             throw ex;

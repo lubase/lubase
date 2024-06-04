@@ -62,6 +62,7 @@ public class Button37ChildFormBatchSaveImpl implements OndDataService {
             entity.setState(EDBEntityState.Modified);
             collection.getData().add(entity);
         }
+        collection.setClientMode();
         return dataAccess.update(collection);
     }
 

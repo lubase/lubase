@@ -1,5 +1,6 @@
 package com.lubase.core.controller.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.lubase.orm.exception.FieldValueException;
 import com.lubase.orm.exception.ParameterNotFoundException;
 import com.lubase.orm.exception.WarnCommonException;
@@ -9,8 +10,11 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -18,7 +22,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import javax.servlet.MultipartConfigElement;
 import java.sql.SQLException;
 
 /**
@@ -30,7 +36,8 @@ import java.sql.SQLException;
 @RestController
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
+    @Autowired
+    private MultipartConfigElement multipartConfigElement;
     @ExceptionHandler(value = Exception.class)
     public ResponseData<String> defaultError(Exception ex) {
         log.error(ex.getMessage(), ex);
@@ -39,6 +46,16 @@ public class GlobalExceptionHandler {
             msg += "\r" + stackTraceElement.toString();
         }
         return ResponseData.error(msg);
+    }
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> defaultError(MaxUploadSizeExceededException ex) {
+        log.error("111:" + ex.getMessage(), ex);
+        String msg = String.format("上传失败，文件大小超出限制：单个文件不超%sM，批量上传时总文件大小不超%sM", multipartConfigElement.getMaxFileSize() / 1024 / 1024, multipartConfigElement.getMaxRequestSize() / 1024 / 1024);
+        ResponseData responseData = new ResponseData(0);
+        responseData.setMessage(msg);
+        responseData.setCode("999");
+        return ResponseEntity.status(HttpStatus.OK).contentType(new MediaType("application", "json")).body(JSON.toJSONString(responseData));
+
     }
 
     @ExceptionHandler(value = AuthenticationException.class)

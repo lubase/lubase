@@ -5,6 +5,7 @@ import com.lubase.orm.model.SqlEntity;
 import com.lubase.orm.model.statistics.StatisticsEntity;
 import com.lubase.model.DbEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
@@ -17,6 +18,14 @@ import java.util.List;
  */
 @Mapper
 public interface DataAccessMapper {
+    /**
+     * 当数据库出现未提交事务时，显示出是哪个库
+     *
+     * @return
+     */
+    @Select("select monster_name from monster")
+    String getMonster();
+
     /**
      * 查询列表
      *
