@@ -47,22 +47,11 @@ public class DbField implements Serializable {
     @JsonIgnore
     private int tableFilter2SqlMode;
     private Integer orderId;
-    @JsonIgnore
-    private Integer rowSpan;
-    @JsonIgnore
-    private Integer colSpan;
     private Integer uniqueValue;
     private String validateExpression;
     private String validateMsg;
     @JsonIgnore
-    private Integer displayWidth;
-    @JsonIgnore
     private Boolean needLog;
-    /**
-     * 渲染标记，false则表示不渲染到表单
-     */
-    @JsonIgnore
-    private Boolean renderFlag;
 
     /**以上为数据库字段，以下为扩展属性*********************/
 

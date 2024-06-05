@@ -32,13 +32,9 @@
         <result column="input_desc" property="inputDesc"/>
         <result column="tablefilter_sqlmode" property="tableFilter2SqlMode"/>
         <result column="order_id" property="orderId"/>
-        <result column="row_span" property="rowSpan"/>
-        <result column="col_span" property="colSpan"/>
         <result column="validate_expression" property="validateExpression"/>
         <result column="validate_msg" property="validateMsg"/>
-        <result column="display_width" property="displayWidth"/>
         <result column="need_log" property="needLog"/>
-        <result column="render_flag" property="renderFlag"/>
         <result column="service_name" property="serviceName"/>
         <result column="unique_value" property="uniqueValue"/>
         <result column="values_count" property="valuesCount"/>

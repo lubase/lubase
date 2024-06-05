@@ -21,4 +21,13 @@ public interface CustomFormDataService {
      * @return
      */
     List<DbField> getFormFieldSetting(DmCustomFormEntity dmCustomForm);
+
+    /**
+     * 把表单字段设置合并到表单默认字段中
+     *
+     * @param allFieldList
+     * @param fieldInfo
+     * @return
+     */
+    List<DbField> getFormFieldSetting(List<DbField> allFieldList, String fieldInfo);
 }

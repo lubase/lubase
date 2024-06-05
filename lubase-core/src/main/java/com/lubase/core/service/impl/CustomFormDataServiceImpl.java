@@ -44,9 +44,17 @@ public class CustomFormDataServiceImpl implements CustomFormDataService {
         queryOption.setFixField(dmCustomForm.getCols());
         DbCollection collection = dataAccess.queryFieldList(queryOption);
         List<DbField> allFieldList = collection.getTableInfo().getFieldList();
-        System.out.println(JSON.toJSONString(allFieldList));
         //表单更新时 表单字段设置的编辑属性 以表单内为主
         Map<String, FormFieldInfo> formField = getFormField(dmCustomForm.getField_info());
+        //设置表单资源编辑属性
+        mergeCustomFormToRegisterFieldInfo(allFieldList, formField);
+        return allFieldList;
+    }
+
+    @Override
+    public List<DbField> getFormFieldSetting(List<DbField> allFieldList, String fieldInfo) {
+        //表单更新时 表单字段设置的编辑属性 以表单内为主
+        Map<String, FormFieldInfo> formField = getFormField(fieldInfo);
         //设置表单资源编辑属性
         mergeCustomFormToRegisterFieldInfo(allFieldList, formField);
         return allFieldList;

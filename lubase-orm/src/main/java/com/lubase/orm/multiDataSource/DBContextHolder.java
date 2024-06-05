@@ -18,8 +18,13 @@ public class DBContextHolder {
      * @author bluesky
      */
     public static void setDataSourceCode(String dataSourceCode) {
-        dbContextHolder.set(dataSourceCode);
-        log.info("已切换到数据源:{}", dataSourceCode);
+        // 主库是“0”
+        if ("0".equals(dataSourceCode)) {
+            setMainDataSourceCode();
+        } else {
+            dbContextHolder.set(dataSourceCode);
+            log.info("已切换到数据源:{}", dataSourceCode);
+        }
     }
 
     /**

@@ -13,6 +13,7 @@ import com.lubase.core.model.ESearchConditionType;
 import com.lubase.core.model.SearchCondition;
 import com.lubase.core.model.customForm.ColumnLookupInfoVO;
 import com.lubase.core.model.customForm.ColumnLookupParamModel;
+import com.lubase.core.service.CustomFormDataService;
 import com.lubase.core.service.FormRuleService;
 import com.lubase.core.service.RenderFormService;
 import com.lubase.core.util.ClientMacro;
@@ -64,6 +65,8 @@ public class RenderFormServiceImpl implements RenderFormService {
     ServerMacroService serverMacroService;
     @Autowired
     CustomFormServiceAdapter customFormServiceAdapter;
+    @Autowired
+    CustomFormDataService customFormDataService;
     @Autowired
     ColumnRemoteServiceAdapter columnRemoteServiceAdapter;
 
@@ -456,7 +459,6 @@ public class RenderFormServiceImpl implements RenderFormService {
         formVO.setExtendScript(dmCustomform.getExtend_script());
         formVO.setName(dmCustomform.getForm_name());
         formVO.setForm_config(dmCustomform.getForm_config());
-        //formVO.setMemo(dmCustomform.getMemo());
         //根据字段获取列信息
         QueryOption queryOption = new QueryOption(dmCustomform.getTable_code());
         //表单查询开启字段权限控制
@@ -464,8 +466,10 @@ public class RenderFormServiceImpl implements RenderFormService {
         queryOption.setFixField(dmCustomform.getCols());
         queryOption.setTableFilter(new TableFilter("ID", dataId));
         DbCollection collection = dataAccess.query(queryOption);
+        // 合并 filedInfo和 tableInfo 方便客户端进行渲染 20240602 lubaase
+        collection.getTableInfo().setFieldList(customFormDataService.getFormFieldSetting(collection.getTableInfo().getFieldList(), dmCustomform.getField_info()));
         formVO.setTableInfo(collection.getTableInfo());
-        // TODO: 合并 filedInfo和 tableInfo 方便客户端进行渲染 20240602 lubaase
+
         formVO.setLayout(dmCustomform.getData());
         formVO.setRule(formRuleService.getFormRuleById(dmCustomform.getId()));
         formVO.setBtns(formRuleService.getFormButtonListById(formId));
