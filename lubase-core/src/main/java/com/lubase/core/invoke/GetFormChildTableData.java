@@ -167,9 +167,8 @@ public class GetFormChildTableData implements IInvokeMethod {
         if (list == null || list.size() == 0) {
             return searchVO;
         }
-        String usedField = "";
+        HashMap<String, DbField> fieldBOHashMap = new HashMap<>();
         for (SearchCondition condition : list) {
-            usedField += "," + condition.getColumnCode();
             //如果defaultValue属性不为空，则给此属性用服务端宏变量重新赋值
             if (condition.getDefaultValue() != null && condition.getDefaultValue().startsWith(ClientMacro.serverMacroPre)) {
                 condition.setDefaultValue(serverMacroService.getServerMacroByKey(condition.getDefaultValue()));
@@ -177,19 +176,7 @@ public class GetFormChildTableData implements IInvokeMethod {
             if (condition.getDefaultValueName() != null && condition.getDefaultValueName().startsWith(ClientMacro.serverMacroPre)) {
                 condition.setDefaultValueName(serverMacroService.getServerMacroByKey(condition.getDefaultValueName()));
             }
-        }
-        usedField = usedField.substring(1).toLowerCase();
-        if (org.springframework.util.StringUtils.isEmpty(usedField)) {
-            return searchVO;
-        }
-        HashMap<String, DbField> fieldBOHashMap = new HashMap<>();
-        List<DbField> fieldList = table.getFieldList();
-        for (DbField field : fieldList) {
-            if (field.isPrimaryKey() && !usedField.contains("id")) {
-                continue;
-            }
-            // 需要字段名字进行完全匹配，方便前端进行标准控件渲染
-            field.setCode(field.getCode().replace(CommonConst.REF_FIELD_SEPARATOR, "."));
+            DbField field = table.getFieldList().stream().filter(f -> f.getCode().equals(condition.getColumnCode())).findFirst().orElse(null);
             fieldBOHashMap.put(field.getCode(), field);
         }
         searchVO.setFieldInfo(fieldBOHashMap);
