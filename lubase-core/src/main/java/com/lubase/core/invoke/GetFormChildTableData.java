@@ -3,13 +3,19 @@ package com.lubase.core.invoke;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lubase.core.model.SearchCondition;
+import com.lubase.core.model.SearchVO;
+import com.lubase.core.model.customForm.ChildTableDataVO;
+import com.lubase.core.util.ClientMacro;
 import com.lubase.core.util.SearchCondition2TableFilterService;
+import com.lubase.model.DbTable;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
+import com.lubase.orm.constant.CommonConst;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
+import com.lubase.orm.util.ServerMacroService;
 import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
@@ -49,6 +55,9 @@ public class GetFormChildTableData implements IInvokeMethod {
     public boolean checkRight() {
         return false;
     }
+
+    @Autowired
+    ServerMacroService serverMacroService;
 
     @Override
     public String getId() {
@@ -145,8 +154,47 @@ public class GetFormChildTableData implements IInvokeMethod {
                     f.setOrderId(i++);
                 }
             }
-            return collChild;
+            ChildTableDataVO childTableDataVO = new ChildTableDataVO();
+            childTableDataVO.setDbCollection(collChild);
+            childTableDataVO.setSearch(getSearchObject(childTable.getSearchInfo(), collChild.getTableInfo()));
+            return childTableDataVO;
         }
+    }
+
+    private SearchVO getSearchObject(String searchStr, DbTable table) {
+        SearchVO searchVO = new SearchVO();
+        List<SearchCondition> list = JSON.parseArray(searchStr, SearchCondition.class);
+        if (list == null || list.size() == 0) {
+            return searchVO;
+        }
+        String usedField = "";
+        for (SearchCondition condition : list) {
+            usedField += "," + condition.getColumnCode();
+            //如果defaultValue属性不为空，则给此属性用服务端宏变量重新赋值
+            if (condition.getDefaultValue() != null && condition.getDefaultValue().startsWith(ClientMacro.serverMacroPre)) {
+                condition.setDefaultValue(serverMacroService.getServerMacroByKey(condition.getDefaultValue()));
+            }
+            if (condition.getDefaultValueName() != null && condition.getDefaultValueName().startsWith(ClientMacro.serverMacroPre)) {
+                condition.setDefaultValueName(serverMacroService.getServerMacroByKey(condition.getDefaultValueName()));
+            }
+        }
+        usedField = usedField.substring(1).toLowerCase();
+        if (org.springframework.util.StringUtils.isEmpty(usedField)) {
+            return searchVO;
+        }
+        HashMap<String, DbField> fieldBOHashMap = new HashMap<>();
+        List<DbField> fieldList = table.getFieldList();
+        for (DbField field : fieldList) {
+            if (field.isPrimaryKey() && !usedField.contains("id")) {
+                continue;
+            }
+            // 需要字段名字进行完全匹配，方便前端进行标准控件渲染
+            field.setCode(field.getCode().replace(CommonConst.REF_FIELD_SEPARATOR, "."));
+            fieldBOHashMap.put(field.getCode(), field);
+        }
+        searchVO.setFieldInfo(fieldBOHashMap);
+        searchVO.setFilter(list);
+        return searchVO;
     }
 
     private DmTableRelationEntity getTableRelation(Long mainTableId, Long childTableId) {
