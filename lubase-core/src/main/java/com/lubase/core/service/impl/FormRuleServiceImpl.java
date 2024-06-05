@@ -71,25 +71,9 @@ public class FormRuleServiceImpl implements FormRuleService {
             fieldControlModelList.add(fieldControlModel);
         }
         formRule.setFieldControl(fieldControlModelList);
-        //回填规则
-        getBackFileRules(formRule, formId);
         return formRule;
     }
 
-    private void getBackFileRules(FormRule formRule, Long formId) {
-        var queryOption = new QueryOption("dm_form_backfill");
-        queryOption.setFixField("column_id,control_rule");
-        queryOption.setTableFilter(new TableFilter("form_id", formId, EOperateMode.Equals));
-        var collection = dataAccess.queryAllData(queryOption);
-        List<FieldBackfillModel> fieldBackfillModelList = new ArrayList<>();
-        for (DbEntity entity : collection.getData()) {
-            var fieldControlModel = new FieldBackfillModel();
-            fieldControlModel.setField(entity.get("column_id").toString());
-            fieldControlModel.setBackfillRules(entity.get("control_rule").toString());
-            fieldBackfillModelList.add(fieldControlModel);
-        }
-        formRule.setFieldBackfill(fieldBackfillModelList);
-    }
 
     @Override
     public DmFormFilterEntity getFormFieldFilter(String form_id, String column_id) {
