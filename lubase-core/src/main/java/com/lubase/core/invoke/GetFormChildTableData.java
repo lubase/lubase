@@ -115,7 +115,7 @@ public class GetFormChildTableData implements IInvokeMethod {
             //3、查询子表数据
             TableFilterWrapper filterWrapper = TableFilterWrapper.and();
             filterWrapper.eq(tableRelation.get("fk_column_code").toString(), dataId);
-            if (childTable.getQueryOption().getTableFilter() != null) {
+            if (childTable.getQueryOption().getTableFilter() != null && !StringUtils.isEmpty(childTable.getQueryOption().getTableFilter().getFilterName())) {
                 filterWrapper.addFilter(childTable.getQueryOption().getTableFilter());
             }
             QueryOption queryOption = childTable.getQueryOption();

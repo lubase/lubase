@@ -3,6 +3,7 @@ package com.lubase.orm.service.query.impl;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.constant.CommonConst;
 import com.lubase.orm.exception.InvokeCommonException;
+import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.mapper.DataAccessMapper;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.LookupMode;
@@ -112,7 +113,7 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
                 collection.setTotalCount(collection.getData().size());
                 collection.setPageSize(0);
             }
-        }catch (BadSqlGrammarException badSqlGrammarException) {
+        } catch (BadSqlGrammarException badSqlGrammarException) {
             System.out.println("查询数据错误：" + badSqlGrammarException.getMessage());
             String monster = "";
             try {
@@ -133,6 +134,7 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
         return collection;
     }
 
+    @SneakyThrows
     private String generateFields(QueryOption queryOption, List<QueryJoinCondition> queryJoinTables, DbCollection collection) {
         DbTable userTable = getUserTableInfo(queryOption, queryJoinTables);
         collection.setTableInfo(userTable);
@@ -160,13 +162,16 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
             if (!queryOption.isBuildLookupField() ||
                     colLookupMode == null ||
                     !colInfo.getEleType().equals("7") ||
-                    colInfo.getIsMultivalued() == 1 ||
+                    (colInfo.getIsMultivalued() != null && colInfo.getIsMultivalued() == 1) ||
                     colLookupMode.getTableKey().equals(colLookupMode.getDisplayCol())) //关联字段与显示字段一致
             {
                 continue;
             }
             //取关联表的信息
             DbTable lookTableInfo = registerColumnInfoService.initTableInfoByTableCode(colLookupMode.getTableCode());
+            if (lookTableInfo == null) {
+                throw new WarnCommonException("字段" + colInfo.getCode() + "关联信息设置不正确，请检查");
+            }
             DbField colKey = lookTableInfo.firstOrDefault(f -> f.getCode().equals(colLookupMode.getTableKey()) && f.getTableCode().equals(colLookupMode.getTableCode()));
             DbField colDisplay = lookTableInfo.firstOrDefault(f -> f.getCode().equals(colLookupMode.getDisplayCol()) && f.getTableCode().equals(colLookupMode.getTableCode()));
             if (colKey == null) {
