@@ -101,8 +101,8 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
             String clientFormId = obj.getString("formId");
             String serialNum = obj.getString("serialNum");
 
-            String childTableId = formRuleService.getChildTableId(formId, serialNum);
-            String mainTableId = formRuleService.getMainTableId(formId);
+            String childTableId = formRuleService.getChildTableId(clientFormId, serialNum);
+            String mainTableId = formRuleService.getMainTableId(clientFormId);
             if (StringUtils.isEmpty(mainTableId) || StringUtils.isEmpty(childTableId)) {
                 throw new WarnCommonException("表单主从关系配置信息不正确，请检查 1");
             }
