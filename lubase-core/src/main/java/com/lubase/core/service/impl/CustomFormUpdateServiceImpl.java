@@ -103,8 +103,8 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
             if (!formId.equals(clientFormId)) {
                 throw new WarnCommonException("处理失败，客户端传递的formId不正确");
             }
-            String childTableId = formRuleService.getChildTableId(formId, serialNum);
-            String mainTableId = formRuleService.getMainTableId(formId);
+            String childTableId = formRuleService.getChildTableId(clientFormId, serialNum);
+            String mainTableId = formRuleService.getMainTableId(clientFormId);
             if (StringUtils.isEmpty(mainTableId) || StringUtils.isEmpty(childTableId)) {
                 throw new WarnCommonException("表单主从关系配置信息不正确，请检查 1");
             }

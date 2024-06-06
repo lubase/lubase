@@ -15,8 +15,8 @@ public class FormRuleServiceTest {
 
     @Test
     void test() {
-        String formId = "817493282010435584";
-        String serialNum = "uJ9Xr7tIK1h02afDjvDsUfXM5V5dIX1M";
+        String formId = "1172219605968490496";
+        String serialNum = "b95AGDG1Y3mDBKuzX01SHXTRxAqfA2BI";
 
         String childTableId = formRuleService.getChildTableId(formId, serialNum);
         String mainTableId = formRuleService.getMainTableId(formId);
