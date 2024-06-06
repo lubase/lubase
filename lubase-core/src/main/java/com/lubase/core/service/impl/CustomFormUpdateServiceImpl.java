@@ -100,9 +100,7 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
             String pId = obj.getString("pId");
             String clientFormId = obj.getString("formId");
             String serialNum = obj.getString("serialNum");
-            if (!formId.equals(clientFormId)) {
-                throw new WarnCommonException("处理失败，客户端传递的formId不正确");
-            }
+
             String childTableId = formRuleService.getChildTableId(formId, serialNum);
             String mainTableId = formRuleService.getMainTableId(formId);
             if (StringUtils.isEmpty(mainTableId) || StringUtils.isEmpty(childTableId)) {
