@@ -76,11 +76,16 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
         }
         //3、如果是子表则设置外键
         if (fkField != null) {
+            DbField existsFkField = null;
             for (DbField field : collection.getTableInfo().getFieldList()) {
                 if (field.getCode().equals(fkField.getCode())) {
+                    existsFkField = field;
                     field.setRight(fkField.getRight());
                     field.setVisible(fkField.getVisible());
                 }
+            }
+            if (existsFkField == null) {
+                collection.getTableInfo().getFieldList().add(fkField);
             }
         }
         int cc = dataAccess.update(collection);
@@ -115,6 +120,8 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
             dbEntity.put(relationEntity.getFk_column_code(), pId);
 
             DbCollection collection = dataAccess.getEmptyDataByTableId(Long.parseLong(childTableId));
+
+
             for (DbField field : collection.getTableInfo().getFieldList()) {
                 if (field.getCode().equals(relationEntity.getFk_column_code())) {
                     field.setRight(4);
