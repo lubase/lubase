@@ -1,5 +1,6 @@
 package com.lubase.core.service;
 
+import com.lubase.core.model.ButtonRefFormInfo;
 import com.lubase.model.DbEntity;
 import com.lubase.core.entity.SsButtonEntity;
 import com.lubase.core.entity.SsPageEntity;
@@ -46,6 +47,12 @@ public interface AppFuncDataService {
      * @return
      */
     String getFormIdByFuncCode(String funcCode);
+
+    /**
+     * @param funcCode
+     * @return
+     */
+    ButtonRefFormInfo getRefFormInfoByFuncCode(String funcCode);
 
     /**
      * 检查页面是否配置了对应的表单

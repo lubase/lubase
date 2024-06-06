@@ -1,8 +1,10 @@
 package com.lubase.core.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.lubase.core.model.ButtonRefFormInfo;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
+import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.operate.EOperateMode;
 import com.lubase.orm.service.DataAccess;
@@ -12,6 +14,7 @@ import com.lubase.core.entity.SsButtonEntity;
 import com.lubase.core.entity.SsPageEntity;
 import com.lubase.core.model.PageGridInfoModel;
 import com.lubase.core.service.AppFuncDataService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,6 +109,36 @@ public class AppFuncDataServiceIml implements AppFuncDataService {
             method = "";
         }
         return method;
+    }
+
+    @SneakyThrows
+    @Override
+    public ButtonRefFormInfo getRefFormInfoByFuncCode(String funcCode) {
+        Long btnId = 0L;
+        try {
+            btnId = Long.parseLong(funcCode);
+        } catch (Exception ex) {
+            return null;
+        }
+        DbCollection coll = dataAccess.queryById("ss_button", btnId, "form_id");
+        String refFormId = null, buttonType = null;
+        if (coll.getData().size() == 1) {
+            refFormId = TypeConverterUtils.object2String(coll.getData().get(0).get("form_id"), "");
+            buttonType = TypeConverterUtils.object2String(coll.getData().get(0).get("button_type"), "");
+        } else {
+            coll = dataAccess.queryById("dm_form_button", btnId, "ref_form_id");
+            if (coll.getData().size() == 1) {
+                refFormId = TypeConverterUtils.object2String(coll.getData().get(0).get("ref_form_id"), "");
+                buttonType = TypeConverterUtils.object2String(coll.getData().get(0).get("button_type"), "");
+            }
+        }
+        if (StringUtils.isEmpty(refFormId)) {
+            throw new WarnCommonException("按钮未找到关联的表单，请联系管理员");
+        }
+        ButtonRefFormInfo info = new ButtonRefFormInfo();
+        info.setRefFormId(refFormId);
+        info.setButtonType(buttonType);
+        return info;
     }
 
     @Override
