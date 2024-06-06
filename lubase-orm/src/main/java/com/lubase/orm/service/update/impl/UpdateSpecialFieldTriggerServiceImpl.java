@@ -40,6 +40,7 @@ public class UpdateSpecialFieldTriggerServiceImpl implements UpdateTriggerServic
         if (user == null) {
             user = new LoginUser();
             user.setId(Long.parseLong("677413984038555649"));
+            user.setCode("lubase-no-user");
         }
         Long[] ids = null;
         int idIndex = 0;
@@ -55,11 +56,11 @@ public class UpdateSpecialFieldTriggerServiceImpl implements UpdateTriggerServic
                     }
                     entity.setId(ids[idIndex++]);
                 }
-                entity.put("create_by", user.getId());
+                entity.put("create_by", user.getCode());
                 entity.put("create_time", LocalDateTime.now());
                 processDefaultValue(collection.getTableInfo(), entity, collection.isServer());
             } else if (entity.getDataState().equals(EDBEntityState.Modified)) {
-                entity.putWithNoTrace("update_by", user.getId());
+                entity.putWithNoTrace("update_by", user.getCode());
                 entity.putWithNoTrace("update_time", LocalDateTime.now());
             }
         }
