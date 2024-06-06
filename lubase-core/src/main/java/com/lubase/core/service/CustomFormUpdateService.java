@@ -14,4 +14,13 @@ public interface CustomFormUpdateService {
      * @return
      */
     Integer saveFormData(String formId, DbEntity dbEntity);
+
+    /**
+     * 表单子表保存数据
+     *
+     * @param formId
+     * @param dbEntity
+     * @return
+     */
+    Integer saveChildTableFormData(String formId, DbEntity dbEntity);
 }

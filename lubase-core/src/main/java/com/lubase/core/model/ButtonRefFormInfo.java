@@ -12,4 +12,8 @@ public class ButtonRefFormInfo {
      * 关联表单信息
      */
     private String refFormId;
+    /**
+     * 是否是表单子表按钮
+     */
+    private Boolean isFormChildTable;
 }

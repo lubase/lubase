@@ -123,7 +123,11 @@ public class PageDataServiceImpl implements PageDataService {
         // 判断是否保存
         String buttonType = refFormInfo.getButtonType();
         if (buttonType.equals(EButtonType.Add.getStringValue()) || buttonType.equals(EButtonType.Edit.getStringValue())) {
-            return customFormUpdateService.saveFormData(refFormInfo.getRefFormId(), dbEntity);
+            if (refFormInfo.getIsFormChildTable()) {
+                return customFormUpdateService.saveChildTableFormData(refFormInfo.getRefFormId(), dbEntity);
+            } else {
+                return customFormUpdateService.saveFormData(refFormInfo.getRefFormId(), dbEntity);
+            }
         } else {
             throw new WarnCommonException("配置错误，此类型按钮无法保存表单");
         }

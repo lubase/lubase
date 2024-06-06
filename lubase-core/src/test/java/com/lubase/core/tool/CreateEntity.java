@@ -33,7 +33,6 @@ public class CreateEntity {
 //        createOneEntity("ss_table_trigger", "SsTableTriggerEntity");
 //        createOneEntity("dm_code", "DmCodeEntity");
 //        createOneEntity("dm_code", "DmCodeEntity");
-//        createOneEntity("dm_col_template", "DmColTemplateEntity");
         //createOneEntity("dm_custom_form", "DmCustomFormEntity2");
         createOneEntity("ss_page", "ss_page2");
         //createOneEntity("ss_button", "ss_button2");
