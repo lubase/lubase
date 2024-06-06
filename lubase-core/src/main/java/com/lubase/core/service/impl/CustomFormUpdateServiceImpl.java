@@ -32,7 +32,7 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
     /**
      * 子表更新设置 属性
      */
-    private static final String FORM_CHILD_TABLE_SETTING = "__childTableSetting";
+    private static final String FORM_CHILD_TABLE_SETTING = "__child_table_setting";
 
     @Autowired
     DataAccess dataAccess;
