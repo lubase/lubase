@@ -120,7 +120,7 @@ public class AppFuncDataServiceIml implements AppFuncDataService {
         } catch (Exception ex) {
             return null;
         }
-        DbCollection coll = dataAccess.queryById("ss_button", btnId, "form_id");
+        DbCollection coll = dataAccess.queryById("ss_button", btnId, "form_id,button_type");
         String refFormId = null, buttonType = null;
         ButtonRefFormInfo info = new ButtonRefFormInfo();
         if (coll.getData().size() == 1) {
@@ -128,7 +128,7 @@ public class AppFuncDataServiceIml implements AppFuncDataService {
             buttonType = TypeConverterUtils.object2String(coll.getData().get(0).get("button_type"), "");
             info.setIsFormChildTable(false);
         } else {
-            coll = dataAccess.queryById("dm_form_button", btnId, "ref_form_id");
+            coll = dataAccess.queryById("dm_form_button", btnId, "ref_form_id,button_type");
             if (coll.getData().size() == 1) {
                 refFormId = TypeConverterUtils.object2String(coll.getData().get(0).get("ref_form_id"), "");
                 buttonType = TypeConverterUtils.object2String(coll.getData().get(0).get("button_type"), "");
