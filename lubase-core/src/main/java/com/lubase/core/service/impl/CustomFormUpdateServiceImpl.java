@@ -76,15 +76,15 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
         }
         //3、如果是子表则设置外键
         if (fkField != null) {
-            DbField existsFkField = null;
+            Boolean existsFkField = false;
             for (DbField field : collection.getTableInfo().getFieldList()) {
                 if (field.getCode().equals(fkField.getCode())) {
-                    existsFkField = field;
+                    existsFkField = true;
                     field.setRight(fkField.getRight());
                     field.setVisible(fkField.getVisible());
                 }
             }
-            if (existsFkField == null) {
+            if (!existsFkField) {
                 collection.getTableInfo().getFieldList().add(fkField);
             }
         }
@@ -105,11 +105,9 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
             String pId = obj.getString("pId");
             String clientFormId = obj.getString("formId");
             String serialNum = obj.getString("serialNum");
-            if (!formId.equals(clientFormId)) {
-                throw new WarnCommonException("处理失败，客户端传递的formId不正确");
-            }
-            String childTableId = formRuleService.getChildTableId(clientFormId, serialNum);
-            String mainTableId = formRuleService.getMainTableId(clientFormId);
+
+            String childTableId = formRuleService.getChildTableId(formId, serialNum);
+            String mainTableId = formRuleService.getMainTableId(formId);
             if (StringUtils.isEmpty(mainTableId) || StringUtils.isEmpty(childTableId)) {
                 throw new WarnCommonException("表单主从关系配置信息不正确，请检查 1");
             }
@@ -120,8 +118,6 @@ public class CustomFormUpdateServiceImpl implements CustomFormUpdateService {
             dbEntity.put(relationEntity.getFk_column_code(), pId);
 
             DbCollection collection = dataAccess.getEmptyDataByTableId(Long.parseLong(childTableId));
-
-
             for (DbField field : collection.getTableInfo().getFieldList()) {
                 if (field.getCode().equals(relationEntity.getFk_column_code())) {
                     field.setRight(4);
