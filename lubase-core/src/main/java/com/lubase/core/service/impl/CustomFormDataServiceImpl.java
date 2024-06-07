@@ -95,10 +95,6 @@ public class CustomFormDataServiceImpl implements CustomFormDataService {
                 if (formFieldSetting.getRequired().equals(1)) {
                     field.setIsNull(0);
                 }
-                //表单字段可编辑字段默认均不再处理
-                if (field.getFieldAccess().getIndex() > EAccessGrade.Read.getIndex()) {
-                    field.setColDefault("");
-                }
             }
         }
         return registerFieldList;
