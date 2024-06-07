@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * 表单 Tabs 数据对象
  *
- * @author zhulanzhou
+ * @author bluesky
  */
 @Data
 public class Tabs {
