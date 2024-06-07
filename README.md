@@ -59,7 +59,7 @@ LuBase是以数据模型驱动，可视化表单和页面设计，内置工作�
 
 #### 获取系统演示地址
 
-扫码入群获取演示环境地址： ![扫描入群](https://foruda.gitee.com/images/1717321144120087316/42986215_10523320.png "872e525b_10523320.png")
+扫码入群获取演示环境地址： ![输入图片说明](https://foruda.gitee.com/images/1717745138227242449/cbc91d75_10523320.png "无标题.png")
 
 #### 完整使用文档
 [语雀-Lubase使用手册](https://www.yuque.com/jiaque-okoeu/zt6gq2/kclxspyo1pgydl1p)

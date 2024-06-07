@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * id 生成器
  *
- * @author zhulanzhou
+ * @author bluesky
  **/
 public interface IDGenerator {
 

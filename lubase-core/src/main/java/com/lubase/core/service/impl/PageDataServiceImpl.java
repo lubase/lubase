@@ -122,7 +122,7 @@ public class PageDataServiceImpl implements PageDataService {
         ButtonRefFormInfo refFormInfo = appFuncDataService.getRefFormInfoByFuncCode(funcCode);
         // 判断是否保存
         String buttonType = refFormInfo.getButtonType();
-        if (buttonType.equals(EButtonType.Add.getStringValue()) || buttonType.equals(EButtonType.Edit.getStringValue())) {
+        if (buttonType.equals(EButtonType.Add.getStringValue()) || buttonType.equals(EButtonType.TreeEdit.getStringValue()) || buttonType.equals(EButtonType.Edit.getStringValue())) {
             if (refFormInfo.getIsFormChildTable()) {
                 return customFormUpdateService.saveChildTableFormData(refFormInfo.getRefFormId(), dbEntity);
             } else {

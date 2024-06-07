@@ -12,6 +12,10 @@ public enum EButtonType {
      * 弹窗编辑
      */
     Edit(21),
+        /**
+     * 左树编辑
+     */
+    TreeEdit(22),
     /**
      * 查看详情
      */
