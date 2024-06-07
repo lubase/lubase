@@ -1,6 +1,7 @@
 package com.lubase.core.service.button.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.lubase.core.service.CustomFormDataService;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
 import com.lubase.orm.exception.InvokeCommonException;
@@ -41,10 +42,11 @@ public class Button27DeleteImpl implements MoreDataService, SpecialButtonService
 
     @Autowired
     DataAccess dataAccess;
-
+    @Autowired
+    CustomFormDataService customFormDataService;
     @Override
     public Object exe(SsButtonEntity button, List<HashMap<String, String>> listMapParam) throws Exception {
-        ButtonServerSettingModel serverSettingModel = getMainTableCode(button);
+        ButtonServerSettingModel serverSettingModel = getMainTableCode(customFormDataService, button);
         String mainTableCode = serverSettingModel.getMainTableCode();
         Boolean isLogicDelete = serverSettingModel.getIsLogicDelete();
         if (listMapParam == null) {

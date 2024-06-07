@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lubase.core.model.SearchCondition;
 import com.lubase.core.model.SearchVO;
 import com.lubase.core.model.customForm.ChildTableDataVO;
+import com.lubase.core.service.CustomFormDataService;
 import com.lubase.core.util.ClientMacro;
 import com.lubase.core.util.SearchCondition2TableFilterService;
 import com.lubase.model.DbTable;
@@ -59,6 +60,9 @@ public class GetFormChildTableData implements IInvokeMethod {
     @Autowired
     ServerMacroService serverMacroService;
 
+    @Autowired
+    CustomFormDataService customFormDataService;
+
     @Override
     public String getId() {
         return "688087055355351040";
@@ -91,14 +95,13 @@ public class GetFormChildTableData implements IInvokeMethod {
             searchParamStr = mapParam.get("searchParam");
         }
         //1、获取表单子表查询对象
-        DbCollection collection = dataAccess.queryById(DmCustomFormEntity.TABLE_CODE, formId);
-        if (collection.getTotalCount() != 1) {
+        DmCustomFormEntity formEntity = customFormDataService.selectById(formId.toString());
+        if (formEntity == null) {
             throw new InvokeCommonException("formId 参数异常");
         }
-        DmCustomFormEntity formEntity = collection.getGenericData(DmCustomFormEntity.class).get(0);
         Long mainTableId = formEntity.getTable_id();
         //2、获取表单主表与子表关联关系
-        ChildTableSetting childTable = getChildTableFromSettingStr(formEntity.getChild_table(), serialNum);
+        ChildTableSetting childTable = customFormDataService.getChildTableFromSettingStr(formEntity.getChild_table(), serialNum);
         if (StringUtils.isBlank(formEntity.getChild_table()) || childTable == null || childTable.getQueryOption() == null) {
             throw new InvokeCommonException("表单未设置子表配置信息，请检查");
         }
@@ -194,20 +197,5 @@ public class GetFormChildTableData implements IInvokeMethod {
             entity = relationEntityList.get(0);
         }
         return entity;
-    }
-
-    ChildTableSetting getChildTableFromSettingStr(String childTableStr, String serialNum) {
-        ChildTableSetting childTable = null;
-        try {
-            List<ChildTableSetting> childTables = JSONObject.parseArray(childTableStr, ChildTableSetting.class);
-            for (ChildTableSetting childTableSetting : childTables) {
-                if (childTableSetting.getSerialNum().equals(serialNum)) {
-                    childTable = childTableSetting;
-                }
-            }
-        } catch (Exception exception) {
-            //log.warn("子表%s未在表单配置中找到", serialNum);
-        }
-        return childTable;
     }
 }

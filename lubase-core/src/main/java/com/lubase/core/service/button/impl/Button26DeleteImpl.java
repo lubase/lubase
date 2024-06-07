@@ -1,5 +1,8 @@
 package com.lubase.core.service.button.impl;
 
+import com.lubase.core.entity.DmCustomFormEntity;
+import com.lubase.core.model.customForm.ChildTableSetting;
+import com.lubase.core.service.CustomFormDataService;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.ParameterNotFoundException;
 import com.lubase.orm.model.DbCollection;
@@ -38,10 +41,12 @@ public class Button26DeleteImpl implements OndDataService, SpecialButtonService 
     @Autowired
     DataAccess dataAccess;
 
+    @Autowired
+    CustomFormDataService customFormDataService;
 
     @Override
     public Object exe(SsButtonEntity button, HashMap<String, String> mapParam) throws Exception {
-        ButtonServerSettingModel serverSettingModel = getMainTableCode(button);
+        ButtonServerSettingModel serverSettingModel = getMainTableCode(customFormDataService, button);
         String mainTableCode = serverSettingModel.getMainTableCode();
         Boolean isLogicDelete = serverSettingModel.getIsLogicDelete();
 

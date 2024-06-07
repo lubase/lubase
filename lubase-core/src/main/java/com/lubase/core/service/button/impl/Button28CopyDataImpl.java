@@ -1,5 +1,6 @@
 package com.lubase.core.service.button.impl;
 
+import com.lubase.core.service.CustomFormDataService;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.exception.ParameterNotFoundException;
 import com.lubase.orm.model.DbCollection;
@@ -38,10 +39,13 @@ public class Button28CopyDataImpl implements OndDataService, SpecialButtonServic
         return "复制";
     }
 
+    @Autowired
+    CustomFormDataService customFormDataService;
+
     @SneakyThrows
     @Override
     public Object exe(SsButtonEntity button, HashMap<String, String> mapParam) {
-        String mainTableCode = getMainTableCode(button).getMainTableCode();
+        String mainTableCode = getMainTableCode(customFormDataService, button).getMainTableCode();
         Long id = 0L;
         if (mapParam.containsKey(idHandle)) {
             id = Long.valueOf(mapParam.get(idHandle));
@@ -64,7 +68,7 @@ public class Button28CopyDataImpl implements OndDataService, SpecialButtonServic
                 queryOption.setFixField("*");
                 DbCollection codeCollection = dataAccess.query(queryOption);
                 if (codeCollection.getTotalCount() > 0) {
-                    for (DbEntity entity:codeCollection.getData()) {
+                    for (DbEntity entity : codeCollection.getData()) {
                         //新关联关系表主键
                         Long nextIdTmp = idGenerator.nextId();
                         entity.setId(nextIdTmp);

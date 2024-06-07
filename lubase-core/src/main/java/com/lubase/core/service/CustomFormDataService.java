@@ -1,5 +1,6 @@
 package com.lubase.core.service;
 
+import com.lubase.core.model.customForm.ChildTableSetting;
 import com.lubase.model.DbField;
 import com.lubase.core.entity.DmCustomFormEntity;
 
@@ -13,6 +14,15 @@ public interface CustomFormDataService {
      * @return
      */
     DmCustomFormEntity selectById(String formId);
+
+    /**
+     * 获取表单中子表设置信息
+     *
+     * @param childTableStr childTableStr
+     * @param serialNum 子表分组码
+     * @return
+     */
+    ChildTableSetting getChildTableFromSettingStr(String childTableStr, String serialNum);
 
     /**
      * 获取表单字段设置

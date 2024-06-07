@@ -1,7 +1,9 @@
 package com.lubase.core.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lubase.core.entity.DmCustomFormEntity;
+import com.lubase.core.model.customForm.ChildTableSetting;
 import com.lubase.core.model.customForm.FormFieldInfo;
 import com.lubase.core.service.CustomFormDataService;
 import com.lubase.model.DbField;
@@ -11,6 +13,7 @@ import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class CustomFormDataServiceImpl implements CustomFormDataService {
 
@@ -36,6 +40,26 @@ public class CustomFormDataServiceImpl implements CustomFormDataService {
             return collection.getGenericData(DmCustomFormEntity.class).get(0);
         }
         return null;
+    }
+
+    @Override
+    public ChildTableSetting getChildTableFromSettingStr(String childTableStr, String serialNum) {
+        if (StringUtils.isEmpty(childTableStr)) {
+            return null;
+        }
+        ChildTableSetting childTable = null;
+        try {
+            List<ChildTableSetting> childTables = JSONObject.parseArray(childTableStr, ChildTableSetting.class);
+            for (ChildTableSetting childTableSetting : childTables) {
+                if (childTableSetting.getSerialNum().equals(serialNum)) {
+                    childTable = childTableSetting;
+                }
+            }
+        } catch (Exception exception) {
+            log.error("获取表单子表配置错误" + serialNum, exception);
+            throw exception;
+        }
+        return childTable;
     }
 
     @Override
