@@ -79,10 +79,13 @@ public class IPUtil {
             ip = request.getHeader("Proxy-Client-IP");
         }
         if (ip == null || ip.length() == 0 || _UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Forwarded-For");
+        }
+        if (ip == null || ip.length() == 0 || _UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
         if (ip == null || ip.length() == 0 || _UNKNOWN.equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
+            ip = request.getHeader("X-Real-IP");
         }
         if (ip == null || ip.length() == 0 || _UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("http_client_ip");
@@ -90,9 +93,15 @@ public class IPUtil {
         if (ip == null || ip.length() == 0 || _UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
+        if (ip == null || ip.length() == 0 || _UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
         // 如果是多级代理，那么取第一个ip为客户ip
         if (ip != null && ip.contains(",")) {
-            ip = ip.substring(ip.lastIndexOf(",") + 1, ip.length()).trim();
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                ip = ip.substring(0, index);
+            }
         }
         return ip;
     }
