@@ -17,8 +17,6 @@ public class DbField implements Serializable {
     private String tableCode;
     private String code;
     private String name;
-    @JsonIgnore
-    private String dataType;
     private Integer length;
     private int isNull;
     @JsonIgnore
