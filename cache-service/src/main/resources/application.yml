@@ -5,9 +5,9 @@ spring:
     name: lcp.core
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 1234.com
-    url: jdbc:mysql://101.43.198.190:5677/lcp?allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ENC(Rx8r5NRdYWq12ylxVp2eNY9hGtf1UwSnRuCwyGNuhJdPViVLlYhEoFbYurZiIo09)
+    password: ENC(X1Icz5XRdxAJRitTpG/h4lVYUXcSAx71ficOwzI2b6IKK/u63/bS0yNV2sUZLHre)
+    url: ENC(/6bM/sa/hcmIiVQaavdQCzK8WVtlQSjzt1dys9kdkBmGHP7af7SdOzi61wKk7X/J5PTtUFxjIBKzwPc3okL/HXLxIPUaGk57X21mEQ1TaPRod1AtbVnHg3TFctHp9bwAMOcqL+Yw2DPUOVmil6aILYhZSnL6UNvt8AgaC3ngS8ETMspSAsYuFDDKVyoGdhs4)
   servlet:
     multipart:
       max-file-size: 50MB
@@ -15,17 +15,17 @@ spring:
   cache:
     type: redis
   redis:
-    host: 101.43.198.190
+    host: ENC(tPvaGrZcku8FYNCJWVEZCGcTOiufmM/vqBgfjgBzOlh7enl3nufMpZl9gtOi5zEs)
     port: 8085
-    password: 1234.com.cn
-    timeout: 10000
+    password: ENC(pbGIvhrejoGACxjiOqxtsD6SJ8ztOy/V8ZjQFaM2KHITEWezki1oTdiWQ1WsVeUS)
+    timeout: 5000
     database: 10
 #下面这些内容是为了让MyBatis映射
 mybatis:
   #指定Mybatis的Mapper文件
   mapper-locations: classpath:mapper/*xml
   #指定Mybatis的实体目录
-  type-aliases-package: com.lcp.core.mybatis.entity
+  type-aliases-package: com.lubase.orm.mybatis.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: false
