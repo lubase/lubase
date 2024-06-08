@@ -84,6 +84,20 @@ public class PageDataServiceImpl implements PageDataService {
         }
     }
 
+    void holdViewButtonList(CustomFormVO formVO) {
+        List<FormButtonVO> allButtonList = formVO.getBtns();
+        if (allButtonList.size() > 0) {
+            List<FormButtonVO> rightButtonList = new ArrayList<>();
+            for (FormButtonVO button : allButtonList) {
+                //表单自定义按钮的funcId 需要当前页面id+btnId
+                if (button.getBtnType().equals(EButtonType.ViewInfo.getStringValue())) {
+                    rightButtonList.add(button);
+                }
+            }
+            formVO.setBtns(rightButtonList);
+        }
+    }
+
     @Override
     public CustomFormVO getEditDataByFuncCode(String pageId, String funcCode, String dataId, ClientMacro clientMacro) {
         ButtonRefFormInfo refFormInfo = appFuncDataService.getRefFormInfoByFuncCode(funcCode);
@@ -95,8 +109,10 @@ public class PageDataServiceImpl implements PageDataService {
         // 如果是查询详情按钮，则表单只读
         if (refFormInfo.getButtonType().equals(EButtonType.ViewInfo.getStringValue())) {
             formVO.setReadonly(true);
+            holdViewButtonList(formVO);
+        } else {
+            checkFormButtonRight(formVO, pageId);
         }
-        checkFormButtonRight(formVO, pageId);
         return formVO;
     }
 
