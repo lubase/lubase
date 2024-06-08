@@ -17,7 +17,6 @@
         <result column="table_code" property="tableCode"/>
         <result column="col_code" property="code"/>
         <result column="col_name" property="name"/>
-        <result column="data_type" property="dataType"/>
         <result column="length" property="length"/>
         <result column="allow_null" property="isNull"/>
         <result column="col_default" property="colDefault"/>

@@ -1,6 +1,5 @@
 package com.lubase.orm.service.update;
 
-import com.lubase.orm.model.EDataType;
 import com.lubase.orm.model.EColumnType;
 import com.lubase.orm.model.SqlEntity;
 import com.lubase.orm.util.TypeConverterUtils;
@@ -46,7 +45,7 @@ public class GenerateUpdateSql {
             }
             Object colValue = entity.get(col.getCode());
             if (colValue == null) {
-                if (col.getDataType().equals(EDataType.VARCHAR.toString())) {
+                if (col.getEleType().equals(EColumnType.Text.getStringValue())) {
                     //字符串类型新增时接收null值，入库为 空字符串
                     colValue = "";
                 } else {
@@ -58,7 +57,7 @@ public class GenerateUpdateSql {
                 if (StringUtils.isEmpty(colValue.toString())) {
                     continue;
                 }
-            } else if (col.getDataType().equals(EDataType.DATETIME.toString())) {
+            } else if (col.getEleType().equals(EColumnType.Date.getStringValue())) {
                 String Format = "yyyy-MM-dd HH:mm:ss";
                 if (col.getDataFormat() != null) {
                     Format = col.getDataFormat();
@@ -135,7 +134,7 @@ public class GenerateUpdateSql {
             }
             if (colValue == null) {
                 // 不允许为空的字符串 如果更新为null，需要设置为更新为空字符串，避免数据库中非空索引校验失败
-                if (col.getIsNull() == 0 && col.getDataType().equals(EDataType.VARCHAR.toString())) {
+                if (col.getIsNull() == 0 && col.getEleType().equals(EColumnType.Text.getStringValue())) {
                     colValue = "";
                 }
             }
@@ -178,7 +177,7 @@ public class GenerateUpdateSql {
             return false;
         }
         //数据对象中字段值没有变化
-        if (isServer &&  !entity.isPropertyChanged(col.getCode())) {
+        if (isServer && !entity.isPropertyChanged(col.getCode())) {
             return false;
         }
         return true;
