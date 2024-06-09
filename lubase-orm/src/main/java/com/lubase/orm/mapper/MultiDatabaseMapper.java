@@ -32,7 +32,7 @@ public interface MultiDatabaseMapper {
      *
      * @return
      */
-    @Select("select * from dm_database where id in(select database_Id from ss_app where deploy_type=0)")
+    @Select("select * from dm_database")
     List<DmDatabaseEntity> getAllDatabaseSetting();
 
     /**
