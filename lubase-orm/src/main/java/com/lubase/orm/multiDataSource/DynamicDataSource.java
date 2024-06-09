@@ -3,6 +3,7 @@ package com.lubase.orm.multiDataSource;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.stat.DruidDataSourceStatManager;
 import com.lubase.orm.config.AppDbDruidConfig;
+import com.lubase.orm.constant.CommonConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,9 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         log.info("正在检查数据源：" + dsCode);
         Map<Object, Object> dynamicTargetDataSources = this.dynamicTargetDataSources;
         Boolean result = false;
-        if (dynamicTargetDataSources.containsKey(dsCode)) {
+        if (dsCode.equals(CommonConst.MAIN_DATABASE_ID)) {
+            log.info("主库数据源无需重新创建");
+        } else if (dynamicTargetDataSources.containsKey(dsCode)) {
             log.info("数据源" + dsCode + "之前已经创建，准备测试数据源是否正常...");
             DruidDataSource druidDataSource = (DruidDataSource) dynamicTargetDataSources.get(dsCode);
             boolean rightFlag = true;
