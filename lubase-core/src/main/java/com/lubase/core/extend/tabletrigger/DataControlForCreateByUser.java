@@ -59,7 +59,7 @@ public class DataControlForCreateByUser implements ITableTrigger {
     public Boolean beforeValidate(DbTable tableInfo, DbEntity entity, Boolean isServer) throws Exception {
         // 根据create_by判断是否允许编辑和删除
         String createBy = getCreateBy(tableInfo.getCode(), entity.getId());
-        if (appHolderService.getUser().getId().toString().equals(createBy)) {
+        if (!StringUtils.isEmpty(createBy) && createBy.equals(appHolderService.getUser().getCode())) {
             return true;
         } else {
             throw new WarnCommonException("此表开启数据权限（create_by）控制，您无权操作当前数据");
