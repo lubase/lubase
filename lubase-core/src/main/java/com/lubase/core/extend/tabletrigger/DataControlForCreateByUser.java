@@ -52,7 +52,7 @@ public class DataControlForCreateByUser implements ITableTrigger {
             return false;
         }
         char[] charArray = customConfig.toCharArray();
-        return charArray.length >= 2 && charArray[2] == '1';
+        return charArray.length >= 3 && charArray[2] == '1';
     }
 
     @Override
