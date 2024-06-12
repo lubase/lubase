@@ -33,8 +33,8 @@ public static final String TABLE_CODE = "wf_tevent";
     public static final String COL_ERROR_COUNT = "error_count";
     public static final String COL_ERROR_TIP = "error_tip";
 
-        public Long getCreate_by() {
-            return TypeConverterUtils.object2Long(super.get("create_by"));
+        public String getCreate_by() {
+            return TypeConverterUtils.object2String(super.get("create_by"));
         }
 
             public void setCreate_by(Long create_by) {
