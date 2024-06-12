@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.WarnCommonException;
+import com.lubase.orm.extend.IColumnRemoteService;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.multiDataSource.ChangeDataSourceService;
@@ -26,6 +27,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -79,6 +81,9 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    @Autowired
+    @Qualifier("userInfoByCodeServiceImpl")
+    IColumnRemoteService remoteServiceByCode;
 
     @Autowired
     AppHolderService appHolderService;
@@ -513,8 +518,11 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         DbCollection bisData = remoteBisDataService.getBisData(fIns.getService_id(), fIns.getData_id());
 
         try {
+            DbEntity userEntity = remoteServiceByCode.getCacheDataByKey(event.getCreate_by());
+
             LoginUser loginUser = new LoginUser();
-            loginUser.setId(event.getCreate_by());
+            loginUser.setId(userEntity.getId());
+            loginUser.setCode(event.getCreate_by());
             appHolderService.setUser(loginUser);
         } catch (Exception exception) {
             log.error("流程引擎初始化用户信息失败", exception);
