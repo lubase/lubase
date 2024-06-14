@@ -291,9 +291,15 @@ public class DataAccessServiceImpl implements DataAccess {
         return procMSSqlMapper.getDbEntityList(EDatabaseType.getFromString(table.getDatabaseType()), procName, p1);
     }
 
+    @SneakyThrows
     @Override
     public List<String> procGetStringList(String tableCode, String procName, String... p1) {
-        return procMSSqlMapper.getStringList(EDatabaseType.Mysql, procName, p1);
+        if (StringUtils.isEmpty(tableCode) || StringUtils.isEmpty(procName)) {
+            throw new WarnCommonException("tableCode or procName not null");
+        }
+        DbTable table = initTableInfoByTableCode(tableCode);
+        changeDataSourceService.changeDataSourceByTableCode(table);
+        return procMSSqlMapper.getStringList(EDatabaseType.getFromString(table.getDatabaseType()), procName, p1);
     }
 
     @Override
