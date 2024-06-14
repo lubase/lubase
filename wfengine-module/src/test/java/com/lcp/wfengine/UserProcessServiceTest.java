@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class UserProcessServiceTest {
 
     @Autowired
@@ -26,7 +26,7 @@ public class UserProcessServiceTest {
     @Test
     void testMapper() {
         changeDataSourceService.changeDataSourceByTableCode(WfServiceEntity.TABLE_CODE);
-        List<String> ids = dataAccess.procGetStringList("proc_getUserProcessIds", "688164070687248384", "abc");
+        List<String> ids = dataAccess.procGetStringList("wf_app", "proc_getUserProcessIds", "688164070687248384","", "1");
         assert ids.size() == 1;
         System.out.println(JSON.toJSONString(ids));
     }

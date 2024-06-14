@@ -1,6 +1,7 @@
 package com.lubase.orm;
 
 import com.alibaba.fastjson.JSON;
+import com.lubase.orm.model.EDatabaseType;
 import com.lubase.orm.util.TypeConverterUtils;
 import com.lubase.model.DbField;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,17 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class BasicTest {
+
+
+    @Test
+    void test1() {
+        EDatabaseType type1 = Enum.valueOf(EDatabaseType.class, "mysql");
+        System.out.println(type1.equals(EDatabaseType.Mysql));
+        EDatabaseType type2 = Enum.valueOf(EDatabaseType.class, "sqlserver");
+        System.out.println(type2.equals(EDatabaseType.Sqlserver));
+        EDatabaseType type3 = Enum.valueOf(EDatabaseType.class, "abcd");
+    }
+
     @Test
     void testDateTime() {
         String val = "2022-12-01";

@@ -22,8 +22,8 @@ public class ProcMSSqlMapperTest {
     @Test
     void testProc() {
         changeDataSourceService.changeDataSourceByTableCode("wf_app");
-        List<String> list = dataAccess.procGetStringList("proc_getUserProcessIds",
-                "688164070687248384");
+        List<String> list = dataAccess.procGetStringList("wf_app", "proc_getUserProcessIds",
+                "688164070687248384","12313","0");
         System.out.println(list);
     }
 }

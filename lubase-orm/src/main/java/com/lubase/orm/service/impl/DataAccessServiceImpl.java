@@ -8,6 +8,8 @@ import com.lubase.orm.extend.ITableTrigger;
 import com.lubase.orm.extend.service.TableTriggerAdapter;
 import com.lubase.orm.mapper.ProcMSSqlMapper;
 import com.lubase.orm.model.DbCollection;
+import com.lubase.orm.model.EDatabaseType;
+import com.lubase.orm.multiDataSource.ChangeDataSourceService;
 import com.lubase.orm.multiDataSource.DBContextHolder;
 import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.service.RegisterColumnInfoService;
@@ -54,7 +56,8 @@ public class DataAccessServiceImpl implements DataAccess {
 
     @Autowired
     PlatformTransactionManager transactionManager;
-
+    @Autowired
+    ChangeDataSourceService changeDataSourceService;
     @Autowired
     ProcMSSqlMapper procMSSqlMapper;
     @Autowired
@@ -277,19 +280,25 @@ public class DataAccessServiceImpl implements DataAccess {
         return registerColumnInfoService.getControlledTableList();
     }
 
+    @SneakyThrows
     @Override
-    public List<DbEntity> procGetDbEntityList(String procName, String... p1) {
-        return procMSSqlMapper.getDbEntityList(procName, p1);
+    public List<DbEntity> procGetDbEntityList(String tableCode, String procName, String... p1) {
+        if (StringUtils.isEmpty(tableCode) || StringUtils.isEmpty(procName)) {
+            throw new WarnCommonException("tableCode or procName not null");
+        }
+        DbTable table = initTableInfoByTableCode(tableCode);
+        changeDataSourceService.changeDataSourceByTableCode(table);
+        return procMSSqlMapper.getDbEntityList(EDatabaseType.getFromString(table.getDatabaseType()), procName, p1);
     }
 
     @Override
-    public List<String> procGetStringList(String procName, String... p1) {
-        return procMSSqlMapper.getStringList(procName, p1);
+    public List<String> procGetStringList(String tableCode, String procName, String... p1) {
+        return procMSSqlMapper.getStringList(EDatabaseType.Mysql, procName, p1);
     }
 
     @Override
     public List<DbCode> getCodeListByTypeId(String codeTypeId) {
-        if(StringUtils.isEmpty(codeTypeId)){
+        if (StringUtils.isEmpty(codeTypeId)) {
             return new ArrayList<>();
         }
         return registerColumnInfoService.getCodeListByTypeId(codeTypeId);

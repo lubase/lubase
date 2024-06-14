@@ -124,7 +124,7 @@ public interface DataAccess {
      * @param p1
      * @return
      */
-    List<DbEntity> procGetDbEntityList(String procName, String... p1);
+    List<DbEntity> procGetDbEntityList(String tableCode,String procName, String... p1);
 
     /**
      * 通过存储过程获取id列表
@@ -133,7 +133,7 @@ public interface DataAccess {
      * @param p1
      * @return
      */
-    List<String> procGetStringList(String procName, String... p1);
+    List<String> procGetStringList(String tableCode, String procName, String... p1);
 
     /**
      * 获取代码表数据

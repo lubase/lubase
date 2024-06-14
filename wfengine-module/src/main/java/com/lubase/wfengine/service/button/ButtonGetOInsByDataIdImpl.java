@@ -75,8 +75,7 @@ public class ButtonGetOInsByDataIdImpl implements PageJumpDataService {
 
     @SneakyThrows
     DbEntity getOInsEntity(String serviceId, String dataId, String userId) {
-        changeDataSourceService.changeDataSourceByTableCode("wf_app");
-        List<DbEntity> list = dataAccess.procGetDbEntityList("proc_getWfOInsByDataId", userId, serviceId, dataId);
+        List<DbEntity> list = dataAccess.procGetDbEntityList("wf_app", "proc_getWfOInsByDataId", userId, serviceId, dataId);
         if (list.size() == 1) {
             return list.get(0);
         } else {

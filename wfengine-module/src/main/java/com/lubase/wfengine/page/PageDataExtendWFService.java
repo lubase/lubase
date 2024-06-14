@@ -102,7 +102,6 @@ public class PageDataExtendWFService implements PageDataExtendService {
      */
     List<String> getDataIds(String serviceId, String processStatus) {
         String userId = appHolderService.getUser().getId().toString();
-        changeDataSourceService.changeDataSourceByTableCode("wf_app");
-        return dataAccess.procGetStringList("proc_getUserProcessIds", userId, serviceId, processStatus);
+        return dataAccess.procGetStringList("wf_app", "proc_getUserProcessIds", userId, serviceId, processStatus);
     }
 }
