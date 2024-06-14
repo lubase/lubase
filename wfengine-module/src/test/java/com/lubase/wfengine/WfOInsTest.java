@@ -1,4 +1,4 @@
-package com.lcp.wfengine;
+package com.lubase.wfengine;
 
 import com.alibaba.fastjson.JSON;
 import com.lubase.orm.exception.WarnCommonException;

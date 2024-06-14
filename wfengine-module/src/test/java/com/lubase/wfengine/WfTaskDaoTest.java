@@ -1,4 +1,4 @@
-package com.lcp.wfengine;
+package com.lubase.wfengine;
 
 import com.lubase.wfengine.auto.entity.WfTaskEntity;
 import com.lubase.wfengine.dao.WfTaskDao;
