@@ -39,7 +39,7 @@ public class QueryUserList implements IInvokeMethod {
         Integer pageIndex = Integer.parseInt(checkAndGetParam("pageIndex", mapParam));
         Boolean isSystemUserTag = true;
         // 设定 如果   outerTage=1 则表示从外部获取用户数据，否则都是内部
-        if (mapParam.containsKey("outerTage") && mapParam.get("outerTage").equals("1")) {
+        if (mapParam.containsKey("outerTag") && mapParam.get("outerTag").equals("1")) {
             isSystemUserTag = false;
         }
         return renderCommonComponentService.selectUserList(userCode, userName, pageIndex, pageSize, isSystemUserTag);
