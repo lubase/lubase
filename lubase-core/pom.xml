@@ -68,7 +68,7 @@
                     </excludes>
                     <archive>
                         <manifest>
-                            <mainClass>com.lubase.core.QibaoApplication</mainClass>
+                            <mainClass>com.lubase.core.LubaseCoreApplication</mainClass>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>

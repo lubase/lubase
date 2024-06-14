@@ -1,6 +1,9 @@
 package com.lubase.wfengine.controller;
 
+import com.lubase.model.DbEntity;
 import com.lubase.orm.exception.ParameterNotFoundException;
+import com.lubase.orm.exception.WarnCommonException;
+import com.lubase.orm.extend.IColumnRemoteService;
 import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.service.AppHolderService;
 import com.lubase.core.config.PassToken;
@@ -11,6 +14,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +30,14 @@ public class WorkFlowController {
     WorkFlowService workFlowService;
     @Autowired
     AppHolderService holderService;
+
+    @Autowired
+    @Qualifier("userColumnServiceImpl")
+    IColumnRemoteService remoteServiceById;
+
+    @Autowired
+    @Qualifier("userInfoByCodeServiceImpl")
+    IColumnRemoteService remoteServiceByCode;
 
     /**
      * @param serviceId 业务场景id
@@ -53,8 +65,17 @@ public class WorkFlowController {
         try {
             LoginUser loginUser = holderService.getUser();
             if (loginUser == null) {
+                DbEntity userInfo = remoteServiceById.getCacheDataByKey(userId);
+                if (userInfo == null) {
+                    userInfo = remoteServiceByCode.getCacheDataByKey(userId);
+                }
+                if (userInfo == null) {
+                    throw new WarnCommonException("用户" + userId + "不存在");
+                }
                 loginUser = new LoginUser();
-                loginUser.setId(Long.parseLong(userId));
+                loginUser.setId(userInfo.getId());
+                loginUser.setCode(userInfo.get("user_code").toString());
+                loginUser.setName(userInfo.get("user_name").toString());
                 holderService.setUser(loginUser);
             }
         } catch (Exception exception) {

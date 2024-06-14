@@ -93,7 +93,8 @@ rocketmq:
     group: myGroup
     send-message-timeout: 10000
 custom:
-  main-api-server: http://101.43.198.190:8084
+  cache-server: http://101.43.198.190:9526
+  main-api-server: http://101.43.198.190:9527
   # 是否启用流程引擎核调度功能
   wf-engine:
     enable-scheduled: 1
@@ -104,7 +105,6 @@ custom:
   #是否启用全文检索
   enable-fulltext: 0
   jwt-secret:
-  cache-server: http://101.43.198.190:9526
   # 如果配置此路径，则从此路径获取扩展jar包
   extend-path: /root/app/lubase/admin/extend
   extend-user-path:
@@ -122,4 +122,3 @@ custom:
   password-reg: "^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9~!@#$%^&*()\\-_+?/\\.]{8,16}$"
   # 密码复杂度正则表达式 不匹配的提示语
   password-tip: "密码不符合复杂度(需包括数字、小写字母、大写字母、特殊字符四种的三种，长度在8-16位)"
-  #单点登录配置（技术中心）

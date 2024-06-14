@@ -17,9 +17,9 @@ import java.io.IOException;
 @MapperScan({"com.lubase.core.*.*.mapper"})
 @EnableCaching
 @EnableScheduling
-public class QibaoApplication {
+public class LubaseCoreApplication {
     public static void main(String[] args) throws IOException {
-        SpringApplication.run(QibaoApplication.class, args);
-        System.out.println("hello spring ……");
+        SpringApplication.run(LubaseCoreApplication.class, args);
+        System.out.println("hello lubase ……");
     }
 }

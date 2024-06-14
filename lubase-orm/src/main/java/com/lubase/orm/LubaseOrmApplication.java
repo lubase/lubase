@@ -10,10 +10,10 @@ import org.springframework.cache.annotation.EnableCaching;
 @EnableCaching
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class }, scanBasePackages = "com.lubase.*")
 @MapperScan("com.lubase.orm.mapper")
-public class CoreApplication {
+public class LubaseOrmApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CoreApplication.class, args);
+        SpringApplication.run(LubaseOrmApplication.class, args);
     }
 
 }

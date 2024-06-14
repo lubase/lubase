@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CoremodelApplication {
+public class LubaseModelApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CoremodelApplication.class, args);
+        SpringApplication.run(LubaseModelApplication.class, args);
     }
 
 }

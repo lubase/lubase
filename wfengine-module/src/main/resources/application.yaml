@@ -2,7 +2,7 @@ server:
   port: 8084
 spring:
   application:
-    name: fastdev2
+    name: LubaseWFEngie
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid-app:
@@ -17,9 +17,9 @@ spring:
       filters: stat
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      username: root
-      password: 1234.com
-      url: jdbc:mysql://101.43.198.190:5677/lcp?allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+      username: ENC(Rx8r5NRdYWq12ylxVp2eNY9hGtf1UwSnRuCwyGNuhJdPViVLlYhEoFbYurZiIo09)
+      password: ENC(X1Icz5XRdxAJRitTpG/h4lVYUXcSAx71ficOwzI2b6IKK/u63/bS0yNV2sUZLHre)
+      url: ENC(/6bM/sa/hcmIiVQaavdQCzK8WVtlQSjzt1dys9kdkBmGHP7af7SdOzi61wKk7X/J5PTtUFxjIBKzwPc3okL/HXLxIPUaGk57X21mEQ1TaPRod1AtbVnHg3TFctHp9bwAMOcqL+Yw2DPUOVmil6aILYhZSnL6UNvt8AgaC3ngS8ETMspSAsYuFDDKVyoGdhs4)
       #初始化连接数
       initial-size: 5
       #同时使用中 - 最大的连接数，未归还druid
@@ -73,17 +73,11 @@ spring:
   cache:
     type: redis
   redis:
-    host: 101.43.198.190
+    host: ENC(tPvaGrZcku8FYNCJWVEZCGcTOiufmM/vqBgfjgBzOlh7enl3nufMpZl9gtOi5zEs)
     port: 8085
-    password: 1234.com.cn
+    password: ENC(pbGIvhrejoGACxjiOqxtsD6SJ8ztOy/V8ZjQFaM2KHITEWezki1oTdiWQ1WsVeUS)
     timeout: 5000
-    database: 6
-  rabbitmq:
-    host: 101.43.198.190
-    port: 5672
-    username: admin
-    password: admin
-    virtual-host: my_vhost
+    database: 10
 #下面这些内容是为了让MyBatis映射
 mybatis:
   #指定Mybatis的Mapper文件
@@ -94,12 +88,13 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: false
 rocketmq:
-  name-server: 101.43.198.190:9876
+  name-server: ENC(BxLV3F5Y0h6PEmPL3CQqcUPD4JGK+6LzH8fESvERJfqaCtvw2XWu7V2OgPqnSyQe67eqjRxLKv5uGCSwu283mA==)
   producer:
     group: myGroup
     send-message-timeout: 10000
 custom:
-  main-api-server: http://101.43.198.190:8084
+  cache-server: http://101.43.198.190:9526
+  main-api-server: http://101.43.198.190:9527
   # 是否启用流程引擎核调度功能
   wf-engine:
     enable-scheduled: 1
@@ -110,7 +105,6 @@ custom:
   #是否启用全文检索
   enable-fulltext: 0
   jwt-secret:
-  cache-server: http://101.43.198.190:8083
   # 如果配置此路径，则从此路径获取扩展jar包
   extend-path: /root/app/new-qibao/extend
   extend-user-path:
@@ -128,4 +122,3 @@ custom:
   password-reg: "^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9~!@#$%^&*()\\-_+?/\\.]{8,16}$"
   # 密码复杂度正则表达式 不匹配的提示语
   password-tip: "密码不符合复杂度(需包括数字、小写字母、大写字母、特殊字符四种的三种，长度在8-16位)"
-  #单点登录配置（技术中心）
