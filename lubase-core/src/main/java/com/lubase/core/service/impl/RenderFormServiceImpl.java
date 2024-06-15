@@ -464,7 +464,10 @@ public class RenderFormServiceImpl implements RenderFormService {
         //表单查询开启字段权限控制
         queryOption.setEnableColAccessControl(true);
         queryOption.setFixField(dmCustomform.getCols());
-        queryOption.setTableFilter(new TableFilter("ID", dataId));
+        if(StringUtils.isEmpty(queryOption.getFixField())){
+            queryOption.setFixField("id");
+        }
+        queryOption.setTableFilter(new TableFilter("id", dataId));
         DbCollection collection = dataAccess.query(queryOption);
         // 合并 filedInfo和 tableInfo 方便客户端进行渲染 20240602 lubaase
         collection.getTableInfo().setFieldList(customFormDataService.getFormFieldSetting(collection.getTableInfo().getFieldList(), dmCustomform.getField_info()));
