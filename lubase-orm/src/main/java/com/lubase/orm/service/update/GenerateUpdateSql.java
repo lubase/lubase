@@ -52,8 +52,8 @@ public class GenerateUpdateSql {
                     continue;
                 }
             }
-            if (col.getEleType().equals(EColumnType.Numeric.getStringValue()) || col.getEleType().equals(EColumnType.Int.getStringValue())) {
-                // 整数和小数时，如果值是“” 则不存入
+            if (col.getEleType().equals(EColumnType.Numeric.getStringValue()) || col.getEleType().equals(EColumnType.Int.getStringValue()) || col.getEleType().equals(EColumnType.Lookup.getStringValue())) {
+                // 整数和小数时,关联数据表，如果值是“” 则不存入
                 if (StringUtils.isEmpty(colValue.toString())) {
                     continue;
                 }
