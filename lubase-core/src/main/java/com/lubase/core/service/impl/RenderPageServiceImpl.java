@@ -1,6 +1,7 @@
 package com.lubase.core.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.lubase.core.exception.NoRightAccessFuncException;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.constant.CommonConst;
 import com.lubase.orm.exception.ParameterNotFoundException;
@@ -162,17 +163,31 @@ public class RenderPageServiceImpl implements RenderPageService {
         LoginUser user = appHolderService.getUser();
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
         // 暂时去掉权限判断。需增加 应用管理员对应用内全部权限功能后再开启
-        //        if (!userRightService.checkFuncRight(rightInfo, pageId)) {
-//            throw new NoRightAccessFuncException();
-//        }
+        if (!rightInfo.getIsAppAdministrator() && !rightInfo.getIsSupperAdministrator() && !userRightService.checkFuncRight(rightInfo, Long.parseLong(pageId))) {
+            throw new NoRightAccessFuncException();
+        }
         List<ButtonVO> allButtonList = getButtonListByPageId(pageEntity.getId());
         List<ButtonVO> rightButtonList = new ArrayList<>();
         for (ButtonVO buttonVO : allButtonList) {
-            if (userRightService.checkFuncRight(rightInfo, Long.parseLong(buttonVO.getCode()))) {
+            if (userRightService.checkFuncRight(rightInfo, Long.parseLong(buttonVO.getId()))) {
                 rightButtonList.add(buttonVO);
             }
         }
         pageInfoVO.setBtns(rightButtonList);
+        pageInfoVO.setId(pageEntity.getId());
+        pageInfoVO.setName(pageEntity.getPage_name());
+        if (pageEntity.getPage_name().startsWith("group-")) {
+            pageInfoVO.setName(pageEntity.getPage_name().substring(6));
+            pageInfoVO.setPageGroup(1);
+        } else {
+            pageInfoVO.setPageGroup(0);
+        }
+        pageInfoVO.setDes(pageEntity.getDescription());
+        pageInfoVO.setVueComponent(pageEntity.getVue_component());
+        pageInfoVO.setVueRouter(pageEntity.getVue_router());
+        pageInfoVO.setCode(pageEntity.getPage_code());
+        pageInfoVO.setType(pageEntity.getType());
+
         pageInfoVO.setTmp(pageEntity.getMaster_page());
         SearchVO searchVO = getSearchVO(pageEntity);
         pageInfoVO.setSearch(searchVO);

@@ -9,6 +9,17 @@ import java.util.List;
  */
 @Data
 public class PageInfoVO {
+    private Long id;
+    private String code;
+    private String name;
+    private String des;
+    private String vueComponent;
+    private String vueRouter;
+    private Integer type;
+    /**
+     * 分组页面标识
+     */
+    private Integer pageGroup;
     private String tmp;
     private List<ButtonVO> btns;
     private SearchVO search;
