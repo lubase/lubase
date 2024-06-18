@@ -106,6 +106,7 @@ public class RenderPageServiceImpl implements RenderPageService {
             if (allGroupNavVOList.stream().anyMatch(p -> p.getId().equals(navVO.getParentId()))) {
                 continue;
             }
+            // 公共页面不受权限控制
             if (userRightService.checkFuncRight(rightInfo, navVO.getId())) {
                 allRightNavVOList.add(navVO);
             }
@@ -163,7 +164,9 @@ public class RenderPageServiceImpl implements RenderPageService {
         LoginUser user = appHolderService.getUser();
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
         // 暂时去掉权限判断。需增加 应用管理员对应用内全部权限功能后再开启
-        if (!rightInfo.getIsAppAdministrator() && !rightInfo.getIsSupperAdministrator() && !userRightService.checkFuncRight(rightInfo, Long.parseLong(pageId))) {
+        // 超级管理员不授权，公共页面不受权限控制
+        boolean rightControl = !rightInfo.getIsAppAdministrator() && !rightInfo.getIsSupperAdministrator() && !pageEntity.getType().equals(EPageType.CommonPage.getType());
+        if (rightControl && !userRightService.checkFuncRight(rightInfo, Long.parseLong(pageId))) {
             throw new NoRightAccessFuncException();
         }
         List<ButtonVO> allButtonList = getButtonListByPageId(pageEntity.getId());

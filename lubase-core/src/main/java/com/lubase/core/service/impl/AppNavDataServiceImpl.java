@@ -116,16 +116,9 @@ public class AppNavDataServiceImpl implements AppNavDataService {
             } else {
                 navVO.setPageGroup(0);
             }
-            // 1：一级页面  2 二级页面  3 功能页面
-            // 此处是为了兼容前端处理逻辑，因为前端只处理了1和2 待前端升级完成后再优化此部分  2023/10/05 AW
-            if (page.getType().equals(1)) {
-                navVO.setType(1);
-            } else {
-                navVO.setType(2);
-            }
+            navVO.setType(page.getType());
             navVO.setDes(page.getDescription());
             navVO.setOrderId(page.getOrder_id());
-            //为 null 前端加载不出来
             navVO.setVueComponent(page.getVue_component());
             navVO.setVueRouter(page.getVue_router());
             navVO.setIconCode(page.getIcon_code());
