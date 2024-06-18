@@ -144,6 +144,23 @@ public class RenderPageServiceImpl implements RenderPageService {
         return allRightNavVOList;
     }
 
+    @SneakyThrows
+    @Override
+    public NavVO getNavInfoByPageId(Long pageId) {
+        if (pageId == null) {
+            throw new ParameterNotFoundException("pageId");
+        }
+        LoginUser user = appHolderService.getUser();
+        NavVO navVO = appNavDataService.getNavInfoByPageId(pageId);
+        UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
+        if (userRightService.checkFuncRight(rightInfo, navVO.getId())) {
+            return navVO;
+        }
+        else {
+            throw new NoRightAccessFuncException();
+        }
+    }
+
     @Override
     public List<DbEntity> getExtendDisplayType() {
         QueryOption queryOption = new QueryOption("ss_web_component");
@@ -181,16 +198,8 @@ public class RenderPageServiceImpl implements RenderPageService {
         pageInfoVO.setName(pageEntity.getPage_name());
         if (pageEntity.getPage_name().startsWith("group-")) {
             pageInfoVO.setName(pageEntity.getPage_name().substring(6));
-            pageInfoVO.setPageGroup(1);
-        } else {
-            pageInfoVO.setPageGroup(0);
         }
         pageInfoVO.setDes(pageEntity.getDescription());
-        pageInfoVO.setVueComponent(pageEntity.getVue_component());
-        pageInfoVO.setVueRouter(pageEntity.getVue_router());
-        pageInfoVO.setCode(pageEntity.getPage_code());
-        pageInfoVO.setType(pageEntity.getType());
-
         pageInfoVO.setTmp(pageEntity.getMaster_page());
         SearchVO searchVO = getSearchVO(pageEntity);
         pageInfoVO.setSearch(searchVO);

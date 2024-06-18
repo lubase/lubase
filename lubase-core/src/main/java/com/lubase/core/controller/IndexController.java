@@ -7,6 +7,7 @@ import com.lubase.core.service.CodeDataService;
 import com.lubase.core.service.RenderPageService;
 import com.lubase.core.service.UserInfoService;
 import com.lubase.core.util.ClientMacro;
+import com.lubase.orm.exception.ParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +81,15 @@ public class IndexController {
             list = renderPageService.getAppNavDataByApId(appId);
         }
         return ResponseData.success(list);
+    }
+
+    @RequestMapping(value = "/getNavInfo", method = RequestMethod.GET)
+    public ResponseData<NavVO> getNavInfo(Long pageId) {
+        if (pageId == null || pageId == 0) {
+            return ResponseData.parameterNotFound("pageId");
+        }
+        NavVO navVO = renderPageService.getNavInfoByPageId(pageId);
+        return ResponseData.success(navVO);
     }
 
     @RequestMapping(value = "/getNavByPageId", method = RequestMethod.POST)

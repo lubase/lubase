@@ -30,6 +30,12 @@ public interface RenderPageService {
     List<NavVO> getNavDataByPageId(Long appId, ClientMacro clientMacro);
 
     /**
+     * 获取某个页面的导航信息，主要用于二级页面的跳转
+     * @param pageId
+     * @return
+     */
+    NavVO getNavInfoByPageId(Long pageId);
+    /**
      * 获取扩展显示类型列表
      *
      * @return

@@ -49,4 +49,11 @@ public interface AppNavDataService {
      * @return
      */
     List<NavVO> getNavDataByPageId(Long pageId);
+
+    /**
+     * 获取某个页面的导航信息
+     * @param pageId
+     * @return
+     */
+    NavVO getNavInfoByPageId(Long pageId);
 }

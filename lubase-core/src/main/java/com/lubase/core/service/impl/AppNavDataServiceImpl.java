@@ -87,6 +87,21 @@ public class AppNavDataServiceImpl implements AppNavDataService {
         return allNavVOList;
     }
 
+    @Override
+    public NavVO getNavInfoByPageId(Long pageId) {
+        if (pageId == null) {
+            return null;
+        }
+        TableFilter filter = new TableFilter("id", pageId, EOperateMode.Equals);
+        List<NavVO> allNavVOList = getNav(null, filter);
+        if(allNavVOList.isEmpty()){
+            return null;
+        }
+        else {
+            return allNavVOList.get(0);
+        }
+    }
+
     List<NavVO> getNav(Long appId, TableFilter extendFilter) {
         //获取用户信息
         QueryOption queryOption = new QueryOption("ss_page");
