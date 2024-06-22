@@ -2,7 +2,7 @@ server:
   port: 8084
 spring:
   application:
-    name: fastdev2
+    name: lubase
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid-app:

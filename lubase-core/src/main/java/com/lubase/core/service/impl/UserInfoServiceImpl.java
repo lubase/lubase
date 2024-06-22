@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.lubase.core.service.VerifyCodeService;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
 import com.lubase.orm.exception.ParameterNotFoundException;
@@ -69,9 +70,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Autowired
     AppNavDataService appNavDataService;
-
     @Autowired
-    RedisTemplate redisTemplate;
+    VerifyCodeService verifyCodeService;
     /**
      * jwt 默认的secret
      */
@@ -86,10 +86,11 @@ public class UserInfoServiceImpl implements UserInfoService {
             secretKey = preSecretKey + CommonConstant.JWT_SECRET_KEY;
         }
     }
+
     @Override
     public LoginUser getUser(String uid, String pwd, String vcode) throws LoginErrorException {
         //判断验证码
-        LoginUser user = checkVerifyCode(vcode, uid);
+        LoginUser user = verifyCodeService.checkVerifyCode(vcode, uid);
         if (user.getErrorCount() < 0) {
             return user;
         }
@@ -112,13 +113,24 @@ public class UserInfoServiceImpl implements UserInfoService {
             user.setErrorCount(0);
             userRightService.getUserRight(user.getId());
             //TODO 清缓存失败了怎么办？
-            clearCacheErrorCount(uid);
+            verifyCodeService.clearCacheErrorCount(uid);
         } else {
-            var count = calcErrorCount(uid);
+            var count = verifyCodeService.calcErrorCount(uid);
             log.info(String.format("%s 登录失败%s次", uid, count));
             user.setErrorCount(count);
         }
         return user;
+    }
+
+    @Override
+    public String validatePassword(String password) {
+        var pattern = Pattern.compile(passwordReg);
+        Matcher matcher = pattern.matcher(password);
+        if (!matcher.matches()) {
+            return passwordTip;
+        } else {
+            return "";
+        }
     }
 
     @SneakyThrows
@@ -261,128 +273,5 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
-    @Override
-    public int calcErrorCount(String userCode) {
-        Object o = redisTemplate.opsForValue().get(getCachePre(CacheRightConstant.PRE_USER_LOGIN_ERR) + userCode);
-        var errorCount = 0;
-        if (o != null) {
-            errorCount = TypeConverterUtils.object2Integer(o);
-        }
-        errorCount++;
-        log.info("错误次数放入缓存");
-        redisTemplate.opsForValue().set(getCachePre(CacheRightConstant.PRE_USER_LOGIN_ERR) + userCode, errorCount, 24, TimeUnit.HOURS);
-        return errorCount;
-    }
-
-    @Override
-    public void clearCacheErrorCount(String userCode) {
-        redisTemplate.delete(getCachePre(CacheRightConstant.PRE_USER_LOGIN_ERR) + userCode);
-        redisTemplate.delete(getCachePre(CacheRightConstant.PRE_USER_LOGIN_VC) + userCode);
-    }
-
-    @Override
-    @Transactional
-    public BufferedImage getVerifyCode(String userCode) {
-        Random random = new Random();
-        int w = 100;
-        int h = 40;
-        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
-        Graphics2D graphics = image.createGraphics();
-        graphics.setColor(Color.white);
-        graphics.fillRect(0, 0, w, h);
-        //边框颜色
-        graphics.setColor(Color.BLUE);
-        graphics.drawRect(0, 0, w - 1, h - 1);
-        //字体
-        Font font = new Font("Fixedsys", Font.PLAIN, h - 10);
-        graphics.setFont(font);
-        //加干扰线
-        for (int i = 0; i < (4 * 2); i++) {
-            graphics.setColor(getRandomColor(random));
-            int x1 = random.nextInt(w);
-            int x2 = random.nextInt(w);
-            int y1 = random.nextInt(h);
-            int y2 = random.nextInt(h);
-            graphics.drawLine(x1, y1, x2, y2);
-        }
-        //加噪点
-        for (int i = 0; i < (4 * 3); i++) {
-            int x = random.nextInt(w);
-            int y = random.nextInt(h);
-            graphics.setColor(getRandomColor(random));
-            graphics.fillRect(x, y, 2, 2);
-        }
-        var code = "";
-        int cw = w / (4 + 4);
-        int ch = h - 5;
-        for (int i = 0; i < 4; i++) {
-            int x = 7;
-            if (i >= 1) {
-                x = (w / 5 * (i)) + 20;
-            }
-            var c = random.nextInt(10);
-            code += TypeConverterUtils.object2String(c);
-            graphics.setColor(getRandomColor(random));
-            //字体旋转角度
-            int degree = random.nextInt() % 15;//角度小于15度
-            graphics.rotate(degree * Math.PI / 180, x, 45);//反向
-            graphics.drawString(c + "", x, ch);
-            graphics.rotate(-degree * Math.PI / 180, x, 45);//正向
-        }
-        redisTemplate.opsForValue().set(getCachePre(CacheRightConstant.PRE_USER_LOGIN_VC) + userCode, code, 1, TimeUnit.HOURS);
-
-        return image;
-    }
-
-    @Override
-    public String validatePassword(String password) {
-        var pattern = Pattern.compile(passwordReg);
-        Matcher matcher = pattern.matcher(password);
-        if (!matcher.matches()) {
-            return passwordTip;
-        } else {
-            return "";
-        }
-    }
-
-    private static Color getRandomColor(Random random) {
-        Color color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
-        return color;
-    }
-
-    @SneakyThrows
-    LoginUser checkVerifyCode(String vcode, String userCode) {
-        LoginUser user = new LoginUser();
-        Object o = redisTemplate.opsForValue().get(getCachePre(CacheRightConstant.PRE_USER_LOGIN_ERR) + userCode);
-        var errorCount = 0;
-        if (o != null) {
-            errorCount = TypeConverterUtils.object2Integer(o);
-        }
-
-        if (errorCount >= 5) {
-            if (errorCount >= 5 && StringUtils.isEmpty(vcode)) {
-                log.info(userCode + "错误大于5次，传入验证码为空");
-                user.setErrorCount(-3);
-                return user;
-            }
-            var code = redisTemplate.opsForValue().get(getCachePre(CacheRightConstant.PRE_USER_LOGIN_VC) + userCode);
-            if (code == null || StringUtils.isEmpty(code.toString())) {
-                log.info(userCode + "错误大于5次，服务端验证码已失效");
-                user.setErrorCount(-2);
-                return user;
-            }
-            if (!StringUtils.isEmpty(vcode) && !vcode.equals(code)) {
-                log.info(userCode + "输入验证码错误");
-                user.setErrorCount(-1);
-                return user;
-            }
-        }
-        user.setErrorCount(0);
-        return user;
-    }
-
-    private String getCachePre(String preKey) {
-        return preKey.replace("'", "");
-    }
 
 }

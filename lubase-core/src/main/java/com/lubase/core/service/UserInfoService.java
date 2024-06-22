@@ -73,11 +73,4 @@ public interface UserInfoService {
      * @return
      */
     List<NavVO> getAppPreviewNavDataId(Long appId);
-
-
-    int calcErrorCount(String userCode);
-
-    void clearCacheErrorCount(String userCode);
-
-    BufferedImage getVerifyCode(String userCode);
 }

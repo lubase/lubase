@@ -1,5 +1,6 @@
 package com.lubase.core.controller;
 
+import com.lubase.core.service.VerifyCodeService;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.ParameterNotFoundException;
 import com.lubase.orm.model.LoginUser;
@@ -37,6 +38,9 @@ public class UserController {
 
     @Autowired
     ServerMacroService serverMacroService;
+
+    @Autowired
+    VerifyCodeService verifyCodeService;
 
     @LoginLog
     @PassToken
@@ -116,7 +120,7 @@ public class UserController {
         if (org.apache.commons.lang3.StringUtils.isEmpty(request.getParameter("uid"))) {
             throw new InvokeCommonException("用户信息为空");
         }
-        var code = userService.getVerifyCode(String.valueOf(request.getParameter("uid")));
+        var code = verifyCodeService.getVerifyCode(String.valueOf(request.getParameter("uid")));
         ImageIO.write(code, "jpg", response.getOutputStream());
     }
 
