@@ -9,6 +9,10 @@ public class ChildTableSetting {
      * 随机id
      */
     private String serialNum;
+    /**
+     * 子表title
+     */
+    private String title;
 
     /**
      * 查询配置
