@@ -155,9 +155,8 @@ public class RenderPageServiceImpl implements RenderPageService {
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
         if (userRightService.checkFuncRight(rightInfo, navVO.getId())) {
             return navVO;
-        }
-        else {
-            throw new NoRightAccessFuncException();
+        } else {
+            return null;
         }
     }
 
