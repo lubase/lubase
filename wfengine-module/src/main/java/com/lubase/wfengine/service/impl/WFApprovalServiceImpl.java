@@ -292,7 +292,6 @@ public class WFApprovalServiceImpl implements WFApprovalService {
             throw new WarnCommonException("流程表单配置不正确，请联系管理员配置");
         }
         List<WfTaskFieldModel> taskFieldModelList = taskService.getTaskCustomSetting(taskEntity);
-        approvalFormVO.setTaskFieldModelList(taskFieldModelList);
         if (taskFieldModelList == null) {
             return formVO;
         }

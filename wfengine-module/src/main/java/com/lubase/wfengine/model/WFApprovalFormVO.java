@@ -38,10 +38,6 @@ public class WFApprovalFormVO {
      */
     private CustomFormVO customForm;
     /**
-     * 流程节点字段设置信息
-     */
-    private List<WfTaskFieldModel> taskFieldModelList;
-    /**
      * 嵌套页面配置
      */
     private CustomPageSetting customPage;
