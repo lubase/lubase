@@ -5,6 +5,7 @@ import com.lubase.orm.service.AppHolderService;
 import com.lubase.core.extend.IInvokeMethod;
 import com.lubase.wfengine.service.WFApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 /**
  * 工作流：获取待办处理页面
  */
+@Component
 public class GetApprovalFormInvoke implements IInvokeMethod {
     @Autowired
     AppHolderService appHolderService;

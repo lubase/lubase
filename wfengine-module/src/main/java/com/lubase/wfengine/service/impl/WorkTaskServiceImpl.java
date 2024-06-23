@@ -152,25 +152,26 @@ public class WorkTaskServiceImpl implements ExtendAppLoadCompleteService, WorkTa
 
     List<DbField> mergeCustomFormToRegisterFieldInfo(List<DbField> formFieldList, Map<String, WfTaskFieldModel> mapTaskFieldList) {
         //设置表单资源编辑属性
-        if (mapTaskFieldList.size() == 0) {
+        if (mapTaskFieldList.isEmpty()) {
             return formFieldList;
         }
+        Integer settingTag = 1;
         for (DbField field : formFieldList) {
-            if (mapTaskFieldList.containsKey(field.getId())) {
-                WfTaskFieldModel mapField = mapTaskFieldList.get(field.getId());
-                if (mapField.getFieldAccess() != null) {
-                    field.setVisible(mapField.getFieldAccess());
-                }
-                if (mapField.getIsNull() != null) {
-                    field.setIsNull(mapField.getIsNull());
-                }
-                //表单字段可编辑字段默认均不再处理
-                if (field.getFieldAccess().getIndex() > EAccessGrade.Read.getIndex()) {
-                    field.setColDefault("");
-                }
-            } else {
-                //表单外字段采用表单配置
-
+            if (!mapTaskFieldList.containsKey(field.getId())) {
+                continue;
+            }
+            WfTaskFieldModel mapField = mapTaskFieldList.get(field.getId());
+            if (settingTag.equals(mapField.getHidden())) {
+                field.setVisible(EAccessGrade.Invisible.getIndex());
+            } else if (settingTag.equals(mapField.getReadonly())) {
+                field.setVisible(EAccessGrade.Read.getIndex());
+            }
+            if (settingTag.equals(mapField.getRequired())) {
+                field.setIsNull(0);
+            }
+            //表单字段可编辑字段默认均不再处理
+            if (field.getFieldAccess().getIndex() > EAccessGrade.Read.getIndex()) {
+                field.setColDefault("");
             }
         }
         return formFieldList;

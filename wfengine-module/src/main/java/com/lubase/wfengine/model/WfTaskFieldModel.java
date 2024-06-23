@@ -5,19 +5,22 @@ import lombok.Data;
 @Data
 public class WfTaskFieldModel {
     private String id;
-    private Integer isNull;
-    private Integer fieldAccess;
-    /**
-     * 默认字段是否允许为空
-     */
-    private Integer _default_IsNull;
-    /**
-     * 默认字段可编辑属性
-     */
-    private Integer _default_fieldAccess;
     private String name;
     /**
      * 1: 字段  2：子表列表
      */
     private Integer elementType;
+
+    /***
+     * 是否只读
+     */
+    private Integer readonly;
+    /**
+     * 是否必填
+     */
+    private Integer required;
+    // 是否隐藏字段
+    private Integer hidden;
+    private Integer _default_required;
+    private Integer _default_readonly;
 }
