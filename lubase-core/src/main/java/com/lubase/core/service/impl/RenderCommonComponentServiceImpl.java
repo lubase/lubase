@@ -51,7 +51,7 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
                 return userSelectForComponentDataService.selectUserList(userCode, userName, pageIndex, pageSize);
             }
             else {
-                throw new WarnCommonException("未实现外部数据源服务");
+                throw new WarnCommonException("未实现弹窗选人外部数据源服务");
             }
         }
 
@@ -63,10 +63,6 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
         }
         if (!StringUtils.isEmpty(userName)) {
             filterWrapper.likeAll("user_name", userName);
-        }
-        if (!isSystemUser) {
-            // 为了模拟下 没实现外部数据源接口的数据
-            filterWrapper.ne("user_code", "admin");
         }
         queryOption.setTableFilter(filterWrapper.build());
         queryOption.setPageIndex(pageIndex);
