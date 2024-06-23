@@ -3,6 +3,7 @@ package com.lubase.core.service;
 import com.lubase.core.exception.LoginErrorException;
 import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.model.NavVO;
+import com.lubase.core.model.SelectUserModel;
 import com.lubase.orm.model.LoginUser;
 import org.apache.tomcat.websocket.AuthenticationException;
 
@@ -20,6 +21,14 @@ public interface UserInfoService {
      * @return
      */
     LoginInfoModel userLogin(String uid, String pwd, String verifyCode) throws LoginErrorException;
+
+    /**
+     * 创建用户
+     *
+     * @param list
+     * @return
+     */
+    Integer createUser(List<SelectUserModel> list);
 
     /**
      * 更改密码

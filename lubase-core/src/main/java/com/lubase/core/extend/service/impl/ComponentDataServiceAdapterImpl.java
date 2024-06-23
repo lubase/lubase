@@ -1,5 +1,6 @@
 package com.lubase.core.extend.service.impl;
 
+import com.lubase.core.extend.UserCreateExtendService;
 import com.lubase.core.extend.UserLoginExtendService;
 import com.lubase.core.extend.UserSelectForComponentDataService;
 import com.lubase.core.extend.service.UserInfoExtendServiceAdapter;
@@ -15,6 +16,7 @@ public class ComponentDataServiceAdapterImpl implements UserInfoExtendServiceAda
 
     List<UserSelectForComponentDataService> componentServiceList;
     List<UserLoginExtendService> userLoginServiceList;
+    List<UserCreateExtendService> userCreateServiceList;
 
     @Override
     public UserSelectForComponentDataService getComponentDataForSelectUserService() {
@@ -33,6 +35,14 @@ public class ComponentDataServiceAdapterImpl implements UserInfoExtendServiceAda
     }
 
     @Override
+    public UserCreateExtendService getUserCreateExtendService() {
+        if (userCreateServiceList != null && !userCreateServiceList.isEmpty()) {
+            return userCreateServiceList.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public void LoadCompleted(ApplicationContext applicationContext) {
         if (componentServiceList == null) {
             componentServiceList = new ArrayList<>(applicationContext.getBeansOfType(UserSelectForComponentDataService.class).values());
@@ -40,11 +50,15 @@ public class ComponentDataServiceAdapterImpl implements UserInfoExtendServiceAda
         if (userLoginServiceList == null) {
             userLoginServiceList = new ArrayList<>(applicationContext.getBeansOfType(UserLoginExtendService.class).values());
         }
+        if (userCreateServiceList == null) {
+            userCreateServiceList = new ArrayList<>(applicationContext.getBeansOfType(UserCreateExtendService.class).values());
+        }
     }
 
     @Override
     public void clearData() {
         componentServiceList = null;
         userLoginServiceList = null;
+        userCreateServiceList = null;
     }
 }

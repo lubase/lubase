@@ -8,10 +8,12 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.lubase.core.constant.CommonConstant;
 import com.lubase.core.exception.LoginErrorException;
+import com.lubase.core.extend.UserCreateExtendService;
 import com.lubase.core.extend.UserLoginExtendService;
 import com.lubase.core.extend.service.UserInfoExtendServiceAdapter;
 import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.model.NavVO;
+import com.lubase.core.model.SelectUserModel;
 import com.lubase.core.service.AppNavDataService;
 import com.lubase.core.service.UserInfoService;
 import com.lubase.core.service.VerifyCodeService;
@@ -38,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.print.DocFlavor;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -56,6 +59,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     private String passwordReg;
     @Value("${custom.password-tip:密码不符合复杂度(需包括数字、小写字母、大写字母、特殊字符四种的三种，长度在8-16位)}")
     private String passwordTip;
+    /**
+     * 配置的默认密码
+     */
+    @Value("${custom.default-password:12345.com}")
+    private String defaultPwd;
     @Autowired
     DataAccess dataAccess;
 
@@ -141,6 +149,73 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
         }
         return infoModel;
+    }
+
+    @SneakyThrows
+    @Override
+    public Integer createUser(List<SelectUserModel> list) {
+        // 参数检查
+        List<SelectUserModel> data = new ArrayList<>();
+        for (SelectUserModel user : list) {
+            if (user.getId() == null || user.getId().isEmpty() || user.getUserCode() == null || user.getUserCode().isEmpty() || user.getUserName() == null || user.getUserName().isEmpty() || user.getDeptId() == null || user.getDeptId().isEmpty() || user.getDeptName() == null || user.getDeptName().isEmpty()) {
+                throw new WarnCommonException("参数传递错误");
+            }
+            if (data.stream().anyMatch(x -> x.getId().equals(user.getId()))) {
+                continue;
+            }
+            data.add(user);
+        }
+        if (data.isEmpty()) {
+            throw new WarnCommonException("参数传递错误");
+        }
+        // 如果扩展了用户创建服务则使用扩展的服务
+        UserCreateExtendService userCreateExtendService = userInfoExtendServiceAdapter.getUserCreateExtendService();
+        if (userCreateExtendService != null) {
+            return userCreateExtendService.createUser(data);
+        }
+
+        QueryOption queryOption = new QueryOption("sa_account");
+        TableFilterWrapper filterWrapper = TableFilterWrapper.or();
+        for (SelectUserModel user : data) {
+            filterWrapper.eq("user_code", user.getUserCode());
+        }
+        DbCollection collExistsUser = dataAccess.queryAllData(queryOption);
+        if (collExistsUser.getData().size() == data.size()) {
+            // 用户已经都存在返回
+            return data.size();
+        }
+
+        queryOption = new QueryOption("sa_organization");
+        filterWrapper = TableFilterWrapper.or();
+        for (SelectUserModel user : data) {
+            filterWrapper.eq("id", user.getDeptId());
+        }
+        DbCollection collExistsDept = dataAccess.queryAllData(queryOption);
+
+        // 创建用户信息
+        for (SelectUserModel user : data) {
+            if (collExistsUser.getData().stream().anyMatch(x -> x.get("user_code").equals(user.getUserCode()))) {
+                continue;
+            }
+            DbEntity entityUser = collExistsUser.newEntity();
+            entityUser.put("organization_id", user.getDeptId());
+            entityUser.put("user_code", user.getUserCode());
+            entityUser.put("user_name", user.getUserName());
+            entityUser.put("password", StringEncodeUtil.strToMd5Str(defaultPwd));
+            collExistsUser.getData().add(entityUser);
+
+            if (collExistsDept.getData().stream().noneMatch(x -> x.get("id").equals(user.getDeptId()))) {
+                // 不存在的部门默认创建到根节点下面，并且用deptId作为部门id进行使用
+                DbEntity entityDept = collExistsDept.newEntity();
+                entityDept.setId(Long.parseLong(user.getDeptId()));
+                entityDept.put("org_name", user.getDeptName());
+                entityDept.put("parent_id", StringUtils.isEmpty(user.getParentDeptId()) ? 0 : Long.parseLong(user.getParentDeptId()));
+                collExistsDept.getData().add(entityDept);
+            }
+        }
+        dataAccess.update(collExistsDept);
+        dataAccess.update(collExistsUser);
+        return 1;
     }
 
     private LoginInfoModel getUserInfoInSystem(String userId, String pwd) {

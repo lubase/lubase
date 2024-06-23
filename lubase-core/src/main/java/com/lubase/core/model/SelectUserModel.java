@@ -11,5 +11,6 @@ public class SelectUserModel {
     private String userCode;
     private String userName;
     private String deptId;
+    private String parentDeptId;
     private String deptName;
 }
