@@ -11,10 +11,10 @@ public interface UserSelectForComponentDataService {
 
     /***
      * 用于弹窗选人等服务
-     * @param userCode
-     * @param userName
-     * @param pageIndex
-     * @param pageSize
+     * @param userCode 用户登录账号，不为空则根据此属性检索
+     * @param userName 用户姓名，不为空则根据此属性检索
+     * @param pageIndex 分页，设置大小
+     * @param pageSize 页面数量
      * @return
      */
     List<SelectUserModel> selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize);

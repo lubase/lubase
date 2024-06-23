@@ -3,9 +3,11 @@ package com.lubase.core.invoke;
 import com.lubase.core.extend.IInvokeMethod;
 import com.lubase.core.service.RenderCommonComponentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
+@Component
 public class QueryUserList implements IInvokeMethod {
 
     @Autowired
