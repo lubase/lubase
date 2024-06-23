@@ -1,6 +1,7 @@
 package com.lubase.core;
 
 import com.lubase.core.model.SelectUserModel;
+import com.lubase.core.model.UserSelectCollection;
 import com.lubase.core.service.RenderCommonComponentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ public class RenderCommonComponentServiceTest {
 
     @Test
     void test1() {
-        List<SelectUserModel> list1 = renderCommonComponentService.selectUserList("admin", "", 1, 10, true);
-        List<SelectUserModel> list2 = renderCommonComponentService.selectUserList("admin", "", 1, 10, false);
+        UserSelectCollection list1 = renderCommonComponentService.selectUserList("admin", "", 1, 10, true);
+        UserSelectCollection list2 = renderCommonComponentService.selectUserList("admin", "", 1, 10, false);
 
         System.out.println(list1);
 

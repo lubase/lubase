@@ -3,6 +3,7 @@ package com.lubase.core.service.impl;
 import com.lubase.core.extend.UserSelectForComponentDataService;
 import com.lubase.core.extend.service.UserInfoExtendServiceAdapter;
 import com.lubase.core.model.SelectUserModel;
+import com.lubase.core.model.UserSelectCollection;
 import com.lubase.core.service.RenderCommonComponentService;
 import com.lubase.model.DbEntity;
 import com.lubase.orm.QueryOption;
@@ -26,7 +27,7 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
     UserInfoExtendServiceAdapter userInfoExtendServiceAdapter;
 
     @Override
-    public List<SelectUserModel> selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize, Boolean isSystemUser) {
+    public UserSelectCollection selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize, Boolean isSystemUser) {
         // 检查参数是否为空
         if (pageIndex <= 0) {
             pageIndex = 1;
@@ -34,8 +35,8 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
         if (pageSize <= 0) {
             pageSize = 10;
         }
+        UserSelectCollection userSelectCollection = new UserSelectCollection();
 
-        List<SelectUserModel> userList = new ArrayList<>();
         /**
          * 获取外部扩展的数据源服务
          */
@@ -62,6 +63,7 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
         queryOption.setPageIndex(pageIndex);
         queryOption.setPageSize(pageSize);
         DbCollection coll = dataAccess.query(queryOption);
+        List<SelectUserModel> userList = new ArrayList<>();
         for (DbEntity entity : coll.getData()) {
             SelectUserModel userModel = new SelectUserModel();
             userModel.setId(entity.getId().toString());
@@ -73,7 +75,9 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
             }
             userList.add(userModel);
         }
-        return userList;
+        userSelectCollection.setData(userList);
+        userSelectCollection.setTotalCount(coll.getTotalCount());
+        return userSelectCollection;
     }
 
 

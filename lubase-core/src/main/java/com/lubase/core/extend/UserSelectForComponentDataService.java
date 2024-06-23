@@ -1,6 +1,7 @@
 package com.lubase.core.extend;
 
 import com.lubase.core.model.SelectUserModel;
+import com.lubase.core.model.UserSelectCollection;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface UserSelectForComponentDataService {
      * @param pageSize 页面数量
      * @return
      */
-    List<SelectUserModel> selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize);
+    UserSelectCollection selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize);
 }

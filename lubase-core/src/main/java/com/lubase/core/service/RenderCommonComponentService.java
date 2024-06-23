@@ -1,6 +1,7 @@
 package com.lubase.core.service;
 
 import com.lubase.core.model.SelectUserModel;
+import com.lubase.core.model.UserSelectCollection;
 
 import java.util.List;
 
@@ -19,6 +20,6 @@ public interface RenderCommonComponentService {
      * @param isSystemUser 是否是系统内部用户
      * @return
      */
-    List<SelectUserModel> selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize, Boolean isSystemUser);
+    UserSelectCollection selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize, Boolean isSystemUser);
 
 }
