@@ -306,10 +306,10 @@ public class WFApprovalServiceImpl implements WFApprovalService {
                 continue;
             }
             //把子表的serialNum=“”或null ，则前端不渲染此group
-            if (fieldModel.getHidden().equals(1)) {
+            if (fieldModel.getHidden() != null && fieldModel.getHidden().equals(1)) {
                 formVO.setLayout(formVO.getLayout().replace(fieldModel.getId(), ""));
                 removeFormButton(formVO, fieldModel.getId());
-            } else if (fieldModel.getReadonly().equals(1)) {
+            } else if (fieldModel.getReadonly() != null && fieldModel.getReadonly().equals(1)) {
                 removeFormButton(formVO, fieldModel.getId());
             }
         }

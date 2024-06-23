@@ -185,16 +185,12 @@ public class WorkTaskServiceImpl implements ExtendAppLoadCompleteService, WorkTa
         if (StringUtils.isEmpty(taskSetting)) {
             return null;
         }
-        WFTaskSettingModel settingModel = null;
         try {
-            settingModel = JSON.parseObject(taskSetting, WFTaskSettingModel.class);
+            taskFieldModelList = JSON.parseArray(taskSetting, WfTaskFieldModel.class);
         } catch (Exception exception) {
             log.error(String.format("任务节点%s转换taskSettingModel失败", taskEntity.getId()), exception);
         }
-        if (settingModel == null) {
-            throw new WarnCommonException(String.format("任务节点%s转换taskSettingModel失败", taskEntity.getId()));
-        }
-        return settingModel.getFieldListAccessRight();
+        return taskFieldModelList;
     }
 
     @Override
