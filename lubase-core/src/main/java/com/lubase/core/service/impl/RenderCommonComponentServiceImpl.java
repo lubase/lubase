@@ -7,9 +7,12 @@ import com.lubase.core.model.UserSelectCollection;
 import com.lubase.core.service.RenderCommonComponentService;
 import com.lubase.model.DbEntity;
 import com.lubase.orm.QueryOption;
+import com.lubase.orm.exception.ParameterNotFoundException;
+import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.util.TableFilterWrapper;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,6 +29,7 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
     @Autowired
     UserInfoExtendServiceAdapter userInfoExtendServiceAdapter;
 
+    @SneakyThrows
     @Override
     public UserSelectCollection selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize, Boolean isSystemUser) {
         // 检查参数是否为空
@@ -42,8 +46,13 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
          */
         UserSelectForComponentDataService userSelectForComponentDataService = userInfoExtendServiceAdapter.getComponentDataForSelectUserService();
         // 系统外用户 并且实现了相关服务
-        if (!isSystemUser && userSelectForComponentDataService != null) {
-            return userSelectForComponentDataService.selectUserList(userCode, userName, pageIndex, pageSize);
+        if (!isSystemUser) {
+            if (userSelectForComponentDataService != null) {
+                return userSelectForComponentDataService.selectUserList(userCode, userName, pageIndex, pageSize);
+            }
+            else {
+                throw new WarnCommonException("未实现外部数据源服务");
+            }
         }
 
         QueryOption queryOption = new QueryOption("sa_account");
