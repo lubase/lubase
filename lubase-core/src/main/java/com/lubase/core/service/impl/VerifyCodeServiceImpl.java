@@ -16,8 +16,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service

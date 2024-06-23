@@ -1,11 +1,11 @@
 package com.lubase.core.service;
 
-import com.lubase.orm.model.LoginUser;
 import com.lubase.core.exception.LoginErrorException;
+import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.model.NavVO;
+import com.lubase.orm.model.LoginUser;
 import org.apache.tomcat.websocket.AuthenticationException;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ public interface UserInfoService {
      * @param pwd
      * @return
      */
-    LoginUser getUser(String uid, String pwd, String verifyCode) throws LoginErrorException;
+    LoginInfoModel userLogin(String uid, String pwd, String verifyCode) throws LoginErrorException;
 
     /**
      * 更改密码
@@ -36,14 +36,6 @@ public interface UserInfoService {
      * @return
      */
     String validatePassword(String password);
-
-    /**
-     * 获取token
-     *
-     * @param user
-     * @return
-     */
-    String createUserToken(LoginUser user);
 
     /**
      * 验证token是否合法

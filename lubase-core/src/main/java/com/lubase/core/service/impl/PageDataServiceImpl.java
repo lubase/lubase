@@ -1,11 +1,6 @@
 package com.lubase.core.service.impl;
 
 import com.lubase.core.model.ButtonRefFormInfo;
-import com.lubase.orm.exception.WarnCommonException;
-import com.lubase.orm.model.EButtonType;
-import com.lubase.orm.model.LoginUser;
-import com.lubase.orm.service.AppHolderService;
-import com.lubase.model.DbEntity;
 import com.lubase.core.model.CustomFormVO;
 import com.lubase.core.model.FormButtonVO;
 import com.lubase.core.service.AppFuncDataService;
@@ -15,9 +10,13 @@ import com.lubase.core.service.RenderFormService;
 import com.lubase.core.service.userright.UserRightService;
 import com.lubase.core.service.userright.model.UserRightInfo;
 import com.lubase.core.util.ClientMacro;
+import com.lubase.model.DbEntity;
+import com.lubase.orm.exception.WarnCommonException;
+import com.lubase.orm.model.EButtonType;
+import com.lubase.orm.model.LoginUser;
+import com.lubase.orm.service.AppHolderService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

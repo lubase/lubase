@@ -1,6 +1,5 @@
 package com.lubase.core.service.userright.impl;
 
-import com.lubase.orm.service.DataAccess;
 import com.lubase.core.constant.CacheRightConstant;
 import com.lubase.core.service.userright.RoleRightService;
 import com.lubase.core.service.userright.UserRightService;
@@ -8,6 +7,7 @@ import com.lubase.core.service.userright.UserRoleAssignService;
 import com.lubase.core.service.userright.model.ColumnRightModelVO;
 import com.lubase.core.service.userright.model.RoleModel;
 import com.lubase.core.service.userright.model.UserRightInfo;
+import com.lubase.orm.service.DataAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

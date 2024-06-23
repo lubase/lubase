@@ -6,46 +6,43 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.lubase.core.constant.CommonConstant;
+import com.lubase.core.exception.LoginErrorException;
+import com.lubase.core.extend.UserLoginExtendService;
+import com.lubase.core.extend.service.UserInfoExtendServiceAdapter;
+import com.lubase.core.model.LoginInfoModel;
+import com.lubase.core.model.NavVO;
+import com.lubase.core.service.AppNavDataService;
+import com.lubase.core.service.UserInfoService;
 import com.lubase.core.service.VerifyCodeService;
+import com.lubase.core.service.userright.UserRightService;
+import com.lubase.core.service.userright.model.UserRightInfo;
+import com.lubase.core.util.StringEncodeUtil;
+import com.lubase.model.DbEntity;
+import com.lubase.model.EDBEntityState;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
 import com.lubase.orm.exception.ParameterNotFoundException;
+import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.service.AppHolderService;
 import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.orm.util.TypeConverterUtils;
-import com.lubase.model.DbEntity;
-import com.lubase.model.EDBEntityState;
-import com.lubase.core.constant.CacheRightConstant;
-import com.lubase.core.constant.CommonConstant;
-import com.lubase.core.exception.LoginErrorException;
-import com.lubase.core.model.NavVO;
-import com.lubase.core.service.AppNavDataService;
-import com.lubase.core.service.UserInfoService;
-import com.lubase.core.service.userright.UserRightService;
-import com.lubase.core.service.userright.model.UserRightInfo;
-import com.lubase.core.util.StringEncodeUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +66,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     UserRightService userRightService;
 
     @Autowired
+    UserInfoExtendServiceAdapter userInfoExtendServiceAdapter;
+
+    @Autowired
     AppNavDataService appNavDataService;
     @Autowired
     VerifyCodeService verifyCodeService;
@@ -87,31 +87,34 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
+    @SneakyThrows
     @Override
-    public LoginUser getUser(String uid, String pwd, String vcode) throws LoginErrorException {
+    public LoginInfoModel userLogin(String uid, String pwd, String vcode) throws LoginErrorException {
+        if (StringUtils.isEmpty(uid) || StringUtils.isEmpty(pwd)) {
+            throw new WarnCommonException("用户名或密码不能为空");
+        }
+        LoginInfoModel infoModel = null;
         //判断验证码
         LoginUser user = verifyCodeService.checkVerifyCode(vcode, uid);
         if (user.getErrorCount() < 0) {
-            return user;
+            return infoModel;
         }
-        String encodePwd = StringEncodeUtil.strToMd5Str(pwd);
-        QueryOption queryOption = new QueryOption("sa_account");
-        TableFilter filter = TableFilterWrapper.and().eq("user_code", uid).eq("password", encodePwd).build();
-        queryOption.setTableFilter(filter);
-        DbCollection collection = dataAccess.query(queryOption);
-        if (collection.getData().size() == 1) {
-            DbEntity entity = collection.getData().get(0);
-            Integer enableTag = TypeConverterUtils.object2Integer(entity.get("enable_tag"), 0);
-            if (enableTag.equals(0)) {
-                throw new LoginErrorException("402", "账号被禁用");
-            }
-            user = new LoginUser();
-            user.setId(entity.getId());
-            user.setCode(entity.get("user_code").toString());
-            user.setName(entity.get("user_name").toString());
-            user.setOrgId(TypeConverterUtils.object2String(entity.get("organization_id"), "0"));
-            user.setErrorCount(0);
+        // 根据用户名和密码获取登录信息
+        UserLoginExtendService userLoginExtendService = userInfoExtendServiceAdapter.getUserLoginExtendService();
+        if (userLoginExtendService != null) {
+            infoModel = userLoginExtendService.userLogin(uid, pwd);
+        } else {
+            infoModel = getUserInfoInSystem(uid, pwd);
+        }
+        if (infoModel == null) {
+            infoModel = new LoginInfoModel();
+            infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
+        }
+
+        user = infoModel.getLoginUser();
+        if (user != null && user.getId() != null && user.getId() > 0L) {
             userRightService.getUserRight(user.getId());
+            user.setToken(createUserToken(user));
             //TODO 清缓存失败了怎么办？
             verifyCodeService.clearCacheErrorCount(uid);
         } else {
@@ -119,7 +122,50 @@ public class UserInfoServiceImpl implements UserInfoService {
             log.info(String.format("%s 登录失败%s次", uid, count));
             user.setErrorCount(count);
         }
-        return user;
+
+        if (user.getErrorCount() > 0) {
+            //临时这样写，通用逻辑再优化
+            if (user.getErrorCount() < 5) {
+                infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
+            } else {
+                //约定420  需要验证码
+                infoModel.setLoginErrorException(new LoginErrorException("420", "用户名或密码错误"));
+            }
+        } else if (user.getErrorCount() < 0) {
+            if (user.getErrorCount() == -1) {
+                infoModel.setLoginErrorException(new LoginErrorException("421", "输入验证码错误"));
+            } else if (user.getErrorCount() == -2) {
+                infoModel.setLoginErrorException(new LoginErrorException("422", "验证码已失效"));
+            } else {
+                infoModel.setLoginErrorException(new LoginErrorException("423", "验证码为空"));
+            }
+        }
+        return infoModel;
+    }
+
+    private LoginInfoModel getUserInfoInSystem(String userId, String pwd) {
+        LoginInfoModel infoModel = new LoginInfoModel();
+        String encodePwd = StringEncodeUtil.strToMd5Str(pwd);
+        QueryOption queryOption = new QueryOption("sa_account");
+        TableFilter filter = TableFilterWrapper.and().eq("user_code", userId).eq("password", encodePwd).build();
+        queryOption.setTableFilter(filter);
+        DbCollection collection = dataAccess.query(queryOption);
+        if (collection.getData().size() == 1) {
+            DbEntity entity = collection.getData().get(0);
+            Integer enableTag = TypeConverterUtils.object2Integer(entity.get("enable_tag"), 0);
+            if (enableTag.equals(0)) {
+                infoModel.setLoginErrorException(new LoginErrorException("402", "账号已经被禁用"));
+                return infoModel;
+            }
+            LoginUser user = null;
+            user = new LoginUser();
+            user.setId(entity.getId());
+            user.setCode(entity.get("user_code").toString());
+            user.setName(entity.get("user_name").toString());
+            user.setOrgId(TypeConverterUtils.object2String(entity.get("organization_id"), "0"));
+            infoModel.setLoginUser(user);
+        }
+        return infoModel;
     }
 
     @Override
@@ -158,8 +204,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         return 0;
     }
 
-    @Override
-    public String createUserToken(LoginUser user) {
+    private String createUserToken(LoginUser user) {
         // 设置token 有效期，8小时
         LocalDateTime localDateTime = LocalDateTime.now().plusHours(8);
         String token = JWT.create().withAudience(user.getId().toString())

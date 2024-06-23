@@ -2,7 +2,6 @@ package com.lubase.core.service.multiApplications.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.lubase.orm.util.SpringUtil;
 import com.lubase.core.extend.IGetLeftDataService;
 import com.lubase.core.extend.IInvokeMethod;
 import com.lubase.core.service.multiApplications.AppConfig;
@@ -10,6 +9,7 @@ import com.lubase.core.service.multiApplications.ExtendFileService;
 import com.lubase.core.service.multiApplications.ILoadExtendApplication;
 import com.lubase.core.service.multiApplications.model.ExtendFileModel;
 import com.lubase.core.util.ClassUtil;
+import com.lubase.orm.util.SpringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.CachedIntrospectionResults;

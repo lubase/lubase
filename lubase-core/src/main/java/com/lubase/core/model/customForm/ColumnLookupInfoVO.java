@@ -1,7 +1,7 @@
 package com.lubase.core.model.customForm;
 
-import com.lubase.orm.model.DbCollection;
 import com.lubase.core.model.SearchCondition;
+import com.lubase.orm.model.DbCollection;
 import lombok.Data;
 
 import java.util.List;

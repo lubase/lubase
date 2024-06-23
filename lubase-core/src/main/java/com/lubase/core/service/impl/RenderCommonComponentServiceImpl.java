@@ -1,7 +1,7 @@
 package com.lubase.core.service.impl;
 
-import com.lubase.core.extend.ComponentDataForSelectUserService;
-import com.lubase.core.extend.service.ComponentDataServiceAdapter;
+import com.lubase.core.extend.UserSelectForComponentDataService;
+import com.lubase.core.extend.service.UserInfoExtendServiceAdapter;
 import com.lubase.core.model.SelectUserModel;
 import com.lubase.core.service.RenderCommonComponentService;
 import com.lubase.model.DbEntity;
@@ -23,7 +23,7 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
     DataAccess dataAccess;
 
     @Autowired
-    ComponentDataServiceAdapter componentDataServiceAdapter;
+    UserInfoExtendServiceAdapter userInfoExtendServiceAdapter;
 
     @Override
     public List<SelectUserModel> selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize, Boolean isSystemUser) {
@@ -39,10 +39,10 @@ public class RenderCommonComponentServiceImpl implements RenderCommonComponentSe
         /**
          * 获取外部扩展的数据源服务
          */
-        ComponentDataForSelectUserService componentDataForSelectUserService = componentDataServiceAdapter.getComponentDataForSelectUserService();
+        UserSelectForComponentDataService userSelectForComponentDataService = userInfoExtendServiceAdapter.getComponentDataForSelectUserService();
         // 系统外用户 并且实现了相关服务
-        if (!isSystemUser && componentDataForSelectUserService != null) {
-            return componentDataForSelectUserService.selectUserList(userCode, userName, pageIndex, pageSize);
+        if (!isSystemUser && userSelectForComponentDataService != null) {
+            return userSelectForComponentDataService.selectUserList(userCode, userName, pageIndex, pageSize);
         }
 
         QueryOption queryOption = new QueryOption("sa_account");

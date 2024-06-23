@@ -1,5 +1,6 @@
 package com.lubase.core.controller;
 
+import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.service.VerifyCodeService;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.ParameterNotFoundException;
@@ -49,31 +50,16 @@ public class UserController {
         if (loginInfo == null || StringUtils.isEmpty(loginInfo.getUid()) || StringUtils.isEmpty(loginInfo.getPwd())) {
             return ResponseData.parameterNotFound("uid or pwd");
         }
-        LoginUser user;
         try {
-            user = userService.getUser(loginInfo.getUid(), loginInfo.getPwd(), loginInfo.getVcode());
+            LoginInfoModel infoModel = userService.userLogin(loginInfo.getUid(), loginInfo.getPwd(), loginInfo.getVcode());
+            if (infoModel.getLoginErrorException() != null) {
+                return ResponseData.error(infoModel.getLoginErrorException().getErrorCode(), infoModel.getLoginErrorException().getErrorMsg());
+            } else {
+                LoginUser user = infoModel.getLoginUser();
+                return ResponseData.success(user);
+            }
         } catch (LoginErrorException exception) {
             return ResponseData.error(exception.getErrorCode(), exception.getErrorMsg());
-        }
-        if (user.getErrorCount() > 0) {
-            //临时这样写，通用逻辑再优化
-            if (user.getErrorCount() < 5) {
-                return ResponseData.error("401", "用户名或密码错误");
-            } else {
-                //约定420  需要验证码
-                return ResponseData.error("420", "用户名或密码错误");
-            }
-        } else if (user.getErrorCount() < 0) {
-            if (user.getErrorCount() == -1) {
-                return ResponseData.error("421", "输入验证码错误");
-            } else if (user.getErrorCount() == -2) {
-                return ResponseData.error("422", "验证码已失效");
-            } else {
-                return ResponseData.error("423", "验证码为空");
-            }
-        } else {
-            user.setToken(userService.createUserToken(user));
-            return ResponseData.success(user);
         }
     }
 

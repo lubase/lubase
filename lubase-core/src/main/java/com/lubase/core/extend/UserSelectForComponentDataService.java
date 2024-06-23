@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * 选人组件所需的外部数据源
  */
-public interface ComponentDataForSelectUserService {
+public interface UserSelectForComponentDataService {
 
     /***
      * 用于弹窗选人等服务
@@ -18,13 +18,4 @@ public interface ComponentDataForSelectUserService {
      * @return
      */
     List<SelectUserModel> selectUserList(String userCode, String userName, Integer pageIndex, Integer pageSize);
-
-    /**
-     * 是否启用selectUserList方法扩展
-     *
-     * @return
-     */
-    default Boolean enableSelectUserList() {
-        return false;
-    }
 }
