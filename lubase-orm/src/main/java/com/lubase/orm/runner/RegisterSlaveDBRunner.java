@@ -33,7 +33,7 @@ public class RegisterSlaveDBRunner implements ApplicationRunner {
     @Value("${appId:default}")
     private String appIdStr;
 
-    @Value("${spring.datasource.druid-app.appointDatabase:}")
+    @Value("${custom.appoint-database:}")
     private String appointDatabase;
     /**
      * 应用ID

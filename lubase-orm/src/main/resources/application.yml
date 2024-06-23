@@ -7,7 +7,6 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid-app:
-      appointDatabase:
       #初始化连接数
       initialSize: 6
       #同时使用中 - 最大的连接数，未归还druid

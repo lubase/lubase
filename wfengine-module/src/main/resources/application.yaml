@@ -98,8 +98,6 @@ custom:
   # 是否启用流程引擎核调度功能
   wf-engine:
     enable-scheduled: 1
-  #是否启用电子签
-  sign-flag: 0
   #是否记录调用外部接口日志
   call-api-log: 1
   #是否启用全文检索
@@ -107,15 +105,11 @@ custom:
   jwt-secret:
   # 如果配置此路径，则从此路径获取扩展jar包
   extend-path: /root/app/new-qibao/extend
-  extend-user-path:
   file-upload:
-    # local  ftp  fastDfs
-    upload-type: local
+    # default: localFileStorageService
+    storage-type: local
     #设置文件夹名称，可以多级,最前面没有\
-    local-path: upload/file
-    ftp-host: aa
-    ftp-user: bb
-    ftp-pwd: cc
+    root-path: upload/file
   # 系统默认密码
   default-password: 12345.com
   # 密码复杂度正则表达式
