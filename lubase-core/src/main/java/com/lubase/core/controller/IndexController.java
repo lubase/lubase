@@ -83,6 +83,12 @@ public class IndexController {
         return ResponseData.success(list);
     }
 
+    /**
+     * 跳转按钮获取导航信息
+     *
+     * @param pageId
+     * @return
+     */
     @RequestMapping(value = "/getNavInfo", method = RequestMethod.GET)
     public ResponseData<NavVO> getNavInfo(Long pageId) {
         if (pageId == null || pageId == 0) {
@@ -92,6 +98,11 @@ public class IndexController {
         return ResponseData.success(navVO);
     }
 
+    /***
+     * 页签页面获取子页面导航信息
+     * @param map
+     * @return
+     */
     @RequestMapping(value = "/getNavByPageId", method = RequestMethod.POST)
     public ResponseData<List<NavVO>> getNavByPageIdPost(@RequestBody Map<String, String> map) {
         Long pageId = 0L;

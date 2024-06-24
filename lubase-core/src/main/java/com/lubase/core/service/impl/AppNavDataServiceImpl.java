@@ -54,7 +54,7 @@ public class AppNavDataServiceImpl implements AppNavDataService {
     @Override
     public List<NavVO> getAdminNavData() {
         TableFilter filter = new TableFilter("page_code", "01", EOperateMode.LikeLeft);
-        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, filter);
+        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, filter, true);
         return allNavVOList;
     }
 
@@ -62,7 +62,7 @@ public class AppNavDataServiceImpl implements AppNavDataService {
     @Override
     public List<NavVO> getSettingNavData() {
         TableFilter filter = new TableFilter("page_code", "02", EOperateMode.LikeLeft);
-        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, filter);
+        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, filter, true);
         return allNavVOList;
     }
 
@@ -72,7 +72,7 @@ public class AppNavDataServiceImpl implements AppNavDataService {
         if (appId == null) {
             return new ArrayList<>();
         }
-        List<NavVO> allNavVOList = getNav(appId, null);
+        List<NavVO> allNavVOList = getNav(appId, null, true);
         return allNavVOList;
     }
 
@@ -83,7 +83,7 @@ public class AppNavDataServiceImpl implements AppNavDataService {
             return new ArrayList<>();
         }
         TableFilter filter = new TableFilter("parent_id", pageId, EOperateMode.Equals);
-        List<NavVO> allNavVOList = getNav(null, filter);
+        List<NavVO> allNavVOList = getNav(null, filter, false);
         return allNavVOList;
     }
 
@@ -93,21 +93,24 @@ public class AppNavDataServiceImpl implements AppNavDataService {
             return null;
         }
         TableFilter filter = new TableFilter("id", pageId, EOperateMode.Equals);
-        List<NavVO> allNavVOList = getNav(null, filter);
-        if(allNavVOList.isEmpty()){
+        List<NavVO> allNavVOList = getNav(null, filter, false);
+        if (allNavVOList.isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             return allNavVOList.get(0);
         }
     }
 
-    List<NavVO> getNav(Long appId, TableFilter extendFilter) {
+    List<NavVO> getNav(Long appId, TableFilter extendFilter, boolean filterLevel2) {
         //获取用户信息
         QueryOption queryOption = new QueryOption("ss_page");
-        queryOption.setFixField("id,page_code,page_name,description,parent_id,order_id,vue_router,vue_component,icon_code,type");
+        queryOption.setFixField("id,page_name,description,parent_id,order_id,vue_router,vue_component,icon_code,type,master_page");
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();
         filterWrapper.eq(SsPageEntity.COL_VISIBLE, 1);
+        // 1： 菜单，4：菜单分组。不显示2：二级页面 3 公共页面
+        if (filterLevel2) {
+            filterWrapper.in(SsPageEntity.COL_TYPE, "1,4");
+        }
         if (appId != null) {
             filterWrapper.eq(SsPageEntity.COL_APP_ID, appId);
         }
@@ -117,20 +120,24 @@ public class AppNavDataServiceImpl implements AppNavDataService {
         queryOption.setTableFilter(filterWrapper.build());
         DbCollection collection = dataAccess.queryAllData(queryOption);
         List<SsPageEntity> pageList = collection.getGenericData(SsPageEntity.class);
-
+        List<Long> tabPageIdList = new ArrayList<>();
+        if (filterLevel2) {
+            for (SsPageEntity page : pageList) {
+                if (CommonConstant.TAB_PAGE_MASTER_PAGE_CODE.equals(page.getPage_code())) {
+                    tabPageIdList.add(page.getId());
+                }
+            }
+        }
         List<NavVO> navVOList = new ArrayList<>();
         for (SsPageEntity page : pageList) {
+            // 过滤页签页面的子页面
+            if (filterLevel2 && tabPageIdList.contains(page.getParent_id())) {
+                continue;
+            }
             NavVO navVO = new NavVO();
             navVO.setId(page.getId());
             navVO.setParentId(page.getParent_id());
-            navVO.setCode(page.getPage_code());
             navVO.setName(page.getPage_name());
-            if (page.getPage_name().startsWith("group-")) {
-                navVO.setName(page.getPage_name().substring(6));
-                navVO.setPageGroup(1);
-            } else {
-                navVO.setPageGroup(0);
-            }
             navVO.setType(page.getType());
             navVO.setDes(page.getDescription());
             navVO.setOrderId(page.getOrder_id());

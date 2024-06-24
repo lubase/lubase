@@ -14,7 +14,6 @@ public class NavVO implements Serializable {
     private static final long serialVersionUID = 1026242975157456896L;
     private Long id;
     private Long parentId;
-    private String code;
     private String name;
     private String des;
     private Integer orderId;
@@ -22,8 +21,4 @@ public class NavVO implements Serializable {
     private String vueRouter;
     private String iconCode;
     private Integer type;
-    /**
-     * 分组页面标识
-     */
-    private Integer pageGroup;
 }

@@ -96,17 +96,7 @@ public class RenderPageServiceImpl implements RenderPageService {
         List<NavVO> allNavVOList = appNavDataService.getNavDataByAppId(appId);
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
         List<NavVO> allRightNavVOList = new ArrayList<>();
-        List<NavVO> allGroupNavVOList = new ArrayList<>();
         for (NavVO navVO : allNavVOList) {
-            if (navVO.getPageGroup().equals(1)) {
-                allGroupNavVOList.add(navVO);
-            }
-        }
-        for (NavVO navVO : allNavVOList) {
-            if (allGroupNavVOList.stream().anyMatch(p -> p.getId().equals(navVO.getParentId()))) {
-                continue;
-            }
-            // 公共页面不受权限控制
             if (userRightService.checkFuncRight(rightInfo, navVO.getId())) {
                 allRightNavVOList.add(navVO);
             }
