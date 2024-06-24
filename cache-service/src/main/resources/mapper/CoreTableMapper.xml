@@ -10,6 +10,7 @@
         <result column="database_type" property="databaseType"/>
         <result column="custom_config" property="customConfig"/>
         <result column="app_id" property="appId"/>
+        <result column="is_view" property="isView"/>
     </resultMap>
     <resultMap id="fieldInfo" type="com.lubase.model.DbField">
         <result column="id" property="id"/>
@@ -48,7 +49,7 @@
         <result column="order_id" property="order_id"/>
     </resultMap>
     <select id="getTableCodeAndIdInfo" resultMap="tableInfo">
-        select id, table_code, table_name, database_id, custom_config,app_id
+        select id, table_code, table_name, database_id, custom_config, app_id,is_view
         from dm_table
     </select>
     <select id="initTableInfoById" parameterType="Long" resultMap="tableInfo">
@@ -58,6 +59,7 @@
                database_id,
                app_id,
                custom_config,
+               is_view,
                (select database_type from dm_database where id = dm_table.database_id) as database_type
         from dm_table
         where id = #{id}

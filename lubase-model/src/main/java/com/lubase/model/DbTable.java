@@ -30,6 +30,8 @@ public class DbTable implements Serializable {
     private String code;
     @JsonIgnore
     private String databaseType;
+    // 是否是视图
+    private Integer isView;
     /**
      * 表中文名字
      */
