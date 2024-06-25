@@ -114,13 +114,16 @@ public class UserInfoServiceImpl implements UserInfoService {
         } else {
             infoModel = getUserInfoInSystem(uid, pwd);
         }
-        if (infoModel == null || infoModel.getLoginUser() == null) {
+        if (infoModel == null) {
             infoModel = new LoginInfoModel();
             infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
             return infoModel;
         }
 
         user = infoModel.getLoginUser();
+        if( user == null){
+            return infoModel;
+        }
         if (user != null && user.getId() != null && user.getId() > 0L) {
             userRightService.getUserRight(user.getId());
             user.setToken(createUserToken(user));
