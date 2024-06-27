@@ -41,4 +41,10 @@ public class AppNavDataServiceTest {
         System.out.println(navVOList.get(0));
         assert navVOList.get(0).getDes().equals(newDes);
     }
+
+    void testGetSettingNavData() {
+        List<NavVO> navVOList = appNavDataService.getSettingNavData();
+        System.out.println(navVOList.size());
+        assert navVOList.size() == 20;
+    }
 }

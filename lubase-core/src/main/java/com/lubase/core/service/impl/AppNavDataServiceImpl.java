@@ -69,14 +69,18 @@ public class AppNavDataServiceImpl implements AppNavDataService {
         // 一级和二级
         for (NavVO navVO : allNavVOList) {
             if (navVO.getId().equals(rootPageId) || navVO.getParentId().equals(rootPageId)) {
-                rootPageList.add(navVO);
+                if (rootPageList.stream().noneMatch(p -> p.getId().equals(navVO.getId()))) {
+                    rootPageList.add(navVO);
+                }
             }
         }
         // 三级和四级
         for (int i = 0; i < 2; i++) {
             for (NavVO navVO : allNavVOList) {
                 if (rootPageList.stream().anyMatch(p -> p.getId().equals(navVO.getParentId()))) {
-                    rootPageList.add(navVO);
+                    if (rootPageList.stream().noneMatch(p -> p.getId().equals(navVO.getId()))) {
+                        rootPageList.add(navVO);
+                    }
                 }
             }
         }
