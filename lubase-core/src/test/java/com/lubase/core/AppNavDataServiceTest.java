@@ -23,6 +23,9 @@ public class AppNavDataServiceTest {
     @Test
     void testLoadAdminPageData() {
         List<NavVO> navVOList = appNavDataService.getAdminNavData();
+
+        System.out.println(navVOList.size());
+        assert navVOList.size() == 20;
         for (int i = 1; i < 100; i++) {
             appNavDataService.getAdminNavData();
         }

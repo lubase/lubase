@@ -53,17 +53,34 @@ public class AppNavDataServiceImpl implements AppNavDataService {
     @Cacheable(value = CacheRightConstant.CACHE_NAME_USER_RIGHT, key = CacheRightConstant.PRE_PAGE_ADMIN)
     @Override
     public List<NavVO> getAdminNavData() {
-        TableFilter filter = new TableFilter("page_code", "01", EOperateMode.LikeLeft);
-        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, filter, true);
-        return allNavVOList;
+        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, null, true);
+        return getNavByRotPageId(allNavVOList, CommonConstant.ADMIN_NAV_ROOT_ID);
     }
 
     @Cacheable(value = CacheRightConstant.CACHE_NAME_USER_RIGHT, key = CacheRightConstant.PRE_PAGE_SETTING)
     @Override
     public List<NavVO> getSettingNavData() {
-        TableFilter filter = new TableFilter("page_code", "02", EOperateMode.LikeLeft);
-        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, filter, true);
-        return allNavVOList;
+        List<NavVO> allNavVOList = getNav(CommonConstant.SYSTEM_APP_ID, null, true);
+        return getNavByRotPageId(allNavVOList, CommonConstant.SETTING_NAV_ROOT_ID);
+    }
+
+    private List<NavVO> getNavByRotPageId(List<NavVO> allNavVOList, Long rootPageId) {
+        List<NavVO> rootPageList = new ArrayList<>();
+        // 一级和二级
+        for (NavVO navVO : allNavVOList) {
+            if (navVO.getId().equals(rootPageId) || navVO.getParentId().equals(rootPageId)) {
+                rootPageList.add(navVO);
+            }
+        }
+        // 三级和四级
+        for (int i = 0; i < 2; i++) {
+            for (NavVO navVO : allNavVOList) {
+                if (rootPageList.stream().anyMatch(p -> p.getId().equals(navVO.getParentId()))) {
+                    rootPageList.add(navVO);
+                }
+            }
+        }
+        return rootPageList;
     }
 
     @Cacheable(value = CacheRightConstant.CACHE_NAME_USER_RIGHT, key = CacheRightConstant.PRE_PAGE_APP + "+#appId")
