@@ -105,7 +105,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         //判断验证码
         LoginUser user = verifyCodeService.checkVerifyCode(vcode, uid);
         if (user.getErrorCount() < 0) {
-            return infoModel;
+            //return infoModel;
         }
         // 根据用户名和密码获取登录信息
         UserLoginExtendService userLoginExtendService = userInfoExtendServiceAdapter.getUserLoginExtendService();
@@ -121,6 +121,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
 
         user = infoModel.getLoginUser();
+        if( user == null){
+            return infoModel;
+        }
         if (user != null && user.getId() != null && user.getId() > 0L) {
             userRightService.getUserRight(user.getId());
             user.setToken(createUserToken(user));
