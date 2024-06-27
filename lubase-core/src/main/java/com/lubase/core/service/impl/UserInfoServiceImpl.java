@@ -117,6 +117,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (infoModel == null || infoModel.getLoginUser() == null) {
             infoModel = new LoginInfoModel();
             infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
+            return infoModel;
         }
 
         user = infoModel.getLoginUser();
