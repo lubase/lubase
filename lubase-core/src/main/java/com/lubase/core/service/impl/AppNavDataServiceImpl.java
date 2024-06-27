@@ -140,7 +140,7 @@ public class AppNavDataServiceImpl implements AppNavDataService {
         List<Long> tabPageIdList = new ArrayList<>();
         if (filterLevel2) {
             for (SsPageEntity page : pageList) {
-                if (CommonConstant.TAB_PAGE_MASTER_PAGE_CODE.equals(page.getPage_code())) {
+                if (CommonConstant.TAB_PAGE_MASTER_CODE.equals(page.getMaster_page())) {
                     tabPageIdList.add(page.getId());
                 }
             }

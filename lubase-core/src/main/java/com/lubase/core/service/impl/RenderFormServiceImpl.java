@@ -300,14 +300,13 @@ public class RenderFormServiceImpl implements RenderFormService {
         }
         ColumnRefPageVO refPageVO = new ColumnRefPageVO();
         refPageVO.setPageId(lookup.getPageId());
-        refPageVO.setPageCode(pageEntity.get("page_code").toString());
         refPageVO.setDisplayCol(lookup.getDisplayCol());
         refPageVO.setTableKey(lookup.getTableKey());
         return refPageVO;
     }
 
     private DbEntity getPageInfo(String pageId) {
-        DbCollection coll = dataAccess.queryById("ss_page", Long.parseLong(pageId), "id,page_code,page_name");
+        DbCollection coll = dataAccess.queryById("ss_page", Long.parseLong(pageId), "id,page_name");
         if (coll.getData().size() > 0) {
             return coll.getData().get(0);
         } else {

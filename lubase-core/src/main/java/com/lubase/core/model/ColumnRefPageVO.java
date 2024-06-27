@@ -13,10 +13,6 @@ public class ColumnRefPageVO {
      */
     private String pageId;
     /**
-     * 页面code
-     */
-    private String pageCode;
-    /**
      * 值列
      */
     private String tableKey;

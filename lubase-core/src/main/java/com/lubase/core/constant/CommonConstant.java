@@ -30,7 +30,7 @@ public class CommonConstant {
     /**
      * 页签页面的模板代码
      */
-    public static final String TAB_PAGE_MASTER_PAGE_CODE = "1130";
+    public static final String TAB_PAGE_MASTER_CODE = "1130";
 
 
 }
