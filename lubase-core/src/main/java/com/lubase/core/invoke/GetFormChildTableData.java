@@ -132,7 +132,7 @@ public class GetFormChildTableData implements IInvokeMethod {
             }
             QueryOption queryOption = childTable.getQueryOption();
             if (StringUtils.isEmpty(queryOption.getFixField())) {
-                throw new WarnCommonException("未设置子表查询字段，请联系管理员配置");
+                queryOption.setFixField("*");
             }
             if (!org.springframework.util.StringUtils.isEmpty(searchParamStr)) {
                 List<SearchCondition> list = JSON.parseArray(searchParamStr, SearchCondition.class);
