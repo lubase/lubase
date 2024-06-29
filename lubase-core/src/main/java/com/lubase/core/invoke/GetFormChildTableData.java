@@ -100,6 +100,7 @@ public class GetFormChildTableData implements IInvokeMethod {
             throw new InvokeCommonException("formId 参数异常");
         }
         Long mainTableId = formEntity.getTable_id();
+
         //2、获取表单主表与子表关联关系
         ChildTableSetting childTable = customFormDataService.getChildTableFromSettingStr(formEntity.getChild_table(), serialNum);
         if (StringUtils.isBlank(formEntity.getChild_table()) || childTable == null || childTable.getQueryOption() == null) {
@@ -116,13 +117,17 @@ public class GetFormChildTableData implements IInvokeMethod {
             }
         } else {
             Long childTableId = childTable.getQueryOption().getTableId();
+            DbTable childTableDbTable = dataAccess.initTableInfoByTableId(mainTableId);
+            if (childTableDbTable == null) {
+                throw new WarnCommonException("子表" + childTable.getTitle() + childTable.getQueryOption().getTableName() + "已经删除请调整表单");
+            }
             if (mainTableId == null || childTableId == null) {
-                throw new InvokeCommonException("表单主表信息、从表信息设置异常，表id为空");
+                throw new WarnCommonException("表单主表信息、从表信息设置异常，表id为空");
             }
             //查询主从表对应关系
             DbEntity tableRelation = getTableRelation(mainTableId, childTableId);
             if (tableRelation == null) {
-                throw new InvokeCommonException("主从表关系设置不正确，请检查");
+                throw new WarnCommonException("主从表关系设置不正确，请检查");
             }
             //3、查询子表数据
             TableFilterWrapper filterWrapper = TableFilterWrapper.and();
