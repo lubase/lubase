@@ -283,7 +283,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         return 0;
     }
 
-    private String createUserToken(LoginUser user) {
+    @Override
+    public String createUserToken(LoginUser user) {
         // 设置token 有效期，8小时
         LocalDateTime localDateTime = LocalDateTime.now().plusHours(8);
         String token = JWT.create().withAudience(user.getId().toString())
