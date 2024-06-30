@@ -181,7 +181,11 @@ public class WFApprovalServiceImpl implements WFApprovalService {
         return coll.getData().get(0).get("table_code").toString();
     }
 
+    @SneakyThrows
     private CustomPageSetting getRefPageSetting(WfTaskEntity taskEntity) {
+        if (taskEntity == null) {
+            throw new WarnCommonException("流程配置错误，当前节点已经被删除");
+        }
         String taskSetting = TypeConverterUtils.object2String(taskEntity.get("ref_page_setting"), "");
         if (StringUtils.isEmpty(taskSetting)) {
             return null;
