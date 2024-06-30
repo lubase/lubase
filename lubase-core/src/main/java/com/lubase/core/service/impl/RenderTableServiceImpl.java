@@ -110,6 +110,9 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
                     List<SearchCondition> list = JSON.parseArray(searchParamStr, SearchCondition.class);
                     TableFilter searchFilter = searchCondition2TableFilterService.convertToTableFilter(list);
                     if (searchFilter != null) {
+                        if (serverQuery.getTableFilter().getChildFilters() == null) {
+                            serverQuery.getTableFilter().setChildFilters(new ArrayList<>());
+                        }
                         serverQuery.getTableFilter().getChildFilters().add(searchFilter);
                     }
                 }
