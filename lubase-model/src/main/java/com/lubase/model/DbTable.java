@@ -13,30 +13,30 @@ import java.util.List;
 @Data
 public class DbTable implements Serializable {
     private static final long serialVersionUID = 5584605329383028458L;
-    /**
-     * 主库的ID
-     */
-    @JsonIgnore
-    private final Long mainDatabaseId = 0L;
+
     private String id;
-    /**
-     * 表所属的数据库Id
-     */
+    private String name;
+    private List<DbField> fieldList;
+
     @JsonIgnore
     private Long databaseId;
+    @JsonIgnore
+    private String databaseType;
     @JsonIgnore
     private Long appId;
     @JsonIgnore
     private String code;
     @JsonIgnore
-    private String databaseType;
-    // 是否是视图
+    private String tableTypeId;
+    @JsonIgnore
     private Integer isView;
-    /**
-     * 表中文名字
-     */
-    private String name;
-    private List<DbField> fieldList;
+    @JsonIgnore
+    private String customConfig;
+
+
+    public DbTable() {
+        this.fieldList = new ArrayList<>();
+    }
 
     /**
      * 判断是否为主库，主库的databaseId 值=0
@@ -45,14 +45,7 @@ public class DbTable implements Serializable {
      */
     @JsonIgnore
     public boolean isMainDatabase() {
-        return this.databaseId != null && this.databaseId.equals(mainDatabaseId);
-    }
-
-    @JsonIgnore
-    private String customConfig;
-
-    public DbTable() {
-        this.fieldList = new ArrayList<>();
+        return this.databaseId != null && this.databaseId.equals(0L);
     }
 
     public DbField firstOrDefault(IFilterField iFilterField) {
