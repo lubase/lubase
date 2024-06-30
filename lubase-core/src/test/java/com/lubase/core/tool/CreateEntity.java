@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.lubase.model.DbEntity;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -27,8 +28,8 @@ public class CreateEntity {
         //createOneEntity("ss_form_trigger", "SsFormTriggerEntity2");
 //        createOneEntity("ss_invoke_datasource", "SsInvokeDatasourceEntity");
 //        createOneEntity("ss_invoke_method", "SsInvokeMethodEntity");
-       // createOneEntity("sd_file_info", "SdFileInfoEntity");
-       // createOneEntity("sd_file_relation", "SdFileRelation2");
+        // createOneEntity("sd_file_info", "SdFileInfoEntity");
+        // createOneEntity("sd_file_relation", "SdFileRelation2");
 
 //        createOneEntity("ss_table_trigger", "SsTableTriggerEntity");
 //        createOneEntity("dm_code", "DmCodeEntity");
@@ -38,8 +39,17 @@ public class CreateEntity {
         //createOneEntity("ss_button", "ss_button2");
     }
 
+    @Value("${spring.datasource.druid.url}")
+    private String url;
+
+    @Value("${spring.datasource.druid.username}")
+    private String username;
+
+    @Value("${spring.datasource.druid.password}")
+    private String password;
+
     void createOneEntity(String tableCode, String entityName) {
-        FastAutoGenerator.create("jdbc:mysql://101.43.198.190:5677/lcp?allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai", "root", "1234.com")
+        FastAutoGenerator.create(url, username, password)
                 .globalConfig(builder -> {
                     builder.author("A") // 设置作者
                             .fileOverride() // 覆盖已生成文件
