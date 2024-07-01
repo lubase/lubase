@@ -101,11 +101,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (StringUtils.isEmpty(uid) || StringUtils.isEmpty(pwd)) {
             throw new WarnCommonException("用户名或密码不能为空");
         }
-        LoginInfoModel infoModel = null;
-        //判断验证码
-        LoginUser user = verifyCodeService.checkVerifyCode(vcode, uid);
-        if (user.getErrorCount() < 0) {
-            //return infoModel;
+        LoginInfoModel infoModel = verifyCodeService.checkVerifyCode(vcode, uid);
+        if (infoModel.getLoginUser().getErrorCount() < 0) {
+            return infoModel;
         }
         // 根据用户名和密码获取登录信息
         UserLoginExtendService userLoginExtendService = userInfoExtendServiceAdapter.getUserLoginExtendService();
@@ -114,43 +112,34 @@ public class UserInfoServiceImpl implements UserInfoService {
         } else {
             infoModel = getUserInfoInSystem(uid, pwd);
         }
+        //登录失败时处理逻辑
         if (infoModel == null || infoModel.getLoginUser() == null) {
-            infoModel = new LoginInfoModel();
-            infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
+            if (infoModel == null) {
+                infoModel = new LoginInfoModel();
+            }
+            if (infoModel.getLoginUser() == null) {
+                infoModel.setLoginUser(new LoginUser());
+            }
+            var count = verifyCodeService.calcErrorCount(uid);
+            log.info(String.format("%s 登录失败%s次", uid, count));
+            infoModel.getLoginUser().setErrorCount(count);
+            if (infoModel.getLoginErrorException() == null) {
+                if (count == 5) {
+                    //表示下次需要验证码了
+                    infoModel.setLoginErrorException(new LoginErrorException("420", "用户名或密码错误"));
+                } else {
+                    infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
+                }
+            }
             return infoModel;
         }
 
-        user = infoModel.getLoginUser();
-        if( user == null){
-            return infoModel;
-        }
+        var user = infoModel.getLoginUser();
         if (user != null && user.getId() != null && user.getId() > 0L) {
             userRightService.getUserRight(user.getId());
             user.setToken(createUserToken(user));
             //TODO 清缓存失败了怎么办？
             verifyCodeService.clearCacheErrorCount(uid);
-        } else {
-            var count = verifyCodeService.calcErrorCount(uid);
-            log.info(String.format("%s 登录失败%s次", uid, count));
-            user.setErrorCount(count);
-        }
-
-        if (user.getErrorCount() > 0) {
-            //临时这样写，通用逻辑再优化
-            if (user.getErrorCount() < 5) {
-                infoModel.setLoginErrorException(new LoginErrorException("401", "用户名或密码错误"));
-            } else {
-                //约定420  需要验证码
-                infoModel.setLoginErrorException(new LoginErrorException("420", "用户名或密码错误"));
-            }
-        } else if (user.getErrorCount() < 0) {
-            if (user.getErrorCount() == -1) {
-                infoModel.setLoginErrorException(new LoginErrorException("421", "输入验证码错误"));
-            } else if (user.getErrorCount() == -2) {
-                infoModel.setLoginErrorException(new LoginErrorException("422", "验证码已失效"));
-            } else {
-                infoModel.setLoginErrorException(new LoginErrorException("423", "验证码为空"));
-            }
         }
         return infoModel;
     }
