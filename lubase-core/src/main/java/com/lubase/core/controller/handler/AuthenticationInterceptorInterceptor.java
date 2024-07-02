@@ -48,6 +48,14 @@ public class AuthenticationInterceptorInterceptor implements HandlerInterceptor 
         if (user == null) {
             throw new AuthenticationException("用户信息已经失效");
         }
+        String ssoToken = request.getHeader("ssoToken");
+        if (StringUtils.isEmpty(ssoToken)) {
+            ssoToken = request.getParameter("ssoToken");
+            if (!StringUtils.isEmpty(ssoToken)) {
+                user.setSsoToken(ssoToken);
+            }
+        }
+        appHolderService.setUser(user);
         return true;
     }
 

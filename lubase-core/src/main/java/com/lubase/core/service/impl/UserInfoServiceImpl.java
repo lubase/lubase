@@ -14,6 +14,7 @@ import com.lubase.core.extend.service.UserInfoExtendServiceAdapter;
 import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.model.NavVO;
 import com.lubase.core.model.SelectUserModel;
+import com.lubase.core.model.UserInfoModel;
 import com.lubase.core.service.AppNavDataService;
 import com.lubase.core.service.UserInfoService;
 import com.lubase.core.service.VerifyCodeService;
@@ -35,6 +36,7 @@ import com.lubase.orm.util.TypeConverterUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,6 +95,27 @@ public class UserInfoServiceImpl implements UserInfoService {
         } else {
             secretKey = preSecretKey + CommonConstant.JWT_SECRET_KEY;
         }
+    }
+
+    @Override
+    public UserInfoModel getUserInfo(String userCode) {
+        if (StringUtils.isEmpty(userCode)) {
+            return null;
+        }
+        QueryOption queryOption = new QueryOption("sa_account");
+        queryOption.setTableFilter(new TableFilter("user_code", userCode));
+        queryOption.setFixField("id,user_code,user_name,enable_tag");
+        DbCollection coll = dataAccess.queryAllData(queryOption);
+        if (!coll.getData().isEmpty()) {
+            DbEntity entity = coll.getData().get(0);
+            UserInfoModel userInfoModel = new UserInfoModel();
+            userInfoModel.setId(entity.getId());
+            userInfoModel.setUserCode(entity.get("user_code").toString());
+            userInfoModel.setUserName(entity.get("user_name").toString());
+            userInfoModel.setEnableTag(TypeConverterUtils.object2Boolean(entity.get("enable_tag")));
+            return userInfoModel;
+        }
+        return null;
     }
 
     @SneakyThrows
@@ -315,7 +338,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         loginUser.setCode(code);
         loginUser.setOrgId(orgId);
         loginUser.setToken(token);
-        appHolderService.setUser(loginUser);
+
         return loginUser;
     }
 

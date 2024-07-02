@@ -4,6 +4,7 @@ import com.lubase.core.exception.LoginErrorException;
 import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.model.NavVO;
 import com.lubase.core.model.SelectUserModel;
+import com.lubase.core.model.UserInfoModel;
 import com.lubase.orm.model.LoginUser;
 import org.apache.tomcat.websocket.AuthenticationException;
 
@@ -13,6 +14,15 @@ import java.util.List;
  * @author A
  */
 public interface UserInfoService {
+
+    /**
+     * 根据用户登录账号获取用户信息
+     *
+     * @param userCode
+     * @return
+     */
+    UserInfoModel getUserInfo(String userCode);
+
     /**
      * 根据用户名和密码检索用户信息
      *

@@ -17,6 +17,7 @@ public class LoginUser {
     private String code;
     private String name;
     private String token;
+    private String ssoToken;
     /**
      * 用户部门id
      */
