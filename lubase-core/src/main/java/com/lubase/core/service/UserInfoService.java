@@ -74,4 +74,11 @@ public interface UserInfoService {
      * @return
      */
     List<NavVO> getAppPreviewNavDataId(Long appId);
+
+    /**
+     * 创建用户token
+     *
+     * @return
+     */
+    String createUserToken(LoginUser user);
 }

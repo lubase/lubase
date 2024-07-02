@@ -1,5 +1,6 @@
 package com.lubase.core.service;
 
+import com.lubase.core.model.LoginInfoModel;
 import com.lubase.orm.model.LoginUser;
 
 import java.awt.image.BufferedImage;
@@ -9,7 +10,7 @@ import java.awt.image.BufferedImage;
  */
 public interface VerifyCodeService {
 
-    LoginUser checkVerifyCode(String vcode, String userCode);
+    LoginInfoModel checkVerifyCode(String vcode, String userCode);
     int calcErrorCount(String userCode);
 
     void clearCacheErrorCount(String userCode);

@@ -1,6 +1,8 @@
 package com.lubase.core.service.impl;
 
 import com.lubase.core.constant.CacheRightConstant;
+import com.lubase.core.exception.LoginErrorException;
+import com.lubase.core.model.LoginInfoModel;
 import com.lubase.core.service.VerifyCodeService;
 import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.util.TypeConverterUtils;
@@ -105,7 +107,8 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
 
     @Override
     @SneakyThrows
-    public LoginUser checkVerifyCode(String vcode, String userCode) {
+    public LoginInfoModel checkVerifyCode(String vcode, String userCode) {
+
         LoginUser user = new LoginUser();
         Object o = redisTemplate.opsForValue().get(getCachePre(CacheRightConstant.PRE_USER_LOGIN_ERR) + userCode);
         var errorCount = 0;
@@ -117,22 +120,31 @@ public class VerifyCodeServiceImpl implements VerifyCodeService {
             if (errorCount >= 5 && StringUtils.isEmpty(vcode)) {
                 log.info(userCode + "错误大于5次，传入验证码为空");
                 user.setErrorCount(-3);
-                return user;
+                return getLoginInfoModel(user, "423","验证码为空");
             }
             var code = redisTemplate.opsForValue().get(getCachePre(CacheRightConstant.PRE_USER_LOGIN_VC) + userCode);
             if (code == null || StringUtils.isEmpty(code.toString())) {
                 log.info(userCode + "错误大于5次，服务端验证码已失效");
                 user.setErrorCount(-2);
-                return user;
+                return getLoginInfoModel(user, "422","验证码已失效");
             }
             if (!StringUtils.isEmpty(vcode) && !vcode.equals(code)) {
                 log.info(userCode + "输入验证码错误");
                 user.setErrorCount(-1);
-                return user;
+                return getLoginInfoModel(user, "421","输入验证码错误");
             }
         }
         user.setErrorCount(0);
-        return user;
+        return getLoginInfoModel(user, "200","");
+    }
+
+    private LoginInfoModel getLoginInfoModel(LoginUser user, String errorCode,String msg) {
+        LoginInfoModel infoModel = new LoginInfoModel();
+        infoModel.setLoginUser(user);
+        if (StringUtils.isNotEmpty(msg)) {
+            infoModel.setLoginErrorException(new LoginErrorException(errorCode, msg));
+        }
+        return infoModel;
     }
 
     private String getCachePre(String preKey) {
