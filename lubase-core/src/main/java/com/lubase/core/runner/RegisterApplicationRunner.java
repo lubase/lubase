@@ -24,9 +24,6 @@ public class RegisterApplicationRunner implements ApplicationRunner {
      */
     @Value("${appId:default}")
     private String appIdStr;
-
-    @Value("${custom.wf-engine.enable-scheduled:0}")
-    private String enableMqSchedule;
     /**
      * 应用ID
      */
@@ -59,9 +56,7 @@ public class RegisterApplicationRunner implements ApplicationRunner {
         for (String key : serviceMap.keySet()) {
             serviceMap.get(key).LoadCompleted(SpringUtil.getApplicationContext());
         }
-        //注册RocketMQ 监听
-        if (enableMqSchedule.equals("1")) {
-            rocketMqListenerRegistry.afterSingletonsInstantiated();
-        }
+
+        rocketMqListenerRegistry.afterSingletonsInstantiated();
     }
 }

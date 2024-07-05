@@ -31,7 +31,7 @@ public class DeptInfoServiceImpl implements IColumnRemoteService {
     DeptInfoServiceImpl currentService;
 
     public DeptInfoServiceImpl(Environment environment) {
-        this.urlTemplate = String.format("%s/userInfo", environment.getProperty("custom.cache-server"));
+        this.urlTemplate = String.format("%s/userInfo", environment.getProperty("lubase.cache-server"));
     }
 
     @Override

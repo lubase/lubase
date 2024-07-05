@@ -37,13 +37,11 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
     private String urlTemplate;
 
     private String fileUrlTemplate;
-    @Value("${custom:cache-server}")
-    private String cacheServer;
 
     public registerColumnInfoServiceApiImpl(Environment environment) {
         log.info("初始化url" + environment.toString());
-        this.urlTemplate = String.format("%s/registerColumnInfo", environment.getProperty("custom.cache-server"));
-        this.fileUrlTemplate = String.format("%s/fileInfo", environment.getProperty("custom.cache-server"));
+        this.urlTemplate = String.format("%s/registerColumnInfo", environment.getProperty("lubase.cache-server"));
+        this.fileUrlTemplate = String.format("%s/fileInfo", environment.getProperty("lubase.cache-server"));
         log.info("初始化url" + urlTemplate);
     }
 

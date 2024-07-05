@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 @Service()
 public class LocalFileStorageService implements FileStorageService {
 
-    @Value("${custom.file-upload.root-path:}")
+    @Value("${lubase.file-upload.root-path:}")
     String rootPathStr;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");

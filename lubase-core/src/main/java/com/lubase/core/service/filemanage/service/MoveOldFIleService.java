@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 public class MoveOldFIleService {
 
-    @Value("${custom.file-upload.storage-type:localFileStorageService}")
+    @Value("${lubase.file-upload.storage-type:localFileStorageService}")
     private String storageType;
     @Autowired
     DataAccess dataAccess;

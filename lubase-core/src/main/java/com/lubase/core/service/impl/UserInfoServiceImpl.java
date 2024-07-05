@@ -57,14 +57,14 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
-    @Value("${custom.password-reg:^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9~!@#$%^&*()\\-_+?/\\.]{8,16}$}")
+    @Value("${lubase.password-reg:^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9~!@#$%^&*()\\-_+?/\\.]{8,16}$}")
     private String passwordReg;
-    @Value("${custom.password-tip:密码不符合复杂度(需包括数字、小写字母、大写字母、特殊字符四种的三种，长度在8-16位)}")
+    @Value("${lubase.password-tip:密码不符合复杂度(需包括数字、小写字母、大写字母、特殊字符四种的三种，长度在8-16位)}")
     private String passwordTip;
     /**
      * 配置的默认密码
      */
-    @Value("${custom.default-password:12345.com}")
+    @Value("${lubase.default-password:12345.com}")
     private String defaultPwd;
     @Autowired
     DataAccess dataAccess;
@@ -88,7 +88,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public static String secretKey;
 
 
-    @Value("${custom.jwt-secret:abcdef}")
+    @Value("${lubase.jwt-secret:abcdef}")
     public void setSecretKey(String preSecretKey) {
         if (StringUtils.isAllEmpty(preSecretKey)) {
             secretKey = CommonConstant.JWT_SECRET_KEY;

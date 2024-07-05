@@ -33,7 +33,7 @@ public class RegisterSlaveDBRunner implements ApplicationRunner {
     @Value("${appId:default}")
     private String appIdStr;
 
-    @Value("${custom.appoint-database:}")
+    @Value("${lubase.appoint-database:}")
     private String appointDatabase;
     /**
      * 应用ID

@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class RestTemplateConfig {
-    @Value("${custom.call-api-log:1}")
+    @Value("${lubase.call-api-log:1}")
     private String enableLog;
 
     @Bean(name = "restTemplate")

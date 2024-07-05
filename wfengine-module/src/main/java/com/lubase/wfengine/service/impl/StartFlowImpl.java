@@ -21,7 +21,7 @@ public class StartFlowImpl implements StartFlow {
     @Autowired
     RestTemplate restTemplate;
 
-    @Value("${custom.main-api-server}")
+    @Value("${lubase.main-api-server}")
     private String urlTemplate;
 
     @SneakyThrows

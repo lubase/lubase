@@ -30,7 +30,7 @@ public class UserColumnServiceImpl implements IColumnRemoteService {
     UserColumnServiceImpl currentService;
 
     public UserColumnServiceImpl(Environment environment) {
-        this.urlTemplate = String.format("%s/userInfo", environment.getProperty("custom.cache-server"));
+        this.urlTemplate = String.format("%s/userInfo", environment.getProperty("lubase.cache-server"));
     }
 
     @Cacheable(key = "'u:id:'" + "+#key")

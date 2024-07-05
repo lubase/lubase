@@ -50,7 +50,7 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
     /**
      * 扩展包路径，如果配置后则优先从此路径获取数据
      */
-    @Value("${custom.extend-path:}")
+    @Value("${lubase.extend-path:}")
     String extendPath;
     @Autowired
     ExtendFileService extendFileService;

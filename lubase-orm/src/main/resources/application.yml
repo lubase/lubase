@@ -83,9 +83,7 @@ mybatis:
   mapper-locations: classpath:mapper/*xml
   #指定Mybatis的实体目录
   type-aliases-package: com.lubase.orm.mybatis.entity
-custom:
-  #是否启用全文检索
-  enable-fulltext: 0
+lubase:
+  #RestTemplate 服务是否启用日志记录
   call-api-log: 1
-  jwt-secret:
   cache-server: http://101.43.198.190:9526

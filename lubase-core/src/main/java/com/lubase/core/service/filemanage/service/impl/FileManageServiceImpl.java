@@ -29,7 +29,7 @@ import java.util.UUID;
 @Service
 public class FileManageServiceImpl implements FileManageService, ExtendAppLoadCompleteService {
 
-    @Value("${custom.file-upload.storage-type:localFileStorageService}")
+    @Value("${lubase.file-upload.storage-type:localFileStorageService}")
     private String storageType;
     Map<String, FileStorageService> fileStorageServices;
     @Autowired

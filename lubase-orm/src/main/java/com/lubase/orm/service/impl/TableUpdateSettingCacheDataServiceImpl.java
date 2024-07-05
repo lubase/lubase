@@ -23,7 +23,7 @@ public class TableUpdateSettingCacheDataServiceImpl implements TableUpdateSettin
     private String urlTemplate;
 
     public TableUpdateSettingCacheDataServiceImpl(Environment environment) {
-        this.urlTemplate = String.format("%s/registerColumnInfo", environment.getProperty("custom.cache-server"));
+        this.urlTemplate = String.format("%s/registerColumnInfo", environment.getProperty("lubase.cache-server"));
     }
 
     @Cacheable(value = CacheConst.CACHE_NAME_TABLE_TRIGGER, key = CacheConst.PRE_CACHE_TABLE_CACHE_LIST)

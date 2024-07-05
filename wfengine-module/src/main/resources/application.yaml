@@ -92,25 +92,24 @@ rocketmq:
   producer:
     group: myGroup
     send-message-timeout: 10000
-custom:
-  cache-server: http://101.43.198.190:9526
-  main-api-server: http://101.43.198.190:9527
-  # 是否启用流程引擎核调度功能
-  wf-engine:
-    enable-scheduled: 1
-  #是否记录调用外部接口日志
+lubase:
+  # 入口数据库
+  appoint-database:
+  #RestTemplate 服务是否启用日志记录
   call-api-log: 1
-  #是否启用全文检索
-  enable-fulltext: 0
+  cache-server: http://101.43.198.190:9526
+  #主服务地址，用于程序中调用启动流程功能
+  main-api-server: http://101.43.198.190:9527
+  #jwt密钥
   jwt-secret:
   # 如果配置此路径，则从此路径获取扩展jar包
-  extend-path: /root/app/new-qibao/extend
+  extend-path: /root/app/lubase/admin/extend
   file-upload:
     # default: localFileStorageService
-    storage-type: local
+    storage-type: localFileStorageService
     #设置文件夹名称，可以多级,最前面没有\
-    root-path: upload/file
-  # 系统默认密码
+    root-path:
+  # 新用户系统默认密码
   default-password: 12345.com
   # 密码复杂度正则表达式
   password-reg: "^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![a-z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9~!@#$%^&*()\\-_+?/\\.]{8,16}$"

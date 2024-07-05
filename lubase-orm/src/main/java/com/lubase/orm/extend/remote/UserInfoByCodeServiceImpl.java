@@ -30,7 +30,7 @@ public class UserInfoByCodeServiceImpl implements IColumnRemoteService {
     UserColumnServiceImpl userColumnService;
 
     public UserInfoByCodeServiceImpl(Environment environment) {
-        this.urlTemplate = String.format("%s/userInfo", environment.getProperty("custom.cache-server"));
+        this.urlTemplate = String.format("%s/userInfo", environment.getProperty("lubase.cache-server"));
     }
 
     @Override
