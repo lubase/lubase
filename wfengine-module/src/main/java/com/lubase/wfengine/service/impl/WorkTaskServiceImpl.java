@@ -116,12 +116,17 @@ public class WorkTaskServiceImpl implements ExtendAppLoadCompleteService, WorkTa
 
     @SneakyThrows
     Boolean checkLinkFilter(DbCollection collBisData, WfLinkEntity linkEntity) {
-        if (StringUtils.isEmpty(linkEntity.getLogic_condition()) || linkEntity.getLogic_condition().equals("{}")) {
-            return true;
+        try {
+            if (StringUtils.isEmpty(linkEntity.getLogic_condition()) || linkEntity.getLogic_condition().equals("{}")) {
+                return true;
+            }
+            TableFilter filter = JSON.parseObject(linkEntity.getLogic_condition(), TableFilter.class);
+            Predicate<DbEntity> predicate = dynamicPredicateService.parseTableFilterToPredicate(filter);
+            return predicate.test(collBisData.getData().get(0));
+        } catch (Exception ex) {
+            log.error("checkLinkFilter error:", ex.getMessage());
+            throw new WarnCommonException("流程流转条件配置错误，请检流转规则，备注为：" + linkEntity.getMemo());
         }
-        TableFilter filter = JSON.parseObject(linkEntity.getLogic_condition(), TableFilter.class);
-        Predicate<DbEntity> predicate = dynamicPredicateService.parseTableFilterToPredicate(filter);
-        return predicate.test(collBisData.getData().get(0));
     }
 
     @Override
