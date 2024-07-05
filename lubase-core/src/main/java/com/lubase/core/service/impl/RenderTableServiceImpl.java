@@ -70,7 +70,7 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
     String urlTemplate;
 
     public RenderTableServiceImpl(Environment environment) {
-        this.urlTemplate = String.format("%s/fulltext", environment.getProperty("custom.fulltext-server"));
+        this.urlTemplate = String.format("%s/fulltext", environment.getProperty("lubase.fulltext-server"));
     }
 
     @Override
