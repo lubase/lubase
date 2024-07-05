@@ -30,25 +30,7 @@ public class ExtendFileServiceImpl implements ExtendFileService {
 
     @Override
     public List<ExtendFileModel> getExtendFileListFromDb() {
-        List<DbEntity> listExtendFile = getExtendFile();
-        List<DbEntity> listExtendDoc = getExtendDoc(listExtendFile);
-        List<ExtendFileModel> fileModelList = new ArrayList<>();
-        for (DbEntity entity : listExtendDoc) {
-            ExtendFileModel fileModel = new ExtendFileModel();
-            DbEntity extendFileEntity = listExtendFile.stream()
-                    .filter(m -> m.get("file_key").equals(entity.get("file_key")))
-                    .findFirst().orElse(null);
-            fileModel.setGroupId(extendFileEntity.get("group_id").toString());
-            fileModel.setExtendFileId(extendFileEntity.getId().toString());
-            fileModel.setFilePath(TypeConverterUtils.object2String(entity.get("file_path"), ""));
-            fileModel.setFileName(TypeConverterUtils.object2String(entity.get("file_name"), ""));
-            if (!StringUtils.isEmpty(fileModel.getFilePath()) && !StringUtils.isEmpty(fileModel.getFileName())) {
-                fileModelList.add(fileModel);
-            }
-        }
-        loadFileList = fileModelList;
-        mapExtendFileList.put("db_setting", fileModelList);
-        return fileModelList;
+        return null;
     }
 
     @Override
@@ -59,11 +41,16 @@ public class ExtendFileServiceImpl implements ExtendFileService {
         if (file.listFiles() == null || !file.isDirectory()) {
             return new ArrayList<>();
         }
+        Map<String, String> map = getExtendFilePackage();
         List<ExtendFileModel> fileModelList = new ArrayList<>();
         for (File f : file.listFiles()) {
             if (f.isFile() && f.getName().toLowerCase().endsWith(fixStr) && f.getName().contains("-")) {
                 ExtendFileModel fileModel = new ExtendFileModel();
-                fileModel.setGroupId(String.format(defaultGroupIdPre, f.getName().split("-")[0]));
+                if (map.containsKey(f.getName())) {
+                    fileModel.setGroupId(map.get(f.getName()));
+                } else {
+                    fileModel.setGroupId(String.format(defaultGroupIdPre, f.getName().split("-")[0]));
+                }
                 fileModel.setFilePath(f.getParent());
                 fileModel.setFileName(f.getName());
                 fileModelList.add(fileModel);
@@ -79,24 +66,14 @@ public class ExtendFileServiceImpl implements ExtendFileService {
         return mapExtendFileList;
     }
 
-    List<DbEntity> getExtendFile() {
-        QueryOption qoFile = new QueryOption("ss_extend_file", 0, 0);
-        qoFile.setFixField("file_key,scope,group_id");
-        TableFilterWrapper wrapper = new TableFilterWrapper(true);
-        wrapper.eq("file_type", "1").eq("category", "1").eq("delete_tag", "0");
-        qoFile.setTableFilter(wrapper.build());
-        return dataAccess.query(qoFile).getData();
-    }
-
-    List<DbEntity> getExtendDoc(List<DbEntity> data) {
-        List<String> fileKey = data.stream().map(m -> m.get("file_key").toString()).collect(Collectors.toList());
-        String fileKeys = String.join(",", fileKey);
-        QueryOption qoDoc = new QueryOption("sd_upload_file", 0, 0);
-        qoDoc.setFixField("file_name,file_path,md5,file_key");
-        TableFilterWrapper wrapperDoc = new TableFilterWrapper(true);
-        wrapperDoc.in("file_key", fileKeys);
-        qoDoc.setTableFilter(wrapperDoc.build());
-        DbCollection collDoc = dataAccess.query(qoDoc);
-        return collDoc.getData();
+    Map<String, String> getExtendFilePackage() {
+        QueryOption qoFile = new QueryOption("sd_extend_file", 0, 0);
+        qoFile.setFixField("file_name,package_name");
+        List<DbEntity> list = dataAccess.query(qoFile).getData();
+        Map<String, String> map = new HashMap<>();
+        for (DbEntity entity : list) {
+            map.put(entity.get("file_name").toString(), entity.get("package_name").toString());
+        }
+        return map;
     }
 }

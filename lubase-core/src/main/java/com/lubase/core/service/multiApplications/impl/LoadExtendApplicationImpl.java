@@ -33,10 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -85,7 +82,7 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
         if (!StringUtils.isEmpty(path)) {
             fileModelList = extendFileService.getExtendFileListFromDirectory(path);
         } else {
-            fileModelList = extendFileService.getExtendFileListFromDb();
+            fileModelList = new ArrayList<>();
         }
         for (ExtendFileModel fileModel : fileModelList) {
             log.info(String.format("%s%s%s", fileModel.getFilePath(), File.separator, fileModel.getFileName()));

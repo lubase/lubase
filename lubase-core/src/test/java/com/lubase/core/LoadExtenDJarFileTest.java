@@ -40,18 +40,7 @@ public class LoadExtenDJarFileTest {
 
     @Test
     void testGetJarFileInfo() throws IOException {
-        List<ExtendFileModel> list = extendFileService.getExtendFileListFromDb();
-        for (ExtendFileModel m : list) {
-            m.setFilePath("E:\\JavaCode\\lubase\\wfengine-module\\target");
-        }
-        System.out.println(JSON.toJSON(list));
-        assert list.size() == 3;
-        for (ExtendFileModel fileModel : list) {
-            AppConfig appConfig = loadExtendApplication.BuildAppConfigByEntity(fileModel);
-            if (appConfig != null) {
-                loadExtendApplication.load(appConfig);
-            }
-        }
+
     }
 
     @SneakyThrows
