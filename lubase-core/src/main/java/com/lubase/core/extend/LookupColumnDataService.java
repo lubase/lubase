@@ -9,13 +9,6 @@ import com.lubase.core.util.ClientMacro;
  */
 public interface LookupColumnDataService {
     /**
-     * 服务id
-     *
-     * @return
-     */
-    String getServiceId();
-
-    /**
      * 列id
      *
      * @return

@@ -44,5 +44,5 @@ public interface CustomFormServiceAdapter {
 
     List<LookupColumnDataService> getLookupColumnDataServiceList(String columnId);
 
-    LookupColumnDataService getLookupColumnDataService(String columnId, String serviceId);
+    LookupColumnDataService getLookupColumnDataService(String columnId);
 }

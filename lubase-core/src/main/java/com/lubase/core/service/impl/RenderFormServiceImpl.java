@@ -97,7 +97,7 @@ public class RenderFormServiceImpl implements RenderFormService {
             throw new InvokeCommonException(String.format("列 %s 关联信息不正确", columnLookupParam.getColumnId()));
         }
         //优先获取service实现，其次获取grid_query配置实现，最后获取dm_column默认配置
-        DmFormFilterEntity filterEntity = formRuleService.getFormFieldFilter(columnLookupParam.getFormId(), columnLookupParam.getColumnId());
+
         QueryOption clientQuery = null;
         try {
             if (!StringUtils.isEmpty(columnLookupParam.getQueryParam()) && !columnLookupParam.getQueryParam().equals("{}")) {
@@ -106,30 +106,25 @@ public class RenderFormServiceImpl implements RenderFormService {
         } catch (Exception ex) {
             log.error("客户端参数错误：" + columnLookupParam.getQueryParam());
         }
-        if (filterEntity != null && !StringUtils.isEmpty(filterEntity.getQuery_service())) {
-            LookupColumnDataService dataService = customFormServiceAdapter.getLookupColumnDataService(columnId.toString(), filterEntity.getQuery_service());
-            if (dataService != null) {
-                ClientMacro clientMacro = ClientMacro.init(columnLookupParam.getClientMacro());
-                columnLookupInfoVO.setDbCollection(dataService.getColLookupData(clientMacro, columnLookupParam.getFormData(), clientQuery));
-                columnLookupInfoVO.setTableKey(dataService.getTableKey());
-                columnLookupInfoVO.setDisplayCol(dataService.getDisplayCol());
-            } else {
-                log.warn("formLookupInfo配置异常，请联系系统管理员" + JSON.toJSONString(columnLookupParam));
-                throw new WarnCommonException("formLookupInfo配置异常，请联系系统管理员");
-            }
+        LookupColumnDataService dataService = customFormServiceAdapter.getLookupColumnDataService(columnId.toString());
+        if (StringUtils.isEmpty(lookupMode.getExtendCol())) {
+            columnLookupInfoVO.setSearchCols(lookupMode.getDisplayCol());
         } else {
-            columnLookupInfoVO = getLookupInfoVO(columnLookupParam, lookupMode, filterEntity, clientQuery);
+            columnLookupInfoVO.setSearchCols(String.format("%s,%s", lookupMode.getDisplayCol(), lookupMode.getExtendCol()));
         }
-        //读取关联字段表格配置数据源
-        if (filterEntity != null) {
-            columnLookupInfoVO.setSearchCols(TypeConverterUtils.object2String(filterEntity.getSearch_filter(), ""));
-            columnLookupInfoVO.setTableInfo(TypeConverterUtils.object2String(filterEntity.getGrid_info(), ""));
-            columnLookupInfoVO.setGridInfo(TypeConverterUtils.object2String(filterEntity.getGrid_info(), ""));
+
+        if (dataService != null) {
+            ClientMacro clientMacro = ClientMacro.init(columnLookupParam.getClientMacro());
+            columnLookupInfoVO.setDbCollection(dataService.getColLookupData(clientMacro, columnLookupParam.getFormData(), clientQuery));
+            columnLookupInfoVO.setTableKey(dataService.getTableKey());
+            columnLookupInfoVO.setDisplayCol(dataService.getDisplayCol());
         } else {
-            if (StringUtils.isEmpty(lookupMode.getExtendCol())) {
-                columnLookupInfoVO.setSearchCols(lookupMode.getDisplayCol());
-            } else {
-                columnLookupInfoVO.setSearchCols(String.format("%s,%s", lookupMode.getDisplayCol(), lookupMode.getExtendCol()));
+            DmFormFilterEntity filterEntity = formRuleService.getFormFieldFilter(columnLookupParam.getFormId(), columnLookupParam.getColumnId());
+            columnLookupInfoVO = getLookupInfoVO(columnLookupParam, lookupMode, filterEntity, clientQuery);
+            if (filterEntity != null) {
+                columnLookupInfoVO.setSearchCols(TypeConverterUtils.object2String(filterEntity.getSearch_filter(), ""));
+                columnLookupInfoVO.setTableInfo(TypeConverterUtils.object2String(filterEntity.getGrid_info(), ""));
+                columnLookupInfoVO.setGridInfo(TypeConverterUtils.object2String(filterEntity.getGrid_info(), ""));
             }
         }
         processSearchFilter(columnLookupInfoVO);
@@ -463,7 +458,7 @@ public class RenderFormServiceImpl implements RenderFormService {
         //表单查询开启字段权限控制
         queryOption.setEnableColAccessControl(true);
         queryOption.setFixField(dmCustomform.getCols());
-        if(StringUtils.isEmpty(queryOption.getFixField())){
+        if (StringUtils.isEmpty(queryOption.getFixField())) {
             queryOption.setFixField("id");
         }
         queryOption.setTableFilter(new TableFilter("id", dataId));

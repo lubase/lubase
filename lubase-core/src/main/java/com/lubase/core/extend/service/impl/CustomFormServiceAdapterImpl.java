@@ -101,9 +101,9 @@ public class CustomFormServiceAdapterImpl implements CustomFormServiceAdapter, E
     }
 
     @Override
-    public LookupColumnDataService getLookupColumnDataService(String columnId, String serviceId) {
+    public LookupColumnDataService getLookupColumnDataService(String columnId) {
         for (LookupColumnDataService service : lookupColumnDataServiceList) {
-            if (service.getServiceId().equals(serviceId) && service.getColumnId().contains(columnId)) {
+            if (service.getColumnId().contains(columnId)) {
                 return service;
             }
         }
