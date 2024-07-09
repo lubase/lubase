@@ -2,6 +2,7 @@ package com.lubase.orm.service.impl;
 
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
+import com.lubase.orm.constant.CacheConst;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.extend.ITableTrigger;
@@ -23,6 +24,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -62,7 +65,8 @@ public class DataAccessServiceImpl implements DataAccess {
     ProcMSSqlMapper procMSSqlMapper;
     @Autowired
     TableTriggerAdapter tableTriggerAdapter;
-
+    @Autowired
+    CacheManager cacheManager;
 
     /**
      * 标砖的query查询，默认分页
@@ -144,10 +148,33 @@ public class DataAccessServiceImpl implements DataAccess {
         if (StringUtils.isEmpty(tableName) || StringUtils.isEmpty(id)) {
             throw new InvokeCommonException("tableName and id is not null ");
         }
-        QueryOption queryOption = new QueryOption(tableName, 0, 0);
-        queryOption.setFixField(fixField);
-        queryOption.setTableFilter(new TableFilter("ID", id.toString()));
-        return query(queryOption);
+        DbCollection coll = null;
+        Cache cache = cacheManager.getCache(CacheConst.CACHE_TABLE_DATA);
+        String cacheKey = String.format("%s:%s", tableName, id);
+        if (CacheConst.ENABLE_CACHE_TABLE.contains(tableName)) {
+            if (cache != null) {
+                DbEntity entity = cache.get(cacheKey, DbEntity.class);
+                if (entity != null) {
+                    coll = getEmptyData(tableName);
+                    coll.getData().add(entity);
+                }
+            }
+        }
+        if (coll == null) {
+            if (CacheConst.ENABLE_CACHE_TABLE.contains(tableName)) {
+                // 如果启用缓存，则查询全部字段
+                fixField = "*";
+            }
+            QueryOption queryOption = new QueryOption(tableName, 0, 0);
+            queryOption.setFixField(fixField);
+            queryOption.setTableFilter(new TableFilter("ID", id.toString()));
+            coll = query(queryOption);
+            if (!coll.getData().isEmpty()) {
+                // 加入缓存
+                cache.put(cacheKey, coll.getData().get(0));
+            }
+        }
+        return coll;
     }
 
 

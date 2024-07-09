@@ -16,6 +16,14 @@ public class CacheConst {
      * 用户信息缓存名字
      */
     public static final String CACHE_NAME_USER_INFO = "userInfo";
+    /**
+     * 表数据缓存
+     */
+    public static final String CACHE_TABLE_DATA = "tableData";
+    /**
+     * 启用缓存的表
+     */
+    public static final String ENABLE_CACHE_TABLE="ss_page";
 
     public static final String PRE_CACHE_TABLE = "'dm:t:'";
     public static final String PRE_CACHE_TABLE_NAME = "'dm:t:n:'";
