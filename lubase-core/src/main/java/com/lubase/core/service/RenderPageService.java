@@ -38,9 +38,10 @@ public interface RenderPageService {
     /**
      * 获取扩展显示类型列表
      *
+     * @param webVersion 1:element 2 layui
      * @return
      */
-    List<DbEntity> getExtendDisplayType();
+    List<DbEntity> getExtendDisplayType(Integer webVersion);
 
     /**
      * 根据页面代码获取页面的渲染配置信息

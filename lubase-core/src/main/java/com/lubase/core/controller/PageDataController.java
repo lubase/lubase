@@ -52,8 +52,12 @@ public class PageDataController {
     ExportService exportService;
 
     @RequestMapping(value = "/getExtendEleDisplayList", method = RequestMethod.GET)
-    public ResponseData<List<DbEntity>> getExtendEleDisplayList() {
-        return ResponseData.success(renderPageService.getExtendDisplayType());
+    public ResponseData<List<DbEntity>> getExtendEleDisplayList(@RequestParam Integer webVersion) {
+        if (webVersion == null) {
+            webVersion = 1;
+        }
+        // 1: element   2: layui
+        return ResponseData.success(renderPageService.getExtendDisplayType(webVersion));
     }
 
     /**

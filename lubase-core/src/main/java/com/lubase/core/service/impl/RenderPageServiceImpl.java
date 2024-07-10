@@ -17,11 +17,13 @@ import com.lubase.core.util.ClientMacro;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
 import com.lubase.orm.QueryOption;
+import com.lubase.orm.TableFilter;
 import com.lubase.orm.constant.CommonConst;
 import com.lubase.orm.exception.ParameterNotFoundException;
 import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.LoginUser;
+import com.lubase.orm.operate.EOperateMode;
 import com.lubase.orm.service.AppHolderService;
 import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.util.ServerMacroService;
@@ -151,10 +153,14 @@ public class RenderPageServiceImpl implements RenderPageService {
     }
 
     @Override
-    public List<DbEntity> getExtendDisplayType() {
+    public List<DbEntity> getExtendDisplayType(Integer webVersion) {
+        if (webVersion == null) {
+            webVersion = 1;
+        }
         QueryOption queryOption = new QueryOption("ss_web_component");
         queryOption.setFixField("ele_type,ele_distype,name,load_from_file,extend_code");
         queryOption.setBuildLookupField(false);
+        queryOption.setTableFilter(new TableFilter("web_version", webVersion, EOperateMode.Equals));
         return dataAccess.queryAllData(queryOption).getData();
     }
 
