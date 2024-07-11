@@ -2,8 +2,11 @@ package com.lubase.core.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class FormButtonVO {
+public class FormButtonVO implements Serializable {
+
     private Long id;
     /**
      * 按钮唯一标识
