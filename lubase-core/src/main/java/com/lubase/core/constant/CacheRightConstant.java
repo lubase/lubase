@@ -85,6 +85,8 @@ public class CacheRightConstant {
      * 表单自定义规则的缓存
      */
     public static final String PRE_CUSTOM_FORM_RUL = "'rule:'";
-
-
+    /**
+     * 表单自定义按钮的缓存
+     */
+    public static final String PRE_CUSTOM_FORM_BUTTON = "'button:'";
 }

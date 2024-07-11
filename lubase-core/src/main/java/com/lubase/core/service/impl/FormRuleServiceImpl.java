@@ -139,6 +139,7 @@ public class FormRuleServiceImpl implements FormRuleService {
         return childTable;
     }
 
+    @Cacheable(value = CacheRightConstant.CACHE_NAME_CUSTOM_FORM, key = CacheRightConstant.PRE_CUSTOM_FORM_BUTTON + "+#formId")
     @Override
     public List<FormButtonVO> getFormButtonListById(String formId) {
         QueryOption queryOption = new QueryOption("dm_form_button");
