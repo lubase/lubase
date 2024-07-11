@@ -1,6 +1,7 @@
 package com.lubase.core.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lubase.core.constant.CacheRightConstant;
 import com.lubase.core.entity.DmCustomFormEntity;
 import com.lubase.core.entity.DmFormFilterEntity;
 import com.lubase.core.entity.DmTableRelationEntity;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ public class FormRuleServiceImpl implements FormRuleService {
     @Qualifier("registerColumnInfoServiceApi")
     RegisterColumnInfoService registerColumnInfoService;
 
+    @Cacheable(value = CacheRightConstant.CACHE_NAME_CUSTOM_FORM, key = CacheRightConstant.PRE_CUSTOM_FORM_RUL + "+#formId")
     @Override
     public FormRule getFormRuleById(Long formId) {
         if (formId == 0L) {

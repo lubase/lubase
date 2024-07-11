@@ -3,10 +3,11 @@ package com.lubase.core.model.customForm;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class FormRule {
+public class FormRule implements Serializable {
     /**
      * 表单字段级联控制规则
      */

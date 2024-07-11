@@ -21,6 +21,8 @@ public class CacheRightConstant {
      * 码表
      */
     public static final String CACHE_NAME_CODE_DATA = "codeData";
+
+
     /****************/
     public static final String PRE_PAGE_ADMIN = "'page:admin:671085014334574592'";
     public static final String PRE_PAGE_SETTING = "'page:setting:671085014334574592'";
@@ -72,5 +74,17 @@ public class CacheRightConstant {
      * 用户登录限制次数
      */
     public static final String PRE_USER_LOGIN_VC = "'user:login:vc：'";
+
+
+
+    /**
+     * 表单缓存的名字
+     */
+    public static final String CACHE_NAME_CUSTOM_FORM = "customForm";
+    /**
+     * 表单自定义规则的缓存
+     */
+    public static final String PRE_CUSTOM_FORM_RUL = "'rule:'";
+
 
 }
