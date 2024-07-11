@@ -157,6 +157,7 @@ public class DataAccessServiceImpl implements DataAccess {
                 if (entity != null) {
                     coll = getEmptyData(tableName);
                     coll.getData().add(entity);
+                    coll.setTotalCount(1);
                 }
             }
         }

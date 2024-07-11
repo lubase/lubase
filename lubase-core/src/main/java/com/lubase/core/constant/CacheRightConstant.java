@@ -34,6 +34,11 @@ public class CacheRightConstant {
      * 角色功能权限列表
      */
     public static final String PRE_ROLE_FUNC = "'role:func:'";
+    /***************/
+    /**
+     * 角色字段权限
+     */
+    public static final String PRE_ROLE_COLUMN = "'role:col:'";
     /**
      * 获取用户的角色列表
      */

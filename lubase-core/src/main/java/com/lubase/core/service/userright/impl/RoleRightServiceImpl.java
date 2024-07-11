@@ -51,7 +51,7 @@ public class RoleRightServiceImpl implements RoleRightService {
         return list;
     }
 
-
+    @Cacheable(value = CacheRightConstant.CACHE_NAME_USER_RIGHT, key = CacheRightConstant.PRE_ROLE_COLUMN + "+#roleId")
     @Override
     public List<ColumnRightModelVO> getRoleColList(Long roleId) {
         List<ColumnRightModelVO> voList = new ArrayList<>();
