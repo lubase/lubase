@@ -111,21 +111,16 @@ public class UpdateCacheTriggerServiceImpl implements UpdateTriggerService {
                 continue;
             }
             String cacheKey = "";
-            if (cacheSettingModel.getKey_field().equals("*")) {
-                //说明任何一个字段变化都清除缓存
-                cacheKey = cacheSettingModel.getCache_key_pre();
-            } else {
-                if (!entity.containsKey(cacheSettingModel.getKey_field()) || null == entity.get(cacheSettingModel.getKey_field())) {
-                    String tmpKeyField = getCacheKey(tableCode, cacheSettingModel.getKey_field(), entity.getId());
-                    if (!StringUtils.isEmpty(tmpKeyField)) {
-                        cacheKey = String.format("%s%s", cacheSettingModel.getCache_key_pre(), tmpKeyField);
-                    } else {
-                        //continue;
-                        throw new InvokeCommonException(String.format("缓存配置错误，表代码：%s，keyField %s 不存在", tableCode, cacheSettingModel.getKey_field()));
-                    }
+            if (!entity.containsKey(cacheSettingModel.getKey_field()) || null == entity.get(cacheSettingModel.getKey_field())) {
+                String tmpKeyField = getCacheKeyFromDb(tableCode, cacheSettingModel.getKey_field(), entity.getId());
+                if (!StringUtils.isEmpty(tmpKeyField)) {
+                    cacheKey = String.format("%s%s", cacheSettingModel.getCache_key_pre(), tmpKeyField);
                 } else {
-                    cacheKey = String.format("%s%s", cacheSettingModel.getCache_key_pre(), entity.get(cacheSettingModel.getKey_field()).toString());
+                    //continue;
+                    throw new InvokeCommonException(String.format("缓存配置错误，表代码：%s，keyField %s 不存在", tableCode, cacheSettingModel.getKey_field()));
                 }
+            } else {
+                cacheKey = String.format("%s%s", cacheSettingModel.getCache_key_pre(), entity.get(cacheSettingModel.getKey_field()).toString());
             }
             CachePathModel model = new CachePathModel(cacheSettingModel.getCache_name(), cacheKey);
             if (cacheKeyList.stream().filter(c -> c.getFullPath().equals(model.getFullPath())).count() == 0) {
@@ -146,7 +141,7 @@ public class UpdateCacheTriggerServiceImpl implements UpdateTriggerService {
         }
     }
 
-    String getCacheKey(String tableCode, String keyField, Long dataId) {
+    String getCacheKeyFromDb(String tableCode, String keyField, Long dataId) {
         QueryOption queryOption = new QueryOption(tableCode);
         queryOption.setFixField(keyField);
         queryOption.setTableFilter(new TableFilter("id", dataId, EOperateMode.Equals));
