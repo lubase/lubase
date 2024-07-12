@@ -2,6 +2,7 @@ package com.lubase.orm.service.update.impl;
 
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
+import com.lubase.orm.constant.CacheConst;
 import com.lubase.orm.exception.InvokeCommonException;
 import com.lubase.orm.model.CachePathModel;
 import com.lubase.orm.model.DbCollection;
@@ -41,8 +42,19 @@ public class UpdateCacheTriggerServiceImpl implements UpdateTriggerService {
     DataAccessQueryCoreService dataAccessQueryCoreService;
 
     private List<SsCacheEntity> getTableCacheSettingList(String tableCode) {
-        return cacheDataService.getTableCacheSettingList()
+        List<SsCacheEntity> list = cacheDataService.getTableCacheSettingList()
                 .stream().filter(c -> c.getTable_code().equals(tableCode)).collect(Collectors.toList());
+        //  临时这么处理
+        if (CacheConst.ENABLE_CACHE_TABLE.contains(tableCode)) {
+            SsCacheEntity cacheEntity = new SsCacheEntity();
+            cacheEntity.setCache_name(CacheConst.CACHE_TABLE_DATA);
+            cacheEntity.setTable_code(tableCode);
+            cacheEntity.setUpdate_event(7);
+            cacheEntity.setKey_field("id");
+            cacheEntity.setCache_key_pre(String.format("%s:", tableCode));
+            list.add(cacheEntity);
+        }
+        return list;
     }
 
     @SneakyThrows
@@ -99,11 +111,10 @@ public class UpdateCacheTriggerServiceImpl implements UpdateTriggerService {
                 continue;
             }
             String cacheKey = "";
-            if(cacheSettingModel.getKey_field().equals("*")){
+            if (cacheSettingModel.getKey_field().equals("*")) {
                 //说明任何一个字段变化都清除缓存
-                cacheKey=cacheSettingModel.getCache_key_pre();
-            }
-            else {
+                cacheKey = cacheSettingModel.getCache_key_pre();
+            } else {
                 if (!entity.containsKey(cacheSettingModel.getKey_field()) || null == entity.get(cacheSettingModel.getKey_field())) {
                     String tmpKeyField = getCacheKey(tableCode, cacheSettingModel.getKey_field(), entity.getId());
                     if (!StringUtils.isEmpty(tmpKeyField)) {
