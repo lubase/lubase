@@ -22,7 +22,7 @@ public enum EDBEntityState {
     /**
      * 删除
      */
-    Deleted(3);
+    Deleted(4);
 
     private int index;
 
@@ -39,7 +39,7 @@ public enum EDBEntityState {
             return EDBEntityState.Added;
         } else if (index == 2) {
             return EDBEntityState.Modified;
-        } else if (index == 3) {
+        } else if (index == 4) {
             return EDBEntityState.Deleted;
         } else {
             return EDBEntityState.UnChanged;
