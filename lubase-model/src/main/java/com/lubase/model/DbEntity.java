@@ -68,7 +68,7 @@ public class DbEntity extends HashMap<String, Object> {
      * @param state
      */
     public void setState(EDBEntityState state) {
-        super.put(stateHandle, state.ordinal());
+        super.put(stateHandle, state.getIndex());
     }
 
     /**
