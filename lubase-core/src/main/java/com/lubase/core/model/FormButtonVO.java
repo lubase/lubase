@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class FormButtonVO implements Serializable {
-
+    private static final long serialVersionUID = 1199427459594850304L;
     private Long id;
     /**
      * 按钮唯一标识
