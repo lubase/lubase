@@ -30,9 +30,9 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         if (!StringUtils.isEmpty(datasource)) {
             Map<Object, Object> dynamicTargetDataSources = this.dynamicTargetDataSources;
             if (dynamicTargetDataSources.containsKey(datasource)) {
-                log.info("---当前数据源：" + datasource + "---");
+                log.debug("---当前数据源：" + datasource + "---");
             } else {
-                log.info("不存在的数据源：" + datasource);
+                log.warn("不存在的数据源：" + datasource);
                 return null;
             }
         } else {

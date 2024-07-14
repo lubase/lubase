@@ -23,7 +23,7 @@ public class DBContextHolder {
             setMainDataSourceCode();
         } else {
             dbContextHolder.set(dataSourceCode);
-            log.info("已切换到数据源:{}", dataSourceCode);
+            log.debug("已切换到数据源:{}", dataSourceCode);
         }
     }
 
@@ -48,6 +48,6 @@ public class DBContextHolder {
      */
     public static void setMainDataSourceCode() {
         dbContextHolder.remove();
-        log.info("进入切换主数据源方法(已经屏蔽)");
+        log.debug("进入切换主数据源方法(已经屏蔽)");
     }
 }

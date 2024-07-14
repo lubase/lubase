@@ -87,6 +87,9 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: false
+logging:
+  level:
+    root: debug
 rocketmq:
   name-server: ENC(BxLV3F5Y0h6PEmPL3CQqcUPD4JGK+6LzH8fESvERJfqaCtvw2XWu7V2OgPqnSyQe67eqjRxLKv5uGCSwu283mA==)
   producer:

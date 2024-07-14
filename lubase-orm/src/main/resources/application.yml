@@ -83,7 +83,13 @@ mybatis:
   mapper-locations: classpath:mapper/*xml
   #指定Mybatis的实体目录
   type-aliases-package: com.lubase.orm.mybatis.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 lubase:
+  appoint-database: wfengine
   #RestTemplate 服务是否启用日志记录
   call-api-log: 1
   cache-server: http://101.43.198.190:9526
+logging:
+  level:
+    root: debug
