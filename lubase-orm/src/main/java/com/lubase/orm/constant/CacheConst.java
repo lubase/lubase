@@ -23,7 +23,7 @@ public class CacheConst {
     /**
      * 启用缓存的表
      */
-    public static final String ENABLE_CACHE_TABLE="ss_page,ss_button,dm_custom_form";
+    public static final String ENABLE_CACHE_TABLE="ss_page,ss_button,dm_custom_form,dm_database";
 
     public static final String PRE_CACHE_TABLE = "'dm:t:'";
     public static final String PRE_CACHE_TABLE_NAME = "'dm:t:n:'";
