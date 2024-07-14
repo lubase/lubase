@@ -55,7 +55,10 @@ public class DbCollection {
      */
     @JsonIgnore
     private Object objState;
-
+    /**
+     * 列表的备注信息
+     */
+    private String memo;
     /**
      * 个性化配置
      */
