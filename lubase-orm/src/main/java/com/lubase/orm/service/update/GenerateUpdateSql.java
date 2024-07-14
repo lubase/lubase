@@ -128,7 +128,8 @@ public class GenerateUpdateSql {
                 } else {
                     colValue = "1".equals(colValue.toString()) ? 1 : 0;
                 }
-            } else if (col.getEleType().equals(EColumnType.Numeric.getStringValue())) {
+            } else if (col.getEleType().equals(EColumnType.Numeric.getStringValue()) || col.getEleType().equals(EColumnType.Int.getStringValue())
+                    || col.getEleType().equals(EColumnType.Lookup.getStringValue()) || col.getEleType().equals(EColumnType.BigInt.getStringValue())) {
                 if (StringUtils.isEmpty(colValue)) {
                     colValue = null;
                 }
