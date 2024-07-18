@@ -10,9 +10,9 @@
     <packaging>jar</packaging>
 
     <parent>
-        <artifactId>fastdev</artifactId>
+        <artifactId>lubase</artifactId>
         <groupId>com.lubase</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.9.0</version>
     </parent>
 
     <dependencies>
