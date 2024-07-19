@@ -38,7 +38,7 @@ public interface UserInfoService {
      * @param list
      * @return
      */
-    Integer createUser(List<SelectUserModel> list);
+    List<SelectUserModel> createUser(List<SelectUserModel> list);
 
     /**
      * 更改密码

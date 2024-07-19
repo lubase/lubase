@@ -11,5 +11,5 @@ public interface UserCreateExtendService {
      * @param list
      * @return
      */
-    Integer createUser(List<SelectUserModel> list);
+    List<SelectUserModel> createUser(List<SelectUserModel> list);
 }

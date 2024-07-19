@@ -169,7 +169,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @SneakyThrows
     @Override
-    public Integer createUser(List<SelectUserModel> list) {
+    public List<SelectUserModel> createUser(List<SelectUserModel> list) {
         // 参数检查
         List<SelectUserModel> data = new ArrayList<>();
         for (SelectUserModel user : list) {
@@ -199,7 +199,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         DbCollection collExistsUser = dataAccess.queryAllData(queryOption);
         if (collExistsUser.getData().size() == data.size()) {
             // 用户已经都存在返回
-            return data.size();
+            for (SelectUserModel user : list) {
+                collExistsUser.getData().stream().filter(d -> d.get("user_code").toString().equals(user.getUserCode())).findFirst().ifPresent(dbUser -> user.setId(dbUser.getId().toString()));
+            }
+            return list;
         }
 
         queryOption = new QueryOption("sa_organization");
@@ -234,7 +237,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
         dataAccess.update(collExistsDept);
         dataAccess.update(collExistsUser);
-        return 1;
+        // 用户已经都存在返回
+        for (SelectUserModel user : list) {
+            collExistsUser.getData().stream().filter(d -> d.get("user_code").toString().equals(user.getUserCode())).findFirst().ifPresent(dbUser -> user.setId(dbUser.getId().toString()));
+        }
+        return list;
     }
 
     private LoginInfoModel getUserInfoInSystem(String userId, String pwd) {
