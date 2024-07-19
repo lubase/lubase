@@ -195,6 +195,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         for (SelectUserModel user : data) {
             filterWrapper.eq("user_code", user.getUserCode());
         }
+        queryOption.setTableFilter(filterWrapper.build());
         DbCollection collExistsUser = dataAccess.queryAllData(queryOption);
         if (collExistsUser.getData().size() == data.size()) {
             // 用户已经都存在返回
@@ -206,6 +207,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         for (SelectUserModel user : data) {
             filterWrapper.eq("id", user.getDeptId());
         }
+        queryOption.setTableFilter(filterWrapper.build());
         DbCollection collExistsDept = dataAccess.queryAllData(queryOption);
 
         // 创建用户信息
@@ -218,6 +220,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             entityUser.put("user_code", user.getUserCode());
             entityUser.put("user_name", user.getUserName());
             entityUser.put("password", StringEncodeUtil.strToMd5Str(defaultPwd));
+            entityUser.put("enable_tag", 1);
             collExistsUser.getData().add(entityUser);
 
             if (collExistsDept.getData().stream().noneMatch(x -> x.get("id").equals(user.getDeptId()))) {
