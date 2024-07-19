@@ -226,7 +226,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             entityUser.put("enable_tag", 1);
             collExistsUser.getData().add(entityUser);
 
-            if (collExistsDept.getData().stream().noneMatch(x -> x.get("id").equals(user.getDeptId()))) {
+            if (collExistsDept.getData().stream().noneMatch(x -> x.get("id").toString().equals(user.getDeptId()))) {
                 // 不存在的部门默认创建到根节点下面，并且用deptId作为部门id进行使用
                 DbEntity entityDept = collExistsDept.newEntity();
                 entityDept.setId(Long.parseLong(user.getDeptId()));
