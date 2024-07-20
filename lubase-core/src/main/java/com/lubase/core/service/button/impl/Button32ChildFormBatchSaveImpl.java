@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 
 @Service
-public class Button37ChildFormBatchSaveImpl implements OndDataService {
+public class Button32ChildFormBatchSaveImpl implements OndDataService {
     @Override
     public String getButtonType() {
-        return "37";
+        return "32";
     }
 
     @Override
