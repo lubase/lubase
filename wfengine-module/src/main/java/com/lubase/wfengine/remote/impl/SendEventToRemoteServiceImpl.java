@@ -9,6 +9,7 @@ import com.lubase.wfengine.remote.SendEventToRemoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,6 +23,16 @@ public class SendEventToRemoteServiceImpl implements SendEventToRemoteService {
     @Autowired
     RocketMQTemplate rocketMQTemplate;
 
+    @Value("${lubase.wf-engine.engine-topic:LUBASE_WF_ENGINE_TOPIC}")
+    private String wfEngineTopic;
+
+    @Value("${lubase.wf-engine.update-table-topic:LUBASE_WF_UPDATE_TABLE_TOPIC}")
+    private String wfUpdateTableTopic;
+
+    @Value("${lubase.wf-engine.public-topic:LUBASE_WF_PUBLIC_TOPIC}")
+    private String wfPublicTopic;
+
+
     @Override
     public void sendWorkFlowEngineEvent(String serviceId, String dataId, WfTEventEntity entity) {
         if (entity == null) {
@@ -29,7 +40,7 @@ public class SendEventToRemoteServiceImpl implements SendEventToRemoteService {
         }
         String msg = JSON.toJSONString(entity);
         try {
-            String msgPath = String.format("%s:%s", EngineConfig.MQ_WF_ENGINE_TOPIC, serviceId);
+            String msgPath = String.format("%s:%s", wfEngineTopic, serviceId);
             Map<String, Object> headers = new HashMap<>();
             headers.put("KEYS", dataId);
             rocketMQTemplate.convertAndSend(msgPath, msg, headers);
@@ -45,7 +56,7 @@ public class SendEventToRemoteServiceImpl implements SendEventToRemoteService {
         }
         String msg = JSON.toJSONString(entity);
         try {
-            String msgPath = String.format("%s:%s", EngineConfig.MQ_UPDATE_TABLE_TOPIC, serviceId);
+            String msgPath = String.format("%s:%s", wfUpdateTableTopic, serviceId);
             Map<String, Object> headers = new HashMap<>();
             headers.put("KEYS", dataId);
             rocketMQTemplate.convertAndSend(msgPath, msg, headers);
@@ -63,7 +74,7 @@ public class SendEventToRemoteServiceImpl implements SendEventToRemoteService {
         String dataId = model.getDataId();
         String msg = JSON.toJSONString(model);
         try {
-            String msgPath = String.format("%s:%s", EngineConfig.MQ_WF_PUBLIC_TOPIC, serviceId);
+            String msgPath = String.format("%s:%s", wfPublicTopic, serviceId);
             Map<String, Object> headers = new HashMap<>();
             headers.put("KEYS", dataId);
             rocketMQTemplate.convertAndSend(msgPath, msg, headers);

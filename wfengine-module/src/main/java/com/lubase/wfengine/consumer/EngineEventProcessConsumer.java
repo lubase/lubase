@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-@RocketMQMessageListener(topic = EngineConfig.MQ_WF_ENGINE_TOPIC, consumerGroup = EngineConfig.MQ_WF_ENGINE_CONSUMER_GROUP)
+@RocketMQMessageListener(topic = "${lubase.wf-engine.engine-topic:LUBASE_WF_ENGINE_TOPIC}", consumerGroup = "${lubase.wf-engine.engine-consumer-group:LUBASE_WF_ENGINE}")
 @Service
 @Slf4j
 public class EngineEventProcessConsumer implements RocketMQListener<WfTEventEntity> {

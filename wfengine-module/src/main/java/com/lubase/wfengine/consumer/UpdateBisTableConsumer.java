@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@RocketMQMessageListener(topic = EngineConfig.MQ_UPDATE_TABLE_TOPIC, consumerGroup = EngineConfig.MQ_UPDATE_TABLE_CONSUMER_GROUP)
+@RocketMQMessageListener(topic = "${lubase.wf-engine.update-table-topic:LUBASE_WF_UPDATE_TABLE_TOPIC}", consumerGroup = "${lubase.wf-engine.update-table-consumer-group:LUBASE_WF_UPDATE_TABLE}")
 @Service
 @Slf4j
 public class UpdateBisTableConsumer implements RocketMQListener<WfCallbackEntity> {

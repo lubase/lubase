@@ -87,6 +87,9 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: false
+logging:
+  level:
+    root: info
 rocketmq:
   name-server: ENC(BxLV3F5Y0h6PEmPL3CQqcUPD4JGK+6LzH8fESvERJfqaCtvw2XWu7V2OgPqnSyQe67eqjRxLKv5uGCSwu283mA==)
   producer:
@@ -104,6 +107,17 @@ lubase:
   jwt-secret:
   # 如果配置此路径，则从此路径获取扩展jar包
   extend-path: /root/app/lubase/admin/extend
+  wf-engine:
+    # 流程引擎流程流转使用的topic
+    engine-topic: LUBASE_WF_ENGINE_TOPIC
+    # 流程引擎流程流转使用的group
+    engine-consumer-group: LUBASE_WF_ENGINE
+    # 流程引擎更新业务表使用的topic
+    update-table-topic: LUBASE_WF_UPDATE_TABLE_TOPIC
+    # 流程引擎更新业务表使用的group
+    update-table-consumer-group: LUBASE_WF_UPDATE_TABLE
+    # 流程引擎事件暴露的公共topic
+    public-event-topic: LUBASE_WF_PUBLIC_TOPIC
   file-upload:
     # default: localFileStorageService
     storage-type: localFileStorageService

@@ -88,7 +88,7 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   level:
-    root: debug
+    root: info
 rocketmq:
   name-server: ENC(BxLV3F5Y0h6PEmPL3CQqcUPD4JGK+6LzH8fESvERJfqaCtvw2XWu7V2OgPqnSyQe67eqjRxLKv5uGCSwu283mA==)
   producer:
