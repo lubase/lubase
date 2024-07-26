@@ -331,6 +331,8 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                 userModelList.add(userModel);
                 operatorService.createOIns(userModelList, fIns, tIns);
                 wfFInsDao.updateFInsProcessUser(fIns, userModelList);
+
+                bisDataUpdateService.sendCommandEvent(fIns, cmdEntity.getUpdate_content(), cmdEntity.getId() + cmdEntity.getCmd_des());
             } else {
                 throw new InvokeCommonException("cmdType未实现:" + cmdEntity.getCmd_type());
             }

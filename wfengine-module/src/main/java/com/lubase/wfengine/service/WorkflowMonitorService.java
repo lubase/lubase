@@ -50,4 +50,5 @@ public interface WorkflowMonitorService {
      * @return
      */
     Integer returnBack(String fInsId, String taskId, String memo, String operatorUserId);
+    Integer addUserForTaskOfEveryone(String finsId, String[] userIdList);
 }

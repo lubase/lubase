@@ -20,6 +20,7 @@ import com.lubase.wfengine.config.EngineConfig;
 import com.lubase.wfengine.dao.WfServiceDao;
 import com.lubase.wfengine.model.EEventStatus;
 import com.lubase.wfengine.model.EUpdateType;
+import com.lubase.wfengine.service.WorkFlowMacroService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
@@ -41,7 +42,8 @@ public class UpdateBisTableConsumer implements RocketMQListener<WfCallbackEntity
     DataAccess dataAccess;
     @Autowired
     ServerMacroService serverMacroService;
-
+    @Autowired
+    WorkFlowMacroService workFlowMacroService;
     @Autowired
     FormRuleService formRuleService;
 
@@ -99,6 +101,7 @@ public class UpdateBisTableConsumer implements RocketMQListener<WfCallbackEntity
 
             DbCollection collection = dataAccess.queryAllData(queryOption);
             if (collection.getData().size() > 0) {
+                DbEntity workFlowMacroEntity = null;
                 //更新配置数据
                 HashMap<String, Object> mapUpdateField = getUpdateField(entity.getUpdate_content(), isChildTable);
                 for (DbEntity bisData : collection.getData()) {
@@ -106,6 +109,12 @@ public class UpdateBisTableConsumer implements RocketMQListener<WfCallbackEntity
                         //回写业务表支持变量，服务端宏变量
                         if (mapUpdateField.get(col).toString().startsWith(ServerMacroService.serverMacroPre)) {
                             bisData.put(col, serverMacroService.getServerMacroByKey(mapUpdateField.get(col).toString()));
+                        } else if (mapUpdateField.get(col).toString().startsWith(WorkFlowMacroService.workFlowMacroPre)) {
+                            //根据流程宏变量回写业务表
+                            if (workFlowMacroEntity == null) {
+                                workFlowMacroEntity = workFlowMacroService.getWorkFlowMacro(entity.getFins_id());
+                            }
+                            bisData.put(col, workFlowMacroEntity.get(mapUpdateField.get(col).toString()));
                         } else {
                             bisData.put(col, mapUpdateField.get(col));
                         }
@@ -116,6 +125,8 @@ public class UpdateBisTableConsumer implements RocketMQListener<WfCallbackEntity
                             bisData.put(_flow_ins_id, entity.getFins_id());
                         }
                     }
+                    //设置流程回写回写标识
+                    bisData.put("__update_handle", "wf_write_back");
                 }
                 dataAccess.update(collection);
                 CompleteCallbackEvent(entity);

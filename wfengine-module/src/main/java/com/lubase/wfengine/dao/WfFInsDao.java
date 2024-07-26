@@ -153,8 +153,32 @@ public class WfFInsDao {
         if (collection.getData().size() == 1) {
             DbEntity entity = collection.getData().get(0);
             entity.setState(EDBEntityState.Modified);
-            String name = userIdList.stream().map(OperatorUserModel::getUserName).collect(Collectors.joining(","));
+            String name = userIdList.stream().map(OperatorUserModel::getUserId).collect(Collectors.joining(","));
             entity.put(WfFInsEntity.COL_PROCESS_USER_ID, name);
+            dataAccess.update(collection);
+        } else {
+            throw new InvokeCommonException(String.format("流程实例:%s不存在", fIns.getId()));
+        }
+    }
+    /**
+     * 转办场景处理流程实例表
+     *
+     * @param fIns
+     * @param newUserId
+     * @param oldUserId
+     */
+    @SneakyThrows
+    public void updateFInsProcessUserForTransfer(WfFInsEntity fIns, String oldUserId, String newUserId) {
+        DbCollection collection = dataAccess.queryById(WfFInsEntity.TABLE_CODE, fIns.getId());
+        if (collection.getData().size() == 1) {
+            DbEntity entity = collection.getData().get(0);
+            entity.setState(EDBEntityState.Modified);
+            String oldProcessUserId = entity.get(WfFInsEntity.COL_PROCESS_USER_ID).toString();
+            if (oldProcessUserId.contains(oldUserId)) {
+                entity.put(WfFInsEntity.COL_PROCESS_USER_ID, oldProcessUserId.replaceAll(oldUserId, newUserId));
+            } else {
+                entity.put(WfFInsEntity.COL_PROCESS_USER_ID, oldProcessUserId + "," + newUserId);
+            }
             dataAccess.update(collection);
         } else {
             throw new InvokeCommonException(String.format("流程实例:%s不存在", fIns.getId()));

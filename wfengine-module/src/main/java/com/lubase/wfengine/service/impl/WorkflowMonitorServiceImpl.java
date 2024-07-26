@@ -159,6 +159,9 @@ public class WorkflowMonitorServiceImpl implements WorkflowMonitorService {
         }
         List<OperatorUserModel> userModelList = new ArrayList<>();
         userModelList.add(userModel);
+
+        String oldUserId = operatorDao.getOInstanceById(oInsId.toString()).getUser_id();
+
         changeDataSourceService.changeDataSourceByTableCode(WfServiceEntity.TABLE_CODE);
         TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
         TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
@@ -167,7 +170,7 @@ public class WorkflowMonitorServiceImpl implements WorkflowMonitorService {
             String memo = String.format("操作人员：%s", operatorUser.getUserName());
             operatorService.transferOIns(fIns, oIns.getId(), memo);
             operatorService.createOIns(userModelList, fIns, tIns);
-            wfFInsDao.updateFInsProcessUser(fIns, userModelList);
+            wfFInsDao.updateFInsProcessUserForTransfer(fIns, oldUserId, toUserId);
             transactionManager.commit(transactionStatus);
 
             try {
@@ -291,5 +294,48 @@ public class WorkflowMonitorServiceImpl implements WorkflowMonitorService {
             throw new WarnCommonException("处理失败，请联系管理员");
         }
         return 1;
+    }
+
+    @SneakyThrows
+    @Override
+    public Integer addUserForTaskOfEveryone(String fInsId, String[] userIdList) {
+        if (StringUtils.isEmpty(fInsId) || userIdList == null || userIdList.length == 0) {
+            throw new WarnCommonException("必填参数不能为空");
+        }
+        WfFInsEntity fIns = wfFInsDao.getFinsById(fInsId);
+        if (fIns == null || !EApprovalStatus.InApproval.getStatus().equals(TypeConverterUtils.object2String(fIns.get("approval_status")))) {
+            throw new WarnCommonException("只有处于审批中的流程才能增加处理人员");
+        }
+        String cTaskId = fIns.getc_task_id();
+        String cTinsId = fIns.getc_tins_id();
+        if (StringUtils.isEmpty(cTaskId) || StringUtils.isEmpty(cTinsId)) {
+            throw new WarnCommonException("未找到当前处理节点");
+        }
+        //判断是否是会签节点
+        WfTaskEntity taskEntity = wfTaskDao.getTaskEntityById(cTaskId);
+        if (!taskEntity.getTask_type().equals(ETaskType.UserTaskForEveryone.getType())) {
+            throw new WarnCommonException("只有会签节点才允许增加人员");
+        }
+        //获取已经存在的处理人
+        List<DbEntity> existOInsList = operatorDao.getOInsCollectionByTInsId(cTinsId).getData();
+
+        //1、获取处理人
+        List<OperatorUserModel> userModelList = new ArrayList<>();
+        for (String userId : userIdList) {
+            if (existOInsList.stream().anyMatch(o -> o.get("user_id").equals(userId))) {
+                continue;
+            }
+            OperatorUserModel operatorUser = userInfoService.getOperatorUserByUserIdOrCode(userId);
+            if (operatorUser == null) {
+                throw new WarnCommonException("未找到处理人");
+            }
+            userModelList.add(operatorUser);
+        }
+        if (userModelList.isEmpty()) {
+            throw new WarnCommonException("会签人已存在");
+        }
+        //2、创建处理人实例
+        WfTInsEntity tIns = wfTaskDao.getTinsById(cTinsId);
+        return operatorService.createOIns(userModelList, fIns, tIns);
     }
 }

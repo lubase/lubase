@@ -111,7 +111,8 @@ public class WFApprovalServiceImpl implements WFApprovalService {
             approvalFormVO.setCustomForm(formVO);
             //非只读并且有表单任意字段编辑权限才允许显示保存按钮
             if (!approvalFormVO.getReadonly()) {
-                approvalFormVO.setAllowSave(formVO.getTableInfo().getFieldList().stream().anyMatch(f -> f.getFieldAccess().equals(EAccessGrade.Write)));
+                approvalFormVO.setAllowSave(true);
+                //approvalFormVO.setAllowSave(formVO.getTableInfo().getFieldList().stream().anyMatch(f -> f.getFieldAccess().equals(EAccessGrade.Write)));
             }
             //获取评分表单
             String ratingFormId = TypeConverterUtils.object2String(currentTaskEntity.get("rating_form"), "");
@@ -206,17 +207,26 @@ public class WFApprovalServiceImpl implements WFApprovalService {
         if (fIns == null) {
             throw new WarnCommonException("fInsId 不存在请联系管理员");
         }
+
+        WfOInsEntity oIns = null;
+        if (!StringUtils.isEmpty(oInsId)) {
+            oIns = operatorDao.getOInstanceById(oInsId);
+        }
         WFApprovalFormVO approvalFormVO = new WFApprovalFormVO();
+        CustomFormVO formVO = null;
+        LoginUser user = appHolderService.getUser();
+        if (oIns == null) {
+            formVO = getCustomFormByFIns(fIns);
+            formVO.getBtns().clear();
+            approvalFormVO.setCustomForm(formVO);
+        } else {
+            approvalFormVO = getApprovalForm(oInsId, user.getId().toString());
+            formVO =approvalFormVO.getCustomForm();
+        }
         approvalFormVO.setReadonly(true);
         approvalFormVO.setAllowSave(false);
-        CustomFormVO formVO = getCustomFormByFIns(fIns);
-        formVO.getBtns().clear();
-        approvalFormVO.setCustomForm(formVO);
-
         // 如果oInsId不为空，则获取流程实例信息
         if (!StringUtils.isEmpty(oInsId)) {
-            WfOInsEntity oIns = operatorDao.getOInstanceById(oInsId);
-            LoginUser user = appHolderService.getUser();
             //需要判断当前用户在查看下已办时可以看到评分表单，管理员在监控时无法看到
             if (user.getId().toString().equals(oIns.getUser_id())) {
                 WfTaskEntity currentTaskEntity = taskDao.getTaskEntityById(oIns.getTask_id());
