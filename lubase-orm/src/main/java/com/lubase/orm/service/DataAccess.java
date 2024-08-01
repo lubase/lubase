@@ -25,6 +25,12 @@ public interface DataAccess {
     DbCollection query(QueryOption queryOption);
 
     /**
+     * 根据查询条件返回数量
+     * @param queryOption
+     * @return
+     */
+    int queryCount(QueryOption queryOption);
+    /**
      * 不分页查询所有数据
      *
      * @param queryOption

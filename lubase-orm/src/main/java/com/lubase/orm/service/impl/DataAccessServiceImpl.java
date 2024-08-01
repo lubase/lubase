@@ -79,6 +79,11 @@ public class DataAccessServiceImpl implements DataAccess {
         return query(queryOption, false);
     }
 
+    @Override
+    public int queryCount(QueryOption queryOption) {
+        return dataAccessQueryCoreService.queryCount(queryOption);
+    }
+
     /**
      * 不分页查询所有数据
      *

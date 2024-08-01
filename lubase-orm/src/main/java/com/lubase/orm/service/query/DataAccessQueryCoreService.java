@@ -15,4 +15,12 @@ public interface DataAccessQueryCoreService {
      */
     DbCollection query(QueryOption queryOption, Boolean onlyQueryFieldList);
 
+    /**
+     * 数据统计
+     *
+     * @param queryOption
+     * @return
+     */
+    int queryCount(QueryOption queryOption);
+
 }

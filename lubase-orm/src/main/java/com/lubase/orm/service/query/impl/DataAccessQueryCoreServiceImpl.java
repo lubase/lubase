@@ -135,6 +135,35 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
     }
 
     @SneakyThrows
+    @Override
+    public int queryCount(QueryOption queryOption) {
+        QueryParamEntity queryParam = new QueryParamEntity();
+        DbTable table = registerColumnInfoService.initTableInfoByTableCode(queryOption.getTableName());
+        if (table == null) {
+            throw new InvokeCommonException(String.format("表%s不存在", queryOption.getTableName()));
+        }
+        List<QueryJoinCondition> queryJoinTables = new ArrayList<>();
+        //lef join 有可能影响count性能,观察下
+        // DbCollection collection = new DbCollection();
+        // String queryFields = generateFields(queryOption, queryJoinTables, collection);
+        //创建表关联条件
+        String joinCondition = generateJoinCondition(queryOption.getTableName(), queryJoinTables);
+        //优化后的切库逻辑：在从缓存获取到表结构后再按需切库
+        changeDataSourceService.changeDataSourceByTableCode(table);
+        //构建where查询条件
+        String where = tableFilterBuilder.parseTableFilterToStr(queryOption.getTableFilter(), table, queryOption.getTableName(), queryParam, queryOption.getRefFields(), queryJoinTables);
+        if (StringUtils.isEmpty(where)) {
+            where = "1=1";
+        }
+        queryParam.setDatabaseType(table.getDatabaseType());
+        //执行查询。因为多参数只能传入一个map对象，所以此处需要将sql语句真实的参数放入一个map
+        queryParam.setWhere(where);
+        queryParam.setJoinCondition(joinCondition);
+
+        return dataAccessMapper.executeQueryCount(queryParam);
+    }
+
+    @SneakyThrows
     private String generateFields(QueryOption queryOption, List<QueryJoinCondition> queryJoinTables, DbCollection collection) {
         DbTable userTable = getUserTableInfo(queryOption, queryJoinTables);
         collection.setTableInfo(userTable);
