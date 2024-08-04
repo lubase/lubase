@@ -18,8 +18,8 @@ spring:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: ENC(Rx8r5NRdYWq12ylxVp2eNY9hGtf1UwSnRuCwyGNuhJdPViVLlYhEoFbYurZiIo09)
-      password: ENC(X1Icz5XRdxAJRitTpG/h4lVYUXcSAx71ficOwzI2b6IKK/u63/bS0yNV2sUZLHre)
-      url: ENC(/6bM/sa/hcmIiVQaavdQCzK8WVtlQSjzt1dys9kdkBmGHP7af7SdOzi61wKk7X/J5PTtUFxjIBKzwPc3okL/HXLxIPUaGk57X21mEQ1TaPRod1AtbVnHg3TFctHp9bwAMOcqL+Yw2DPUOVmil6aILYhZSnL6UNvt8AgaC3ngS8ETMspSAsYuFDDKVyoGdhs4)
+      password: ENC(aS/wGiL8T+TNg02Q80Iwy8VoU8xTPSH0oeF36f0ShbXzDZ0NEpXOkGqSVdqztJLg)
+      url: ENC(PXFvgvLCHCNMfep6DuDGFzMXzurAJx+W2SZ9QnURsb6OHn5/3XlLFjAwQF0AlEz10AdeGbLPPQ0V/l7Brs0FX8MwN4/ov7nRkUI+PYv57DqNLVqu/eFn4/qGGmRidYRt0xZ4ojeQiS+fwSYBVM224V59e5mzVrENgsgNcAiemxHnXTK61paI0kMW2uSg3At+gI0woeLvi/GPKOTHLag0ssxFH4BjJn2FfcLcEWp8tD4=)
       #初始化连接数
       initial-size: 5
       #同时使用中 - 最大的连接数，未归还druid
@@ -73,8 +73,8 @@ spring:
     type: redis
   redis:
     host: ENC(tPvaGrZcku8FYNCJWVEZCGcTOiufmM/vqBgfjgBzOlh7enl3nufMpZl9gtOi5zEs)
-    port: 8085
-    password: ENC(pbGIvhrejoGACxjiOqxtsD6SJ8ztOy/V8ZjQFaM2KHITEWezki1oTdiWQ1WsVeUS)
+    port: 5676
+    password: ENC(hEo3CvO9OKzK0tKcitwarHDoUc0asUZs0R2LFOmYn+oF/14mrXe6bkz6Jm21wa9i)
     timeout: 5000
     database: 10
 #下面这些内容是为了让MyBatis映射
