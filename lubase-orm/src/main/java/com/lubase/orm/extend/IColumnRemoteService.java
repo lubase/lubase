@@ -26,6 +26,7 @@ public interface IColumnRemoteService {
 
     /**
      * 用于弹窗显示类型的搜索列
+     *
      * @return
      */
     default String searchCols() {
@@ -51,9 +52,10 @@ public interface IColumnRemoteService {
      * 根据检索条件数据列表，用于支持弹窗选人
      *
      * @param clientQuery
+     * @param clientMacroStr 客户端宏变量字符串
      * @return
      */
-    default DbCollection getDataByFilter(QueryOption clientQuery) {
+    default DbCollection getDataByFilter(QueryOption clientQuery, String clientMacroStr) {
         return getAllData();
     }
 

@@ -246,7 +246,7 @@ public class RenderFormServiceImpl implements RenderFormService {
         if (service == null) {
             throw new WarnCommonException("未找到服务列" + field.getServiceName());
         }
-        columnLookupInfoVO.setDbCollection(service.getDataByFilter(clientQuery));
+        columnLookupInfoVO.setDbCollection(service.getDataByFilter(clientQuery, columnServiceParam.getClientMacro()));
         columnLookupInfoVO.setTableKey(service.tableKey());
         columnLookupInfoVO.setDisplayCol(service.displayCol());
         columnLookupInfoVO.setSearchCols(service.searchCols());
