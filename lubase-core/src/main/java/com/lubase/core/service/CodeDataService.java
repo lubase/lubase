@@ -26,6 +26,8 @@ public interface CodeDataService {
      */
     List<CodeDataTypeVO> getCodeListByAppId(Long appId);
 
+    List<CodeDataTypeVO> getAllAppCodeList();
+
     /**
      * 根据typeid 获取代码表集合
      *

@@ -81,13 +81,23 @@ public class CodeDataServiceImpl implements CodeDataService {
         return list;
     }
 
+    @Cacheable(value = CacheRightConstant.CACHE_NAME_CODE_DATA, key = CacheRightConstant.PRE_CODE + "+#appId")
     @Override
     public List<CodeDataTypeVO> getCodeListByAppId(Long appId) {
         if (StringUtils.isEmpty(appId)) {
             return new ArrayList<>();
         }
-        List<DbEntity> dmCodeList = personalizationDataService.getAllCode(appId.toString());
-        return processCodeList(dmCodeList);
+        QueryOption queryOption = new QueryOption("dm_code");
+        queryOption.setTableFilter(new TableFilter("code_type_id.app_id", appId.toString()));
+        DbCollection collection = dataAccess.queryAllData(queryOption);
+        return processCodeList(collection.getData());
+    }
+
+    @Override
+    public List<CodeDataTypeVO> getAllAppCodeList() {
+        QueryOption queryOption = new QueryOption("dm_code");
+        DbCollection collection = dataAccess.queryAllData(queryOption);
+        return processCodeList(collection.getData());
     }
 
     @Cacheable(value = CacheRightConstant.CACHE_NAME_USER_RIGHT, key = CacheRightConstant.PRE_CODE_INFO + "+#typeId")

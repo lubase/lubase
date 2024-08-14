@@ -129,9 +129,6 @@ public class IndexController {
      */
     @RequestMapping(value = "/getCodeData", method = RequestMethod.GET)
     public ResponseData<Object> getCodeData(Long appId) {
-        if (appId == null || appId == 0) {
-            return ResponseData.parameterNotFound("appId");
-        }
         return ResponseData.success(codeDataService.getCodeListByAppId(appId));
     }
 }
