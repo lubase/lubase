@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.indexOfAnyBut;
@@ -79,9 +80,8 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
         String jarPath = "";
 
         if (StringUtils.isEmpty(extendPath)) {
-            jarPath =System.getProperty("user.dir");
+            jarPath = Path.of(System.getProperty("user.dir"), "extend").toString();
             // 路径拼接
-            jarPath = jarPath + File.separator + "extend";
         } else {
             jarPath = extendPath;
         }
