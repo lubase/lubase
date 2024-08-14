@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ExtendFileService {
+    String getExtendPath();
+
     List<ExtendFileModel> getExtendFileListFromDb();
 
     List<ExtendFileModel> getExtendFileListFromDirectory(String path);

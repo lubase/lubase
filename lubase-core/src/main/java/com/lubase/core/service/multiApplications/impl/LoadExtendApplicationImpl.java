@@ -14,11 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.loader.jar.JarFile;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -34,11 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.*;
 
-import static org.apache.commons.lang3.StringUtils.indexOfAnyBut;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -48,11 +43,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Slf4j
 public class LoadExtendApplicationImpl implements ILoadExtendApplication, ApplicationContextAware {
 
-    /**
-     * 扩展包路径，如果配置后则优先从此路径获取数据
-     */
-    @Value("${lubase.extend-path:}")
-    String extendPath;
     @Autowired
     ExtendFileService extendFileService;
     /**
@@ -77,17 +67,7 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
      */
     @Override
     public AppInfoImpl autoLoad() throws IOException {
-        String jarPath = "";
-
-        if (StringUtils.isEmpty(extendPath)) {
-            jarPath = Path.of(System.getProperty("user.dir"), "extend").toString();
-            // 路径拼接
-        } else {
-            jarPath = extendPath;
-        }
-
-        log.info("extendPath is " + jarPath);
-        return autoLoadFromDirectory(jarPath);
+        return autoLoadFromDirectory(extendFileService.getExtendPath());
     }
 
     @Override

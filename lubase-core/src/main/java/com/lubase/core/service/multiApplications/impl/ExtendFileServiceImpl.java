@@ -4,29 +4,46 @@ import com.lubase.core.service.multiApplications.ExtendFileService;
 import com.lubase.core.service.multiApplications.model.ExtendFileModel;
 import com.lubase.model.DbEntity;
 import com.lubase.orm.QueryOption;
-import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
-import com.lubase.orm.util.TableFilterWrapper;
-import com.lubase.orm.util.TypeConverterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ExtendFileServiceImpl implements ExtendFileService {
     @Autowired
     DataAccess dataAccess;
 
+    /**
+     * 扩展包路径，如果配置后则优先从此路径获取数据
+     */
+    @Value("${lubase.extend-path:}")
+    String extendPath;
+
     List<ExtendFileModel> loadFileList = null;
 
     Map<String, List<ExtendFileModel>> mapExtendFileList = new HashMap<>();
+
+    @Override
+    public String getExtendPath() {
+        String jarPath = "";
+
+        if (StringUtils.isEmpty(extendPath)) {
+            jarPath = Path.of(System.getProperty("user.dir"), "extend").toString();
+            // 路径拼接
+        } else {
+            jarPath = extendPath;
+        }
+        return jarPath;
+    }
 
     @Override
     public List<ExtendFileModel> getExtendFileListFromDb() {
