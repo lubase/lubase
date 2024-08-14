@@ -103,9 +103,9 @@ lubase:
   #主服务地址，用于程序中调用启动流程功能
   main-api-server: http://101.43.198.190:9527
   #jwt密钥
-  jwt-secret:
+  jwt-secret: aabbccddeeff
   # 如果配置此路径，则从此路径获取扩展jar包
-  extend-path: D:\coding\lubase\lubase-sso\target
+  extend-path:
   file-upload:
     # default: localFileStorageService
     storage-type: localFileStorageService

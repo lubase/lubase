@@ -77,7 +77,7 @@ public class UserInfoByCodeServiceImpl implements IColumnRemoteService {
     }
 
     @Override
-    public DbCollection getDataByFilter(QueryOption clientQuery) {
-        return userColumnService.getDataByFilter(clientQuery);
+    public DbCollection getDataByFilter(QueryOption clientQuery,String clientMacroStr) {
+        return userColumnService.getDataByFilter(clientQuery,"");
     }
 }

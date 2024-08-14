@@ -73,11 +73,11 @@ public class UserColumnServiceImpl implements IColumnRemoteService {
 
     @Override
     public DbCollection getAllData() {
-        return getDataByFilter(null);
+        return getDataByFilter(null, "");
     }
 
     @Override
-    public DbCollection getDataByFilter(QueryOption clientQuery) {
+    public DbCollection getDataByFilter(QueryOption clientQuery, String clientMacroStr) {
         QueryOption queryOption = new QueryOption("sa_account");
         queryOption.setFixField("user_name,user_code");
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();

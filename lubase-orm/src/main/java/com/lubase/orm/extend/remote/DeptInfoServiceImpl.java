@@ -64,11 +64,11 @@ public class DeptInfoServiceImpl implements IColumnRemoteService {
 
     @Override
     public DbCollection getAllData() {
-        return getDataByFilter(null);
+        return getDataByFilter(null,"");
     }
 
     @Override
-    public DbCollection getDataByFilter(QueryOption clientQuery) {
+    public DbCollection getDataByFilter(QueryOption clientQuery,String clientMacroStr) {
         QueryOption queryOption = new QueryOption("sa_organization");
         queryOption.setFixField("id,org_name");
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();

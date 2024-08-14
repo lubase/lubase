@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.loader.jar.JarFile;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -33,8 +34,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
 import java.util.*;
 
+import static org.apache.commons.lang3.StringUtils.indexOfAnyBut;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -73,7 +76,18 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
      */
     @Override
     public AppInfoImpl autoLoad() throws IOException {
-        return autoLoadFromDirectory(extendPath);
+        String jarPath = "";
+
+        if (StringUtils.isEmpty(extendPath)) {
+            jarPath =System.getProperty("user.dir");
+            // 路径拼接
+            jarPath = jarPath + File.separator + "extend";
+        } else {
+            jarPath = extendPath;
+        }
+
+        log.info("extendPath is " + jarPath);
+        return autoLoadFromDirectory(jarPath);
     }
 
     @Override
