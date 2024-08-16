@@ -60,7 +60,7 @@ public class GenerateUpdateSql {
                 }
             } else if (col.getEleType().equals(EColumnType.Date.getStringValue())) {
                 String Format = "yyyy-MM-dd HH:mm:ss";
-                if (col.getDataFormat() != null) {
+                if (!StringUtils.isEmpty(col.getDataFormat())) {
                     Format = col.getDataFormat();
                 }
                 colValue = TypeConverterUtils.object2LocalDateTime2String(colValue, Format);
@@ -115,7 +115,7 @@ public class GenerateUpdateSql {
             Object colValue = entity.get(col.getCode());
             if (col.getEleType().equals(EColumnType.Date.getIndex().toString())) {
                 String Format = "yyyy-MM-dd HH:mm:ss";
-                if (col.getDataFormat() != null) {
+                if (!StringUtils.isEmpty(col.getDataFormat())) {
                     Format = col.getDataFormat();
                 }
                 String dtvalue = TypeConverterUtils.object2LocalDateTime2String(colValue, Format);

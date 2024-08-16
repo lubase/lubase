@@ -86,10 +86,10 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 lubase:
-  appoint-database: wfengine
+  appoint-database:
   #RestTemplate 服务是否启用日志记录
   call-api-log: 1
   cache-server: http://101.43.198.190:9526
 logging:
   level:
-    root: debug
+    root: info
