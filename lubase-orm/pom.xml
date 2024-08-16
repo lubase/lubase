@@ -3,11 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>lubase-orm</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <name>lubase-orm</name>
     <description>lubase orm</description>
     <packaging>jar</packaging>
-
+    <url>https://lubase.cn</url>
+    <scm>
+        <connection>https://gitee.com/lubase/lu-base.git</connection>
+        <developerConnection>scm:git:ssh://git@gitee.com:lubase/lu-base.git
+        </developerConnection>
+        <url>https://gitee.com/lubase/lu-base</url>
+    </scm>
     <parent>
         <artifactId>lubase</artifactId>
         <groupId>io.github.lubase</groupId>

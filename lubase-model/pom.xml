@@ -7,7 +7,13 @@
     <name>lubase-model</name>
     <description>base model</description>
     <packaging>jar</packaging>
-
+    <url>https://lubase.cn</url>
+    <scm>
+        <connection>https://gitee.com/lubase/lu-base.git</connection>
+        <developerConnection>scm:git:ssh://git@gitee.com:lubase/lu-base.git
+        </developerConnection>
+        <url>https://gitee.com/lubase/lu-base</url>
+    </scm>
     <parent>
         <artifactId>lubase</artifactId>
         <groupId>io.github.lubase</groupId>
