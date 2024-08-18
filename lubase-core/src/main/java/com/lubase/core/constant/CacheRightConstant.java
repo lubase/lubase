@@ -22,6 +22,11 @@ public class CacheRightConstant {
      */
     public static final String CACHE_NAME_CODE_DATA = "codeData";
 
+    /**
+     * 码表
+     */
+    public static final String CACHE_NAME_CODE_ORG_DATA = "codeDataOri";
+
 
     /****************/
     public static final String PRE_PAGE_ADMIN = "'page:admin:671085014334574592'";
