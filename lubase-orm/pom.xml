@@ -5,7 +5,7 @@
     <artifactId>lubase-orm</artifactId>
     <version>1.2.1</version>
     <name>lubase-orm</name>
-    <description>lubase orm</description>
+    <description>lubase orm module</description>
     <packaging>jar</packaging>
     <url>https://lubase.cn</url>
     <scm>
