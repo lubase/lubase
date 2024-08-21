@@ -69,6 +69,7 @@ public class CacheRightConstant {
      * 码表
      */
     public static final String PRE_CODE = "'code:'";
+    public static final String PRE_CODE_ORI = "'codeori:'";
     public static final String PRE_CODE_INFO = "'code:info:'";
 
     /**

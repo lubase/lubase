@@ -104,7 +104,7 @@ public class PersonalizationDataServiceImpl implements PersonalizationDataServic
         return getDisplaySetting(pageId, accountId);
     }
 
-    @Cacheable(value = CacheRightConstant.CACHE_NAME_CODE_ORG_DATA, key = CacheRightConstant.PRE_CODE + "+#appId")
+    @Cacheable(value = CacheRightConstant.CACHE_NAME_CODE_ORG_DATA, key = CacheRightConstant.PRE_CODE_ORI + "+#appId")
     public List<DbEntity> getAllCode(String appId) {
         if (StringUtils.isEmpty(appId)) {
             return new ArrayList<>();
