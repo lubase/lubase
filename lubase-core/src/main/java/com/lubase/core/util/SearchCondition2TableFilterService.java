@@ -1,10 +1,13 @@
 package com.lubase.core.util;
 
+import com.alibaba.fastjson.JSON;
 import com.lubase.orm.TableFilter;
+import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.operate.EOperateMode;
 import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.core.model.ESearchConditionType;
 import com.lubase.core.model.SearchCondition;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -13,8 +16,21 @@ import java.util.List;
 @Component
 public class SearchCondition2TableFilterService {
 
+    @SneakyThrows
+    public TableFilter convertToTableFilter(String searchParamStr) {
+        if (StringUtils.isEmpty(searchParamStr)) {
+            return null;
+        }
+        try {
+            List<SearchCondition> list = JSON.parseArray(searchParamStr, SearchCondition.class);
+            return convertToTableFilter(list);
+        } catch (Exception e) {
+            throw new WarnCommonException("convertToTableFilter失败：" + searchParamStr);
+        }
+    }
+
     public TableFilter convertToTableFilter(List<SearchCondition> list) {
-        if (list.size() == 0) {
+        if (list == null || list.isEmpty()) {
             return null;
         }
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();

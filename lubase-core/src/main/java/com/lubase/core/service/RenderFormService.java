@@ -2,9 +2,15 @@ package com.lubase.core.service;
 
 import com.lubase.core.model.ColumnRefPageVO;
 import com.lubase.core.model.CustomFormVO;
+import com.lubase.core.model.customForm.ChildTableDataVO;
 import com.lubase.core.model.customForm.ColumnLookupInfoVO;
 import com.lubase.core.model.customForm.ColumnLookupParamModel;
 import com.lubase.core.util.ClientMacro;
+import com.lubase.orm.exception.ParameterNotFoundException;
+import lombok.SneakyThrows;
+import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
 
 /**
  * <p>
@@ -63,4 +69,35 @@ public interface RenderFormService {
      * @return
      */
     Boolean checkFieldUniqueValue(String columnId, String val, String currentDataId);
+
+    /**
+     * 获取表单 子表数据
+     *
+     * @param mapParam
+     * @return
+     */
+    ChildTableDataVO getFormChildTableData(HashMap<String, String> mapParam);
+
+    /**
+     * 获取表单 子表所有数据
+     *
+     * @param mapParam
+     * @return
+     */
+    ChildTableDataVO getFormChildAllTableData(HashMap<String, String> mapParam);
+
+    /**
+     * 检查参数是否存在，如果不存在会抛出ParameterNotFoundException
+     *
+     * @param key
+     * @param mapParam
+     */
+    @SneakyThrows
+    default String checkAndGetParam(String key, HashMap<String, String> mapParam) {
+        if (mapParam.containsKey(key) && !StringUtils.isEmpty(mapParam.get(key))) {
+            return mapParam.get(key);
+        } else {
+            throw new ParameterNotFoundException(key);
+        }
+    }
 }
