@@ -195,7 +195,7 @@ public class RenderFormServiceImpl implements RenderFormService {
             if (!StringUtils.isEmpty(clientQuery.getSortField())) {
                 serverQuery.setSortField(clientQuery.getSortField());
             } else {
-                String sortField = String.format("%s.id ASC", serverQuery.getTableName());
+                String sortField = String.format("%s.id desc", serverQuery.getTableName());
                 serverQuery.setSortField(sortField);
             }
         }
