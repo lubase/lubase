@@ -157,7 +157,7 @@ public class FileManageServiceImpl implements FileManageService, ExtendAppLoadCo
     public String getUniqueName(String originalFileName) {
         String newFileName = UUID.randomUUID().toString();
         if (originalFileName.contains(".")) {
-            newFileName = newFileName + originalFileName.substring(originalFileName.indexOf("."));
+            newFileName = newFileName + originalFileName.substring(originalFileName.lastIndexOf("."));
         }
         return newFileName;
     }
