@@ -51,7 +51,7 @@ public class PageDataServiceTest {
         String pageId = "746696222764437504"; // 040212 分组报表测试
         String clientParams = "{}";
         ClientMacro clientMacro = ClientMacro.init("");
-        DbCollection coll = renderTableService.getStatisticsInfo(pageId, clientParams, clientMacro, "5", "2");
+        DbCollection coll = renderTableService.getStatisticsInfo(pageId, clientParams,"{}", clientMacro, "5", "2");
         System.out.println("没有条件时记录数：" + coll.getTotalCount());
         System.out.println("数据明细：：" + coll);
     }

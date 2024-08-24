@@ -123,7 +123,7 @@ public class PageDataController {
 
     @RequestMapping(value = "/getStatisticInfoData", method = RequestMethod.POST)
     public ResponseData<DbCollection> getStatisticInfoData(@RequestBody Map<String, String> map) {
-        String pageId = "", queryParam = "", rowValue = "", colValue = "";
+        String pageId = "", searchParamStr = "", queryParamsStr = "", rowValue = "", colValue = "";
         ClientMacro clientMacro = null;
         if (map.containsKey("pageId")) {
             pageId = map.get("pageId");
@@ -131,8 +131,11 @@ public class PageDataController {
         if (StringUtils.isEmpty(pageId)) {
             return ResponseData.parameterNotFound("pageId");
         }
+        if (map.containsKey("searchParam")) {
+            searchParamStr = map.get("searchParam");
+        }
         if (map.containsKey("queryParam")) {
-            queryParam = map.get("queryParam");
+            queryParamsStr = map.get("queryParam");
         }
         if (map.containsKey("clientMacro")) {
             clientMacro = ClientMacro.init(map.get("clientMacro"));
@@ -145,13 +148,13 @@ public class PageDataController {
         if (map.containsKey("colValue")) {
             colValue = map.get("colValue");
         }
-        return ResponseData.success(renderTableService.getStatisticsInfo(pageId, queryParam, clientMacro, rowValue, colValue));
+        return ResponseData.success(renderTableService.getStatisticsInfo(pageId, searchParamStr, queryParamsStr, clientMacro, rowValue, colValue));
     }
 
     @SneakyThrows
     @RequestMapping(value = "/exportStatisticInfoData", method = RequestMethod.POST)
     public void exportStatisticInfoData(@RequestBody Map<String, String> map, HttpServletResponse response) {
-        String pageId = "", queryParam = "", rowValue = "", colValue = "";
+        String pageId = "", searchParam = "", rowValue = "", colValue = "";
         ClientMacro clientMacro = null;
         if (map.containsKey("pageId")) {
             pageId = map.get("pageId");
@@ -159,8 +162,8 @@ public class PageDataController {
         if (StringUtils.isEmpty(pageId)) {
             throw new InvokeCommonException("pageId  not found");
         }
-        if (map.containsKey("queryParam")) {
-            queryParam = map.get("queryParam");
+        if (map.containsKey("searchParam")) {
+            searchParam = map.get("searchParam");
         }
         if (map.containsKey("clientMacro")) {
             clientMacro = ClientMacro.init(map.get("clientMacro"));
@@ -173,7 +176,7 @@ public class PageDataController {
         if (map.containsKey("colValue")) {
             colValue = map.get("colValue");
         }
-        DbCollection collection = renderTableService.getStatisticsInfoNoPaging(pageId, queryParam, clientMacro, rowValue, colValue);
+        DbCollection collection = renderTableService.getStatisticsInfoNoPaging(pageId, searchParam, clientMacro, rowValue, colValue);
         String name = collection.getTableInfo().getName();
         exportService.ExportByQuery(collection, response, name);
     }

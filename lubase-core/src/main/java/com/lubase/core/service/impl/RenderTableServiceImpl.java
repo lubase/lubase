@@ -16,6 +16,7 @@ import com.lubase.model.DbField;
 import com.lubase.model.DbTable;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
+import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.statistics.StatisticsOption;
 import com.lubase.orm.operate.EOperateMode;
@@ -24,6 +25,7 @@ import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.service.query.StatisticsCoreService;
 import com.lubase.orm.util.ServerMacroService;
 import com.lubase.orm.util.TableFilterWrapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -227,19 +229,17 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
 
 
     @Override
-    public DbCollection getStatisticsInfo(String pageId, String queryParamsStr, ClientMacro clientMacro, String
-            rowValue, String colValue) {
-        return getStatisticsInfo(pageId, queryParamsStr, clientMacro, rowValue, colValue, false);
+    public DbCollection getStatisticsInfo(String pageId, String searchParamsStr, String queryParamsStr, ClientMacro clientMacro, String rowValue, String colValue) {
+        return getStatisticsInfo(pageId, searchParamsStr, queryParamsStr, clientMacro, rowValue, colValue, false);
     }
 
     @Override
-    public DbCollection getStatisticsInfoNoPaging(String pageId, String queryParamsStr, ClientMacro
-            clientMacro, String rowValue, String colValue) {
-        return getStatisticsInfo(pageId, queryParamsStr, clientMacro, rowValue, colValue, true);
+    public DbCollection getStatisticsInfoNoPaging(String pageId, String searchParam, ClientMacro clientMacro, String rowValue, String colValue) {
+        return getStatisticsInfo(pageId, searchParam, null, clientMacro, rowValue, colValue, true);
     }
 
-    private DbCollection getStatisticsInfo(String pageId, String queryParamsStr, ClientMacro clientMacro, String
-            rowValue, String colValue, Boolean allData) {
+    @SneakyThrows
+    private DbCollection getStatisticsInfo(String pageId, String searchParamStr, String queryParamsStr, ClientMacro clientMacro, String rowValue, String colValue, Boolean allData) {
         if (StringUtils.isEmpty(pageId)) {
             return null;
         }
@@ -249,16 +249,37 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
             return null;
         }
         QueryOption serverQuery = JSON.parseObject(pageEntity.getGrid_query(), QueryOption.class);
-        QueryParamDTO clientQuery = JSON.parseObject(queryParamsStr, QueryParamDTO.class);
+        //1、 附加搜索区域条件
+        if (!StringUtils.isEmpty(searchParamStr)) {
+            List<SearchCondition> list = JSON.parseArray(searchParamStr, SearchCondition.class);
+            TableFilter searchFilter = searchCondition2TableFilterService.convertToTableFilter(list);
+            if (searchFilter != null) {
+                if (serverQuery.getTableFilter().getChildFilters() == null) {
+                    serverQuery.getTableFilter().setChildFilters(new ArrayList<>());
+                }
+                serverQuery.getTableFilter().getChildFilters().add(searchFilter);
+            }
+        }
+        //2、附件行列条件
         StatisticsOption statisticsOption = JSON.parseObject(pageEntity.getStatistics_setting(), StatisticsOption.class);
-        DbCollection coll = null;
-        //mergeFilterQuery(serverQuery, clientQuery, statisticsOption, rowValue, colValue);
-        mergeClientQuery(serverQuery, clientQuery);
+        mergeFilterQuery(serverQuery, statisticsOption, rowValue, colValue);
+        //3、附件翻页信息
+        if (!StringUtils.isEmpty(queryParamsStr)) {
+            try {
+                QueryParamDTO clientQuery = JSON.parseObject(queryParamsStr, QueryParamDTO.class);
+                mergeClientQuery(serverQuery, clientQuery);
+            } catch (Exception e) {
+                throw new WarnCommonException(e.getMessage());
+            }
+        }
+
         if (StringUtils.isEmpty(serverQuery.getFixField())) {
             serverQuery.setFixField("*");
         }
         replaceClientMacro(serverQuery.getTableFilter(), clientMacro);
         serverQuery.setEnableColAccessControl(true);
+
+        DbCollection coll = null;
         if (allData) {
             coll = dataAccess.queryAllData(serverQuery);
         } else {
@@ -272,11 +293,8 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
         return coll;
     }
 
-    private void mergeFilterQuery(QueryOption serverQuery, QueryOption clientQuery, StatisticsOption
-            statisticsOption, String rowValue, String colValue) {
-        if (clientQuery == null) {
-            clientQuery = new QueryOption();
-        }
+    private void mergeFilterQuery(QueryOption serverQuery, StatisticsOption statisticsOption, String rowValue, String colValue) {
+
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();
         DbTable table = dataAccess.initTableInfoByTableCode(serverQuery.getTableName());
         if (!StringUtils.isEmpty(rowValue)) {
@@ -287,10 +305,7 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
             DbField columnField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getColumnField())).findFirst().orElse(null);
             filterWrapper.eq(columnField.getCode(), colValue);
         }
-        if (clientQuery.getTableFilter() != null) {
-            filterWrapper.addFilter(clientQuery.getTableFilter());
-        }
-        clientQuery.setTableFilter(filterWrapper.build());
+        serverQuery.getTableFilter().getChildFilters().add(filterWrapper.build());
     }
 
 

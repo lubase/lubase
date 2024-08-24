@@ -23,23 +23,24 @@ public interface RenderTableService {
      * 标准统计获取详情数据
      *
      * @param pageId
-     * @param queryParamsStr
+     * @param searchParamStr
+     * @param queryParamStr
      * @param clientMacro
      * @param rowValue
      * @param colValue
      * @return
      */
-    DbCollection getStatisticsInfo(String pageId, String queryParamsStr, ClientMacro clientMacro, String rowValue, String colValue);
+    DbCollection getStatisticsInfo(String pageId, String searchParamStr,String queryParamStr, ClientMacro clientMacro, String rowValue, String colValue);
 
     /**
      * 不分页获取全部明细数据
      *
      * @param pageId
-     * @param queryParamsStr
+     * @param searchParam
      * @param clientMacro
      * @param rowValue
      * @param colValue
      * @return
      */
-    DbCollection getStatisticsInfoNoPaging(String pageId, String queryParamsStr, ClientMacro clientMacro, String rowValue, String colValue);
+    DbCollection getStatisticsInfoNoPaging(String pageId, String searchParam, ClientMacro clientMacro, String rowValue, String colValue);
 }
