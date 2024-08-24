@@ -231,6 +231,24 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
                 }
                 boolean isMainTable = colInfo.getTableId().equals(userTable.getId());
                 String colLookupDisplay = (isMainTable ? "" : (colInfo.getTableCode() + CommonConst.REF_FIELD_SEPARATOR)) + colInfo.getCode() + "NAME";
+                if (isMainTable) {
+                    DbField colInfo2 = getDisplayFieldInfo(colLookupMode.getTableCode(), colLookupMode.getDisplayCol());
+                    String tableAlias2 = tableAlias + "2";
+                    if (colInfo2 != null && colInfo2.getLookup() != null) {
+                        LookupMode colLookupMode2 = LookupMode.FromJsonStr(colInfo2.getLookup());
+                        if (colInfo2.getEleType().equals("7") && colLookupMode2 != null && !StringUtils.isEmpty(colLookupMode2.getTableCode()) && !StringUtils.isEmpty(colLookupMode2.getTableKey())) {
+                            String joinTableKey2 = getSqlObj(userTable.getDatabaseType(), colLookupMode2.getTableCode()) + " AS " + getSqlObj(userTable.getDatabaseType(), tableAlias2);
+                            QueryJoinCondition queryJoinCondition = new QueryJoinCondition();
+                            queryJoinCondition.setTableAlias(joinTableKey2);
+                            queryJoinCondition.setCondition(String.format("%s.%s = %s.%s", getSqlObj(userTable.getDatabaseType(), tableAlias), getSqlObj(userTable.getDatabaseType(), colLookupMode.getDisplayCol()),
+                                    getSqlObj(userTable.getDatabaseType(), tableAlias2), getSqlObj(userTable.getDatabaseType(), colLookupMode2.getTableKey())));
+                            queryJoinTables.add(queryJoinCondition);
+                            String str = getSqlObj(userTable.getDatabaseType(), tableAlias2) + "." + getSqlObj(userTable.getDatabaseType(), colLookupMode2.getDisplayCol()) + " AS " + getSqlObj(userTable.getDatabaseType(), colLookupDisplay);
+                            queryFields.put(colInfo.getId(), String.format("%s,%s", queryFields.get(colInfo.getId()), str));
+                            continue;
+                        }
+                    }
+                }
                 queryFields.put(colInfo.getId(), String.format("%s,%s", queryFields.get(colInfo.getId()), getLookupDisplayField(userTable.getDatabaseType(), colInfo, colLookupMode, isMainTable, colLookupDisplay)));
             }
         }
@@ -247,6 +265,16 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
             sbCols.append("," + item);
         }
         return sbCols.substring(1);
+    }
+
+    private DbField getDisplayFieldInfo(String lookupTable, String lookupField) {
+        DbTable table = registerColumnInfoService.initTableInfoByTableCode(lookupTable);
+        for (DbField field : table.getFieldList()) {
+            if (field.getCode().equals(lookupField)) {
+                return field;
+            }
+        }
+        return null;
     }
 
     @SneakyThrows
