@@ -215,6 +215,13 @@ public class RenderFormServiceImpl implements RenderFormService {
         }
         columnLookupInfoVO.setTableKey(lookupMode.getTableKey());
         columnLookupInfoVO.setDisplayCol(lookupMode.getDisplayCol());
+        // 如果关联显示列是关联数据表或者关联服务列则把显示值替换为关联值
+        String refDisplayCol = lookupMode.getDisplayCol() + "NAME";
+        for (DbEntity entity : columnLookupInfoVO.getDbCollection().getData()) {
+            if (entity.getRefData() != null && entity.getRefData().containsKey(refDisplayCol)) {
+                entity.put(lookupMode.getDisplayCol(), entity.getRefData().get(refDisplayCol));
+            }
+        }
         return columnLookupInfoVO;
     }
 
