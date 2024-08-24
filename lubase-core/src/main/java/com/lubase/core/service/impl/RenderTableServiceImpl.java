@@ -82,6 +82,15 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
 
     @Override
     public DbCollection getGridDataByPageId(String pageId, ClientMacro clientMacro, String searchParamStr, String queryParamsStr, String fullTextSearch) {
+        return getGridDataByPageId(pageId, clientMacro, searchParamStr, false, queryParamsStr, fullTextSearch);
+    }
+
+    @Override
+    public DbCollection getGridAllDataByPageId(String pageId, ClientMacro clientMacro, String searchParamStr, String queryParamsStr, String fullTextSearch) {
+        return getGridDataByPageId(pageId, clientMacro, searchParamStr, true, queryParamsStr, fullTextSearch);
+    }
+
+    private DbCollection getGridDataByPageId(String pageId, ClientMacro clientMacro, String searchParamStr, Boolean isAllData, String queryParamsStr, String fullTextSearch) {
         if (StringUtils.isEmpty(pageId)) {
             return null;
         }
@@ -92,6 +101,9 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
         }
         List<PageDataExtendService> extendServices = gridDataExtendService.getCurrentExtendService(pageId);
         QueryOption serverQuery = JSON.parseObject(pageEntity.getGrid_query(), QueryOption.class);
+        if (isAllData) {
+            serverQuery.setQueryMode(2);
+        }
         QueryParamDTO clientQuery = JSON.parseObject(queryParamsStr, QueryParamDTO.class);
 
         DbCollection coll = null;

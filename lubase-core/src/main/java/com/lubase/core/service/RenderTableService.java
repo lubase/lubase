@@ -17,6 +17,18 @@ public interface RenderTableService {
      */
     DbCollection getGridDataByPageId(String pageId, ClientMacro clientMacro, String searchParam, String queryParam, String fullTextSearch);
 
+    /**
+     * 不分页获取全部明细数据
+     *
+     * @param pageId         页面id
+     * @param clientMacro    客户端宏变量
+     * @param searchParam    搜索区域条件
+     * @param queryParam     分页参数
+     * @param fullTextSearch 模糊搜索参数
+     * @return
+     */
+    DbCollection getGridAllDataByPageId(String pageId, ClientMacro clientMacro, String searchParam, String queryParam, String fullTextSearch);
+
     String getIdListByFullTextSearch(String pageId, String searchStr);
 
     /**
@@ -30,7 +42,7 @@ public interface RenderTableService {
      * @param colValue
      * @return
      */
-    DbCollection getStatisticsInfo(String pageId, String searchParamStr,String queryParamStr, ClientMacro clientMacro, String rowValue, String colValue);
+    DbCollection getStatisticsInfo(String pageId, String searchParamStr, String queryParamStr, ClientMacro clientMacro, String rowValue, String colValue);
 
     /**
      * 不分页获取全部明细数据

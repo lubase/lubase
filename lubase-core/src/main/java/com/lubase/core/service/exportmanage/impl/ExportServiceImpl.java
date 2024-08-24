@@ -8,10 +8,9 @@ import com.alibaba.fastjson.JSON;
 import com.lubase.core.service.exportmanage.ExportService;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
-import com.lubase.orm.QueryOption;
+import com.lubase.model.EAccessGrade;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
-import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.orm.util.TypeConverterUtils;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,51 +32,43 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public void ExportByQuery(DbCollection collection, HttpServletResponse response, String name) throws IOException {
+        if (StringUtils.isEmpty(name)) {
+            name = collection.getTableInfo().getName();
+        }
+        //excel文件名
+        String fileName = name + "-" + LocalDateTime.now().toString().substring(0, 10);
+        // 这里URLEncoder.encode可以防止中文乱码
+        fileName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
+        //sheetName
+        String sheetName = name + "-" + LocalDateTime.now().toString().substring(0, 10);
+
         //表头
         List<List<String>> headList = new ArrayList<List<String>>();
-        List<String> codes = new ArrayList<>();
-        HashMap<String, String> codeType = new HashMap<String, String>();
-        HashMap<String, DbCollection> codeList = new HashMap<String, DbCollection>();
+        List<String> columnList = new ArrayList<>();
         for (DbField filed : collection.tableInfo.getFieldList()) {
-            //跳过主键
-            if (filed.getName().equals("主键")) {
+            //不可见字段不导出
+            if (filed.getAccessRight() == EAccessGrade.Invisible.getIndex()) {
                 continue;
-            } else if (filed.getCodeTypeId() != null && !StringUtils.isEmpty(filed.getCodeTypeId())) {
-                //获取码表信息
-                DbCollection t = getCodeType(filed.getCodeTypeId());
-                codeList.put(filed.getCode(), t);
             }
-            List<String> tmp = new ArrayList(1);
+            columnList.add(filed.getCode());
+
+            List<String> tmp = new ArrayList<>(1);
             tmp.add(filed.getName());
-            codes.add(filed.getCode());
             headList.add(tmp);
         }
+        // 获取数据
         List<List<String>> contentList = new ArrayList<List<String>>();
-
         List<DbEntity> dataList = collection.getData();
-        for (DbEntity DbEntity : dataList) {
-            List<String> tmp = new ArrayList();
-            for (String code : codes) {
-                if (DbEntity.get(code) != null && !(DbEntity.get(code).equals(""))) {
-                    //获取码表信息
-                    DbCollection t = codeList.get(code);
-                    int a = 0;
-                    if (t != null) {
-                        for (DbEntity dmCode : t.getData()) {
-                            if (dmCode.get("code_value").toString().equals(DbEntity.get(code))) {
-                                tmp.add(dmCode.get("code_name").toString());
-                                a++;
-                            }
-                        }
-                    }
-                    //如果码值没有
-                    if (0 == a) {
-                        String rowValue = TypeConverterUtils.object2String(DbEntity.getRefData().get(code + "NAME"));
-                        if (rowValue == null) {
-                            tmp.add(DbEntity.get(code).toString());
-                        } else {
-                            tmp.add(rowValue);
-                        }
+        for (DbEntity dbEntity : dataList) {
+            List<String> tmp = new ArrayList<>();
+            for (String code : columnList) {
+                if (dbEntity.get(code) != null && !(dbEntity.get(code).equals(""))) {
+                    // 获取关联字段的显示名称
+                    String displayName = TypeConverterUtils.object2String(dbEntity.getRefData().get(code + "NAME"));
+                    if (displayName != null) {
+                        tmp.add(displayName);
+                    } else {
+                        tmp.add(TypeConverterUtils.object2String(dbEntity.get(code)));
                     }
                 } else {
                     tmp.add("");
@@ -86,10 +76,7 @@ public class ExportServiceImpl implements ExportService {
             }
             contentList.add(tmp);
         }
-        //excel文件名
-        final String FILENAME = name + "-" + LocalDateTime.now().toString().substring(0, 10);
-        //sheetName
-        final String SHEETNAME = name + "-" + LocalDateTime.now().toString().substring(0, 10);
+
         try {
             //表头样式策略
             WriteCellStyle headWriteCellStyle = new WriteCellStyle();
@@ -103,15 +90,13 @@ public class ExportServiceImpl implements ExportService {
             HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
-            // 这里URLEncoder.encode可以防止中文乱码
-            String fileName = URLEncoder.encode(FILENAME, "UTF-8").replaceAll("\\+", "%20");
             //响应首部 Access-Control-Expose-Headers 就是控制“暴露”的开关，它列出了哪些首部可以作为响应的一部分暴露给外部。
             //此处设置了开放Content-Disposition，前端可获取该响应参数获取文件名称
             response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
             EasyExcel.write(response.getOutputStream()).autoCloseStream(Boolean.FALSE)
-                    .registerWriteHandler(horizontalCellStyleStrategy).sheet(SHEETNAME).head(headList).doWrite(contentList);
+                    .registerWriteHandler(horizontalCellStyleStrategy).sheet(sheetName).head(headList).doWrite(contentList);
         } catch (IOException e) { //下载失败情况的处理
             // 重置response
             response.reset();
@@ -122,15 +107,5 @@ public class ExportServiceImpl implements ExportService {
             map.put("message", "下载文件失败" + e.getMessage());
             response.getWriter().println(JSON.toJSONString(map));
         }
-    }
-
-    private DbCollection getCodeType(String code_type_id) {
-        QueryOption queryOption = new QueryOption("dm_code", 0, 0);
-        TableFilterWrapper wrapper = new TableFilterWrapper(true);
-        wrapper.eq("code_type_id", code_type_id);
-        queryOption.setTableFilter(wrapper.build());
-        queryOption.setFixField("*");
-        DbCollection codeCollection = dataAccess.query(queryOption);
-        return codeCollection;
     }
 }

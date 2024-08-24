@@ -31,9 +31,6 @@ import java.util.Map;
 public class PageDataController {
 
     @Autowired
-    PageDataService pageDataService;
-
-    @Autowired
     RenderPageService renderPageService;
 
     @Autowired
@@ -47,9 +44,6 @@ public class PageDataController {
 
     @Autowired
     PersonalizationDataService personalizationDataService;
-
-    @Autowired
-    ExportService exportService;
 
     @RequestMapping(value = "/getExtendEleDisplayList", method = RequestMethod.GET)
     public ResponseData<List<DbEntity>> getExtendEleDisplayList(@RequestParam Integer webVersion) {
@@ -150,37 +144,6 @@ public class PageDataController {
         }
         return ResponseData.success(renderTableService.getStatisticsInfo(pageId, searchParamStr, queryParamsStr, clientMacro, rowValue, colValue));
     }
-
-    @SneakyThrows
-    @RequestMapping(value = "/exportStatisticInfoData", method = RequestMethod.POST)
-    public void exportStatisticInfoData(@RequestBody Map<String, String> map, HttpServletResponse response) {
-        String pageId = "", searchParam = "", rowValue = "", colValue = "";
-        ClientMacro clientMacro = null;
-        if (map.containsKey("pageId")) {
-            pageId = map.get("pageId");
-        }
-        if (StringUtils.isEmpty(pageId)) {
-            throw new InvokeCommonException("pageId  not found");
-        }
-        if (map.containsKey("searchParam")) {
-            searchParam = map.get("searchParam");
-        }
-        if (map.containsKey("clientMacro")) {
-            clientMacro = ClientMacro.init(map.get("clientMacro"));
-        } else {
-            throw new InvokeCommonException("clientMacro  not found");
-        }
-        if (map.containsKey("rowValue")) {
-            rowValue = map.get("rowValue");
-        }
-        if (map.containsKey("colValue")) {
-            colValue = map.get("colValue");
-        }
-        DbCollection collection = renderTableService.getStatisticsInfoNoPaging(pageId, searchParam, clientMacro, rowValue, colValue);
-        String name = collection.getTableInfo().getName();
-        exportService.ExportByQuery(collection, response, name);
-    }
-
     /**
      * 个性化页面保存
      *
