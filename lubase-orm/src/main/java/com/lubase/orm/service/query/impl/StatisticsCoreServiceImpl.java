@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -58,9 +59,15 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         }
         changeDataSourceService.changeDataSourceByTableCode(table);
         DbField rowField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getRowField())).findFirst().orElse(null);
-        DbField columnField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getColumnField())).findFirst().orElse(null);
-        if (rowField == null || columnField == null) {
-            throw new InvokeCommonException("统计行或统计列设置错误，表中不存在");
+        if (rowField == null) {
+            throw new InvokeCommonException("统计行设置错误，表中不存在");
+        }
+        DbField columnField = null;
+        if (!StringUtils.isEmpty(statisticsOption.getColumnField())) {
+            columnField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getColumnField())).findFirst().orElse(null);
+            if (columnField == null) {
+                throw new InvokeCommonException("统计列设置错误，表中不存在");
+            }
         }
         //2、目前只支持单表
         String joinCondition = queryOption.getTableName();
@@ -93,33 +100,64 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
     private DbCollection getStatisticsCollection(DbField rowField, DbField columnField, List<StatisticsEntity> statisticsList) {
         DbCollection collection = new DbCollection();
         List<DbCode> rCodeData = registerColumnInfoService.getCodeListByTypeId(rowField.getCodeTypeId());
-        List<DbCode> cCodeData = registerColumnInfoService.getCodeListByTypeId(columnField.getCodeTypeId());
+        if (rCodeData != null && !rCodeData.isEmpty()) {
+            rCodeData.sort(Comparator.comparingInt(DbCode::getOrder_id));
+        } else {
+            rCodeData = new ArrayList<>();
+            // 从  statisticsList 获取列
+            for (StatisticsEntity entity : statisticsList) {
+                if (rCodeData.stream().noneMatch(dbCode -> dbCode.getCode().equals(entity.getR()))) {
+                    DbCode dbCode = new DbCode();
+                    dbCode.setCode(entity.getR());
+                    dbCode.setName(entity.getR());
+                    rCodeData.add(dbCode);
+                }
+            }
+        }
+
+        List<DbCode> cCodeData = new ArrayList<>();
+        if (columnField != null) {
+            cCodeData = registerColumnInfoService.getCodeListByTypeId(columnField.getCodeTypeId());
+        }
+        if (cCodeData == null) {
+            cCodeData = new ArrayList<>();
+        }
+        cCodeData.sort(Comparator.comparingInt(DbCode::getOrder_id));
         DbTable table = new DbTable();
         String colPre = "c_", colRowSum = "c_sum", rowSumCode = "r_sum";
         //固定字段 id
+        Integer columnOrder = 1;
         DbField field = new DbField();
         field.setId("id");
         field.setCode("id");
         field.setVisible(0);
+        field.setOrderId(columnOrder++);
         table.getFieldList().add(field);
         //固定字段 设定的行
         field = new DbField();
         field.setId("row_title");
         field.setCode(field.getId());
-        field.setName(String.format("%s\\%s", rowField.getName(), columnField.getName()));
+        if (columnField != null) {
+            field.setName(String.format("%s\\%s", rowField.getName(), columnField.getName()));
+        } else {
+            field.setName(rowField.getName());
+        }
         field.setVisible(2);
         field.setRight(2);
         field.setEleType("1");
+        field.setOrderId(columnOrder++);
         table.getFieldList().add(field);
         field = new DbField();
         field.setId("row_value");
         field.setCode(field.getId());
+        field.setOrderId(columnOrder++);
         table.getFieldList().add(field);
         //遍历列增加字段
         for (DbCode code : cCodeData) {
             field = new DbField();
             field.setId(code.getCode());
             field.setCode(colPre + code.getCode());
+            field.setOrderId(columnOrder++);
             field.setName(code.getName());
             field.setVisible(2);
             field.setRight(2);
@@ -134,6 +172,7 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         field.setVisible(2);
         field.setRight(2);
         field.setEleType("1");
+        field.setOrderId(columnOrder);
         table.getFieldList().add(field);
         collection.setTableInfo(table);
         //遍历行增加数据
@@ -142,11 +181,13 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
             DbEntity entity = collection.newEntity();
             entity.put("row_title", r.getName());
             entity.put("row_value", r.getCode());
-            for (DbCode c : cCodeData) {
-                entity.put(colPre + c.getCode(), getCellValueByRowAndColumn(statisticsList, r.getCode(), c.getCode()));
+            if (!cCodeData.isEmpty()) {
+                for (DbCode c : cCodeData) {
+                    entity.put(colPre + c.getCode(), getCellValueByRowAndColumn(statisticsList, r.getCode(), c.getCode()));
+                }
             }
             //行合计
-            Double rowSum = statisticsList.stream().filter(d -> d.getR() != null && d.getR().equals(r.getCode())).mapToDouble(d -> d.getV()).sum();
+            Double rowSum = statisticsList.stream().filter(d -> d.getR() != null && d.getR().equals(r.getCode())).mapToDouble(StatisticsEntity::getV).sum();
             entity.put(colRowSum, rowSum);
             listData.add(entity);
         }
@@ -155,16 +196,16 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         entity.put("row_title", "总计");
         entity.put("row_value", "r_sum");
         for (DbCode c : cCodeData) {
-            entity.put(colPre + c.getCode(), statisticsList.stream().filter(d -> d.getC() != null && d.getC().equals(c.getCode())).mapToDouble(d -> d.getV()).sum());
+            entity.put(colPre + c.getCode(), statisticsList.stream().filter(d -> d.getC() != null && d.getC().equals(c.getCode())).mapToDouble(StatisticsEntity::getV).sum());
         }
-        entity.put(colRowSum, statisticsList.stream().mapToDouble(d -> d.getV()).sum());
+        entity.put(colRowSum, statisticsList.stream().mapToDouble(StatisticsEntity::getV).sum());
         listData.add(entity);
         collection.setData(listData);
         return collection;
     }
 
     private Double getCellValueByRowAndColumn(List<StatisticsEntity> statisticsList, String r, String c) {
-        Double val = null;
+        Double val = 0D;
         StatisticsEntity entity = statisticsList.stream().filter(d -> d.getR() != null && d.getC() != null
                 && d.getR().equals(r) && d.getC().equals(c)).findFirst().orElse(null);
         if (entity != null) {

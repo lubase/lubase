@@ -64,12 +64,18 @@ public class DataAccessSqlBuilder {
         } else {
             statisticsType = String.format("sum(%s)", queryParam.getStatisticsSumField());
         }
-        groupFields = String.format("%s,%s", queryParam.getStatisticsRowField(), queryParam.getStatisticsColumnField());
         joinCondition = queryParam.getJoinCondition();
         where = queryParam.getWhere();
         // 拼接完整sql语句
-        String mainSql = String.format("select %s as r,%s as c,%s as v from %s where %s group by %s", queryParam.getStatisticsRowField(),
-                queryParam.getStatisticsColumnField(), statisticsType, joinCondition, where, groupFields);
+        String mainSql = "";
+        if (StringUtils.isEmpty(queryParam.getStatisticsColumnField())) {
+            groupFields = queryParam.getStatisticsRowField();
+            mainSql = String.format("select %s as r,%s as v from %s where %s group by %s", queryParam.getStatisticsRowField(), statisticsType, joinCondition, where, groupFields);
+        } else {
+            groupFields = String.format("%s,%s", queryParam.getStatisticsRowField(), queryParam.getStatisticsColumnField());
+            mainSql = String.format("select %s as r,%s as c,%s as v from %s where %s group by %s", queryParam.getStatisticsRowField(),
+                    queryParam.getStatisticsColumnField(), statisticsType, joinCondition, where, groupFields);
+        }
         return mainSql;
     }
 

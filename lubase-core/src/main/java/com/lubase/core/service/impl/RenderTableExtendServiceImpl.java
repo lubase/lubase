@@ -11,6 +11,7 @@ import com.lubase.core.util.ClientMacro;
 import com.lubase.model.DbEntity;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.model.DbCollection;
+import com.lubase.orm.service.DataAccess;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class RenderTableExtendServiceImpl implements RenderTableExtendService {
 
     @Autowired
     PageServiceAdapter pageServiceAdapter;
+
+    @Autowired
+    DataAccess dataAccess;
 
     @Override
     public List<PageDataExtendService> getCurrentExtendService(String pageId) {
@@ -46,6 +50,16 @@ public class RenderTableExtendServiceImpl implements RenderTableExtendService {
             if (extendService != null) {
                 extendService.beforeExecuteQuery(pageEntity, queryOption, clientMacro);
             }
+        }
+    }
+
+    @Override
+    public DbCollection executePageTemplate(DbEntity pageEntity, QueryOption queryOption, ClientMacro clientMacro) {
+        PageTemplateExtendService pageTemplateExtendService = pageTemplateExtendService(pageEntity.get(SsPageEntity.COL_MASTER_PAGE).toString());
+        if (pageTemplateExtendService == null) {
+            return dataAccess.query(queryOption);
+        } else {
+            return pageTemplateExtendService.executePageTemplate(dataAccess, pageEntity, queryOption, clientMacro);
         }
     }
 

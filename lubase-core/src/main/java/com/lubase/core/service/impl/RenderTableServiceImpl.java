@@ -91,7 +91,7 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
         List<PageDataExtendService> extendServices = gridDataExtendService.getCurrentExtendService(pageId);
         QueryOption serverQuery = JSON.parseObject(pageEntity.getGrid_query(), QueryOption.class);
         QueryParamDTO clientQuery = JSON.parseObject(queryParamsStr, QueryParamDTO.class);
-        StatisticsOption statisticsOption = JSON.parseObject(pageEntity.getStatistics_setting(), StatisticsOption.class);
+
         DbCollection coll = null;
         if (serverQuery.getQueryType() == 2) {
             //注意: 只能接收无参数的方法。如果需要客户端传递的参数，请使用queryType=3。详见↓
@@ -136,15 +136,13 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
                 }
                 serverQuery.getTableFilter().getChildFilters().add(new TableFilter("id", ids, EOperateMode.In));
             }
-            if (statisticsOption != null && !StringUtils.isEmpty(statisticsOption.getRowField()) && !StringUtils.isEmpty(statisticsOption.getColumnField())) {
-                coll = statisticsCoreService.queryStatistics(serverQuery, statisticsOption);
-            } else {
-                serverQuery.setEnableColAccessControl(true);
-                gridDataExtendService.executePageTemplateExtend(pageEntity, serverQuery, clientMacro);
-                gridDataExtendService.beforeExecuteQueryEvent(pageEntity, extendServices, serverQuery, clientMacro);
-                coll = dataAccess.query(serverQuery);
-            }
+
+            serverQuery.setEnableColAccessControl(true);
+            gridDataExtendService.executePageTemplateExtend(pageEntity, serverQuery, clientMacro);
+            gridDataExtendService.beforeExecuteQueryEvent(pageEntity, extendServices, serverQuery, clientMacro);
+            coll = gridDataExtendService.executePageTemplate(pageEntity, serverQuery, clientMacro);
         }
+
         int i = 1;
         for (DbField f : coll.getTableInfo().getFieldList()) {
             f.setOrderId(i);

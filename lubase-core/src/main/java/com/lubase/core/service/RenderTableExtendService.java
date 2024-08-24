@@ -21,6 +21,7 @@ public interface RenderTableExtendService {
      * @return
      */
     List<PageDataExtendService> getCurrentExtendService(String pageId);
+
     /**
      * 执行页面模板的扩展方法。执行顺序1
      *
@@ -39,7 +40,15 @@ public interface RenderTableExtendService {
     void beforeExecuteQueryEvent(DbEntity pageEntity, List<PageDataExtendService> extendServiceList, QueryOption queryOption, ClientMacro clientMacro);
 
     /**
-     * 页面模板执行返回后 执行顺序3
+     * 执行页面模板的核心逻辑。执行顺序3
+     *
+     * @param pageEntity
+     * @param queryOption
+     */
+    DbCollection executePageTemplate(DbEntity pageEntity, QueryOption queryOption, ClientMacro clientMacro);
+
+    /**
+     * 页面模板执行返回后 执行顺序4
      *
      * @param pageEntity
      * @param collection
@@ -48,7 +57,7 @@ public interface RenderTableExtendService {
     void beforeReturnPageTemplateExtend(DbEntity pageEntity, DbCollection collection, ClientMacro clientMacro);
 
     /**
-     * 页面返回前事件 执行顺序4
+     * 页面返回前事件 执行顺序5
      *
      * @param pageId
      * @param extendServiceList

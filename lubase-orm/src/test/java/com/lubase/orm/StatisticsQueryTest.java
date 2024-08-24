@@ -20,10 +20,16 @@ public class StatisticsQueryTest {
     void testMainDB() {
         QueryOption queryOption = new QueryOption("dm_column");
         StatisticsOption statisticsOption = new StatisticsOption();
-        statisticsOption.setRowField("data_type");
+        statisticsOption.setRowField("table_id");
         statisticsOption.setColumnField("ele_type");
         statisticsOption.setValueType(1);
         DbCollection collection = statisticsCoreService.queryStatistics(queryOption, statisticsOption);
+        System.out.println(JSON.toJSON(collection));
+
+        statisticsOption = new StatisticsOption();
+        statisticsOption.setRowField("table_id");
+        statisticsOption.setValueType(1);
+        collection = statisticsCoreService.queryStatistics(queryOption, statisticsOption);
         System.out.println(JSON.toJSON(collection));
     }
 
