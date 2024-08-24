@@ -60,7 +60,10 @@ public class ExportController extends BaseCommonController {
         //2、导出
         try {
             name = getParam("name", map, false);
-            exportService.ExportByQuery(collection, response, name);
+            if (StringUtils.isEmpty(name)) {
+                name = collection.getTableInfo().getName();
+            }
+            exportService.ExportByQuery(pageId, collection, response, name);
         } catch (Exception e) {
             throw new WarnCommonException("文件导出失败：" + e.getMessage());
         }
@@ -82,6 +85,7 @@ public class ExportController extends BaseCommonController {
         if (methodParamModel.getAppId() != null && methodParamModel.getAppId() > 0) {
             methodParamModel.getData().put("appId", methodParamModel.getAppId().toString());
         }
+        String serialNum = getParam("serialNum", methodParamModel.getData(), true);
         String allData = getParam("allData", methodParamModel.getData(), false);
         DbCollection collection;
         if (allData.equals("1")) {
@@ -92,7 +96,7 @@ public class ExportController extends BaseCommonController {
 
         try {
             String name = collection.getTableInfo().getName();
-            exportService.ExportByQuery(collection, response, name);
+            exportService.ExportByQuery(serialNum, collection, response, name);
         } catch (Exception e) {
             throw new WarnCommonException("文件导出失败：" + e.getMessage());
         }
@@ -118,7 +122,7 @@ public class ExportController extends BaseCommonController {
 
         try {
             String name = collection.getTableInfo().getName();
-            exportService.ExportByQuery(collection, response, name);
+            exportService.ExportByQuery(pageId, collection, response, name);
         } catch (Exception e) {
             throw new WarnCommonException("文件导出失败：" + e.getMessage());
         }

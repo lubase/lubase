@@ -5,13 +5,17 @@ import com.alibaba.excel.util.MapUtils;
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.fastjson.JSON;
+import com.lubase.core.extend.ExportExtendService;
+import com.lubase.core.extend.service.ExportExtendAdapter;
 import com.lubase.core.service.exportmanage.ExportService;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
 import com.lubase.model.EAccessGrade;
+import com.lubase.orm.exception.ParameterNotFoundException;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.util.TypeConverterUtils;
+import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,17 +34,37 @@ public class ExportServiceImpl implements ExportService {
     @Autowired
     DataAccess dataAccess;
 
+    @Autowired
+    ExportExtendAdapter exportExtendAdapter;
+
+    @SneakyThrows
     @Override
-    public void ExportByQuery(DbCollection collection, HttpServletResponse response, String name) throws IOException {
-        if (StringUtils.isEmpty(name)) {
-            name = collection.getTableInfo().getName();
+    public void ExportByQuery(String tableIdentityCode, DbCollection collection, HttpServletResponse response, String memo) throws IOException {
+        if (StringUtils.isEmpty(memo)) {
+            memo = collection.getTableInfo().getName();
         }
+        if (StringUtils.isEmpty(tableIdentityCode)) {
+            throw new ParameterNotFoundException("tableIdentityCode");
+        }
+        ExportExtendService extendService = exportExtendAdapter.getServiceByIdentification(tableIdentityCode);
         //excel文件名
-        String fileName = name + "-" + LocalDateTime.now().toString().substring(0, 10);
+        String fileName, sheetName;
+        if (extendService != null) {
+            fileName = extendService.getFileName(memo);
+            sheetName = extendService.getSheetName(memo);
+            collection = extendService.beforeBuilderFile(collection);
+        } else {
+            fileName = memo + "-" + LocalDateTime.now().toString().substring(0, 10);
+            sheetName = memo + "-" + LocalDateTime.now().toString().substring(0, 10);
+        }
         // 这里URLEncoder.encode可以防止中文乱码
         fileName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
-        //sheetName
-        String sheetName = name + "-" + LocalDateTime.now().toString().substring(0, 10);
+
+        if (extendService != null && extendService.enableCustomExport()) {
+            // 如果启用自定义导出则直接返回
+            extendService.export(collection, response, memo);
+            return;
+        }
 
         //表头
         List<List<String>> headList = new ArrayList<List<String>>();
