@@ -16,6 +16,9 @@ public interface RenderBaseService {
      * @param clientMacro 客户端宏变量
      */
     default void replaceClientMacro(TableFilter tableFilter, ClientMacro clientMacro) {
+        if (tableFilter.getChildFilters() != null && tableFilter.getChildFilters().size() == 1 && tableFilter.getChildFilters().get(0) == null) {
+            tableFilter.setChildFilters(null);
+        }
         if (tableFilter.getChildFilters() != null) {
             for (TableFilter filter : tableFilter.getChildFilters()) {
                 replaceClientMacro(filter, clientMacro);
