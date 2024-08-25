@@ -140,7 +140,7 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
 
         cCodeData.sort(Comparator.comparingInt(DbCode::getOrder_id));
         // 判断列是否有空值
-        if (statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getC()))) {
+        if (columnField != null && statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getC()))) {
             DbCode dbCode = new DbCode();
             dbCode.setCode("@@S.empty");
             dbCode.setName("空");
