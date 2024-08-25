@@ -121,12 +121,12 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         // 判断行是否有空值
         if (statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getR()))) {
             DbCode dbCode = new DbCode();
-            dbCode.setCode("@@S.empty");
+            dbCode.setCode("@@S.Empty");
             dbCode.setName("空");
             rCodeData.add(dbCode);
             for (StatisticsEntity entity : statisticsList) {
                 if (StringUtils.isEmpty(entity.getR())) {
-                    entity.setR("@@S.empty");
+                    entity.setR("@@S.Empty");
                 }
             }
         }
@@ -143,12 +143,12 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         // 判断列是否有空值
         if (columnField != null && statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getC()))) {
             DbCode dbCode = new DbCode();
-            dbCode.setCode("@@S.empty");
+            dbCode.setCode("@@S.Empty");
             dbCode.setName("空");
             cCodeData.add(dbCode);
             for (StatisticsEntity entity : statisticsList) {
                 if (StringUtils.isEmpty(entity.getC())) {
-                    entity.setC("@@S.empty");
+                    entity.setC("@@S.Empty");
                 }
             }
         }
@@ -186,7 +186,7 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         for (DbCode code : cCodeData) {
             field = new DbField();
             field.setId(code.getCode());
-            field.setCode(colPre + code.getCode().toLowerCase());
+            field.setCode(colPre + code.getCode());
             field.setOrderId(columnOrder++);
             field.setName(code.getName());
             field.setVisible(2);
@@ -213,7 +213,7 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
             entity.put("row_value", r.getCode());
             if (!cCodeData.isEmpty()) {
                 for (DbCode c : cCodeData) {
-                    entity.put(colPre + c.getCode(), getCellValueByRowAndColumn(statisticsList, r.getCode(), c.getCode()));
+                    entity.putWithNoTrace(colPre + c.getCode(), getCellValueByRowAndColumn(statisticsList, r.getCode(), c.getCode()));
                 }
             }
             //行合计
@@ -226,7 +226,7 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         entity.put("row_title", "总计");
         entity.put("row_value", "r_sum");
         for (DbCode c : cCodeData) {
-            entity.put(colPre + c.getCode(), statisticsList.stream().filter(d -> d.getC() != null && d.getC().equals(c.getCode())).mapToDouble(StatisticsEntity::getV).sum());
+            entity.putWithNoTrace(colPre + c.getCode(), statisticsList.stream().filter(d -> d.getC() != null && d.getC().equals(c.getCode())).mapToDouble(StatisticsEntity::getV).sum());
         }
         entity.put(colRowSum, statisticsList.stream().mapToDouble(StatisticsEntity::getV).sum());
         listData.add(entity);
