@@ -106,11 +106,26 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
             rCodeData = new ArrayList<>();
             // 从  statisticsList 获取列
             for (StatisticsEntity entity : statisticsList) {
+                if (StringUtils.isEmpty(entity.getR())) {
+                    continue;
+                }
                 if (rCodeData.stream().noneMatch(dbCode -> dbCode.getCode().equals(entity.getR()))) {
                     DbCode dbCode = new DbCode();
                     dbCode.setCode(entity.getR());
                     dbCode.setName(entity.getR());
                     rCodeData.add(dbCode);
+                }
+            }
+        }
+        // 判断行是否有空值
+        if (statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getR()))) {
+            DbCode dbCode = new DbCode();
+            dbCode.setCode("@@S.empty");
+            dbCode.setName("空");
+            rCodeData.add(dbCode);
+            for (StatisticsEntity entity : statisticsList) {
+                if (StringUtils.isEmpty(entity.getR())) {
+                    entity.setR("@@S.empty");
                 }
             }
         }
@@ -122,7 +137,21 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         if (cCodeData == null) {
             cCodeData = new ArrayList<>();
         }
+
         cCodeData.sort(Comparator.comparingInt(DbCode::getOrder_id));
+        // 判断列是否有空值
+        if (statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getC()))) {
+            DbCode dbCode = new DbCode();
+            dbCode.setCode("@@S.empty");
+            dbCode.setName("空");
+            cCodeData.add(dbCode);
+            for (StatisticsEntity entity : statisticsList) {
+                if (StringUtils.isEmpty(entity.getC())) {
+                    entity.setC("@@S.empty");
+                }
+            }
+        }
+
         DbTable table = new DbTable();
         String colPre = "c_", colRowSum = "c_sum", rowSumCode = "r_sum";
         //固定字段 id
