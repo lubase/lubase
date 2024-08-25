@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class StatisticsCoreServiceImpl implements StatisticsCoreService {
@@ -185,7 +186,7 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         for (DbCode code : cCodeData) {
             field = new DbField();
             field.setId(code.getCode());
-            field.setCode(colPre + code.getCode());
+            field.setCode(colPre + code.getCode().toLowerCase());
             field.setOrderId(columnOrder++);
             field.setName(code.getName());
             field.setVisible(2);
