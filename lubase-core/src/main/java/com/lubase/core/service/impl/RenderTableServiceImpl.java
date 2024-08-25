@@ -316,6 +316,10 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
         if (!StringUtils.isEmpty(colValue)) {
             DbField columnField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getColumnField())).findFirst().orElse(null);
             filterWrapper.eq(columnField.getCode(), colValue);
+
+        }
+        if (serverQuery.getTableFilter().getChildFilters() == null) {
+            serverQuery.getTableFilter().setChildFilters(new ArrayList<>());
         }
         serverQuery.getTableFilter().getChildFilters().add(filterWrapper.build());
     }
