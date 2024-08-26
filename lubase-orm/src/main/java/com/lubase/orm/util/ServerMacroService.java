@@ -17,6 +17,8 @@ public class ServerMacroService {
 
     public static final String serverMacroPre = "@@S.";
 
+    public static final String EMPTY_KEY = "@@S.empty";
+
     java.time.format.DateTimeFormatter formatterDate = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
     java.time.format.DateTimeFormatter formatterTime = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss");
     java.time.format.DateTimeFormatter formatterDatetime = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

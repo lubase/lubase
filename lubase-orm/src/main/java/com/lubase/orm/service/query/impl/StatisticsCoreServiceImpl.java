@@ -17,6 +17,7 @@ import com.lubase.model.DbCode;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
 import com.lubase.model.DbTable;
+import com.lubase.orm.util.ServerMacroService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -121,12 +122,12 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         // 判断行是否有空值
         if (statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getR()))) {
             DbCode dbCode = new DbCode();
-            dbCode.setCode("@@S.Empty");
+            dbCode.setCode(ServerMacroService.EMPTY_KEY);
             dbCode.setName("空");
             rCodeData.add(dbCode);
             for (StatisticsEntity entity : statisticsList) {
                 if (StringUtils.isEmpty(entity.getR())) {
-                    entity.setR("@@S.Empty");
+                    entity.setR(ServerMacroService.EMPTY_KEY);
                 }
             }
         }
@@ -143,12 +144,12 @@ public class StatisticsCoreServiceImpl implements StatisticsCoreService {
         // 判断列是否有空值
         if (columnField != null && statisticsList.stream().anyMatch(entity -> StringUtils.isEmpty(entity.getC()))) {
             DbCode dbCode = new DbCode();
-            dbCode.setCode("@@S.Empty");
+            dbCode.setCode(ServerMacroService.EMPTY_KEY);
             dbCode.setName("空");
             cCodeData.add(dbCode);
             for (StatisticsEntity entity : statisticsList) {
                 if (StringUtils.isEmpty(entity.getC())) {
-                    entity.setC("@@S.Empty");
+                    entity.setC(ServerMacroService.EMPTY_KEY);
                 }
             }
         }
