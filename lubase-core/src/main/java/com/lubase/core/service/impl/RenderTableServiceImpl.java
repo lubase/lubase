@@ -305,18 +305,38 @@ public class RenderTableServiceImpl implements RenderTableService, RenderBaseSer
         return coll;
     }
 
+    @SneakyThrows
     private void mergeFilterQuery(QueryOption serverQuery, StatisticsOption statisticsOption, String rowValue, String colValue) {
 
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();
         DbTable table = dataAccess.initTableInfoByTableCode(serverQuery.getTableName());
         if (!StringUtils.isEmpty(rowValue)) {
             DbField rowField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getRowField())).findFirst().orElse(null);
-            filterWrapper.eq(rowField.getCode(), rowValue);
+            if (rowField == null) {
+                throw new WarnCommonException("统计行设置错误，表中不存在");
+            }
+            if (ServerMacroService.EMPTY_KEY.equals(rowValue)) {
+                TableFilterWrapper wrapper = TableFilterWrapper.or();
+                wrapper.eq(rowField.getCode(), rowValue);
+                wrapper.isNull(rowField.getCode());
+                filterWrapper.addFilter(wrapper.build());
+            } else {
+                filterWrapper.eq(rowField.getCode(), rowValue);
+            }
         }
         if (!StringUtils.isEmpty(colValue)) {
             DbField columnField = table.getFieldList().stream().filter(f -> f.getCode().equals(statisticsOption.getColumnField())).findFirst().orElse(null);
-            filterWrapper.eq(columnField.getCode(), colValue);
-
+            if (columnField == null) {
+                throw new WarnCommonException("统计列设置错误，表中不存在");
+            }
+            if (ServerMacroService.EMPTY_KEY.equals(colValue)) {
+                TableFilterWrapper wrapper = TableFilterWrapper.or();
+                wrapper.eq(columnField.getCode(), colValue);
+                wrapper.isNull(columnField.getCode());
+                filterWrapper.addFilter(wrapper.build());
+            } else {
+                filterWrapper.eq(columnField.getCode(), colValue);
+            }
         }
         if (serverQuery.getTableFilter().getChildFilters() == null) {
             serverQuery.getTableFilter().setChildFilters(new ArrayList<>());
