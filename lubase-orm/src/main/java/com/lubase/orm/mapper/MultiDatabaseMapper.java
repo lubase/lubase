@@ -3,6 +3,7 @@ package com.lubase.orm.mapper;
 import com.lubase.orm.model.auto.DmDatabaseEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -11,6 +12,11 @@ import java.util.List;
  */
 @Mapper
 public interface MultiDatabaseMapper {
+
+    @Update("DROP TABLE if EXISTS monster; create table  monster (monster_name varchar(23));\n" +
+            "insert into monster select '${databaseCode}';")
+    Integer initMonster(String databaseCode);
+
     /**
      * 获取当前数据库连接所有使用的库名字
      *
