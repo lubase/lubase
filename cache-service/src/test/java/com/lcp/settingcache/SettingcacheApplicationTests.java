@@ -1,6 +1,5 @@
 package com.lcp.settingcache;
 
-import com.alibaba.fastjson.JSON;
 import com.lubase.model.DbEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ class SettingcacheApplicationTests {
         redisTemplate.opsForValue().set("testKey", entity);
 
         DbEntity entity1 = (DbEntity) redisTemplate.opsForValue().get("testKey");
-        System.out.println(JSON.toJSONString(entity1));
+        System.out.println(entity1);
     }
 
 }

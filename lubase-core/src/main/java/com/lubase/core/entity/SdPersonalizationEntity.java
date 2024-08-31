@@ -1,8 +1,7 @@
 package com.lubase.core.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.lubase.orm.util.TypeConverterUtils;
 import com.lubase.model.DbEntity;
+import com.lubase.orm.util.TypeConverterUtils;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 * @author caogengmeng
 * @since 2022-08-11
 */
-    @TableName("sd_personalization")
     public class SdPersonalizationEntity extends DbEntity {
     private static final long serialVersionUID = 1L;
     public static final String TABLE_CODE = "sd_personalization";

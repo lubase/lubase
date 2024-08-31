@@ -1,8 +1,7 @@
 package com.lubase.core.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.lubase.orm.util.TypeConverterUtils;
 import com.lubase.model.DbEntity;
+import com.lubase.orm.util.TypeConverterUtils;
 
 /**
 * hello custom
@@ -13,7 +12,6 @@ import com.lubase.model.DbEntity;
 * @author A
 * @since 2022-08-07
 */
-    @TableName("dm_column")
     public class DmColumnEntity extends DbEntity {
     private static final long serialVersionUID = 1L;
 public static final String TABLE_CODE = "dm_column";

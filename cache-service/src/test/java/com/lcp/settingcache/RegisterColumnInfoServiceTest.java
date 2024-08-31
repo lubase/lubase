@@ -1,7 +1,6 @@
 package com.lcp.settingcache;
 
 
-import com.alibaba.fastjson.JSON;
 import com.lubase.model.DbTable;
 import com.lubase.cache.service.RegisterColumnInfoService;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ public class RegisterColumnInfoServiceTest {
     @Test
     void testLoadCache() {
         DbTable table = registerColumnInfoService.initTableInfoByTableCode("sa_account");
-        System.out.println(JSON.toJSONString(table));
+        System.out.println(table);
 
     }
 }
