@@ -7,10 +7,7 @@ import com.lubase.orm.TableFilter;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.operate.EOperateMode;
 import com.lubase.orm.service.query.DataAccessQueryCoreService;
-import com.lubase.orm.service.update.GetAvgValue;
-import com.lubase.orm.service.update.GetNextIndex;
-import com.lubase.orm.service.update.GetSumValue;
-import com.lubase.orm.service.update.UpdateTriggerService;
+import com.lubase.orm.service.update.*;
 import com.lubase.orm.util.TypeConverterUtils;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
@@ -33,6 +30,7 @@ public class UpdateCalcColumnTriggerImpl implements UpdateTriggerService {
         AviatorEvaluator.addFunction(new GetNextIndex());
         AviatorEvaluator.addFunction(new GetSumValue());
         AviatorEvaluator.addFunction(new GetAvgValue());
+        AviatorEvaluator.addFunction(new GetDateAddValue());
     }
 
     /**

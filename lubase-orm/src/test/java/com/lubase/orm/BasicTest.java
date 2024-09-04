@@ -1,10 +1,14 @@
 package com.lubase.orm;
 
 import com.alibaba.fastjson.JSON;
+import com.lubase.model.DbEntity;
+import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.EDatabaseType;
+import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.util.TypeConverterUtils;
 import com.lubase.model.DbField;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.ParseException;
@@ -16,20 +20,23 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class BasicTest {
 
+    @Autowired
+    DataAccess dataAccess;
 
     @Test
     void testDateAdd() {
-        String datepart = "day";
-        Integer number = 2;
-        String date = "2024-09-12";
+        QueryOption queryOption = new QueryOption("xt_banji");
+        queryOption.setTableFilter(new TableFilter("id", "1196905868407345152"));
+        DbCollection coll = dataAccess.query(queryOption);
+        System.out.println(JSON.toJSONString(coll.getData()));
+        assert coll.getData().size() == 1;
+        DbEntity entity = coll.getData().get(0);
+        entity.put("bzr", "test22");
+        dataAccess.update(coll);
 
-        String Format = "yyyy-MM-dd HH:mm:ss";
-
-        LocalDateTime dtvalue = TypeConverterUtils.object2LocalDateTime(date);
-        dtvalue = dtvalue.plusDays(number);
-        System.out.println(dtvalue);
 
     }
+
 
     @Test
     void test1() {

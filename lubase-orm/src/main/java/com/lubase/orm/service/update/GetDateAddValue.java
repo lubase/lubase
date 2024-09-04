@@ -18,7 +18,7 @@ public class GetDateAddValue extends AbstractFunction {
     public AviatorObject call(Map<String, Object> env, AviatorObject arg1, AviatorObject arg2, AviatorObject arg3) {
         String departed = FunctionUtils.getStringValue(arg1, env);
         int number = FunctionUtils.getNumberValue(arg2, env).intValue();
-        String date = FunctionUtils.getStringValue(arg3, env);
+        String date = TypeConverterUtils.object2String(env.get(FunctionUtils.getStringValue(arg3, env)));
         if (StringUtils.isEmpty(date)) {
             return new AviatorString("");
         }
