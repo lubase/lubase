@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
+
+import java.time.LocalDateTime;
 
 @SpringBootTest
 class SettingcacheApplicationTests {
@@ -38,5 +41,6 @@ class SettingcacheApplicationTests {
         DbEntity entity1 = (DbEntity) redisTemplate.opsForValue().get("testKey");
         System.out.println(entity1);
     }
+
 
 }

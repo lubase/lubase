@@ -18,6 +18,20 @@ public class BasicTest {
 
 
     @Test
+    void testDateAdd() {
+        String datepart = "day";
+        Integer number = 2;
+        String date = "2024-09-12";
+
+        String Format = "yyyy-MM-dd HH:mm:ss";
+
+        LocalDateTime dtvalue = TypeConverterUtils.object2LocalDateTime(date);
+        dtvalue = dtvalue.plusDays(number);
+        System.out.println(dtvalue);
+
+    }
+
+    @Test
     void test1() {
         EDatabaseType type1 = Enum.valueOf(EDatabaseType.class, "mysql");
         System.out.println(type1.equals(EDatabaseType.Mysql));
