@@ -18,11 +18,17 @@ public class GetDateAddValue extends AbstractFunction {
     public AviatorObject call(Map<String, Object> env, AviatorObject arg1, AviatorObject arg2, AviatorObject arg3) {
         String departed = FunctionUtils.getStringValue(arg1, env);
         int number = FunctionUtils.getNumberValue(arg2, env).intValue();
-        String date = TypeConverterUtils.object2String(env.get(FunctionUtils.getStringValue(arg3, env)));
-        if (StringUtils.isEmpty(date)) {
-            return new AviatorString("");
+        LocalDateTime dtvalue;
+        String colName = FunctionUtils.getStringValue(arg3, env);
+        if (colName.equals("sysdate()")) {
+            dtvalue = LocalDateTime.now();
+        } else {
+            String date = TypeConverterUtils.object2String(env.get(colName));
+            if (StringUtils.isEmpty(date)) {
+                return new AviatorString("");
+            }
+            dtvalue = TypeConverterUtils.object2LocalDateTime(date);
         }
-        LocalDateTime dtvalue = TypeConverterUtils.object2LocalDateTime(date);
         if (dtvalue == null) {
             return new AviatorString("");
         }
