@@ -37,4 +37,8 @@ public class ColumnLookupParamModel {
      */
     private String formData;
 
+    /**
+     * 是否只获取配置信息
+     */
+    private Integer onlyConfig;
 }
