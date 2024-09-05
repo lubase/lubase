@@ -58,7 +58,7 @@ public class UserColumnServiceImpl implements IColumnRemoteService {
 
     @Override
     public String getDescription() {
-        return "业务应用关联获取用户信息";
+        return "根据用户id获取用户姓名";
     }
 
     @Override

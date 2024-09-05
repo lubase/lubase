@@ -40,7 +40,7 @@ public class UserInfoByCodeServiceImpl implements IColumnRemoteService {
 
     @Override
     public String getDescription() {
-        return "业务应用根据用户工号获取用户信息";
+        return "根据用户工号获取用户姓名";
     }
 
     @Override

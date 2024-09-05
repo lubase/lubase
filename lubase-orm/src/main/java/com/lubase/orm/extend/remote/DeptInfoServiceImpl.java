@@ -36,7 +36,7 @@ public class DeptInfoServiceImpl implements IColumnRemoteService {
 
     @Override
     public String getDescription() {
-        return "业务应用关联获取部门信息";
+        return "根据部门id获取部门名称";
     }
 
     @Override

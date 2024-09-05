@@ -57,7 +57,7 @@ public class UserOrgIdColumnServiceImpl implements IColumnRemoteService {
 
     @Override
     public String getDescription() {
-        return "根据用户id获取组织id";
+        return "根据用户id获取部门id";
     }
 
     @Override
