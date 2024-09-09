@@ -174,6 +174,8 @@ public class DataAccessServiceImpl implements DataAccess {
             QueryOption queryOption = new QueryOption(tableName, 0, 0);
             queryOption.setFixField(fixField);
             queryOption.setTableFilter(new TableFilter("ID", id.toString()));
+            queryOption.setPageIndex(0);
+            queryOption.setQueryMode(2);
             coll = query(queryOption);
             if (!coll.getData().isEmpty()) {
                 // 加入缓存
