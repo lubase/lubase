@@ -474,7 +474,9 @@ public class RenderFormServiceImpl implements RenderFormService {
             queryOption.setFixField("id");
         }
         queryOption.setTableFilter(new TableFilter("id", dataId));
-        DbCollection collection = dataAccess.query(queryOption);
+        queryOption.setQueryMode(2);
+        queryOption.setPageIndex(0);
+        DbCollection collection = dataAccess.queryAllData(queryOption);
         // 合并 filedInfo和 tableInfo 方便客户端进行渲染 20240602 lubaase
         collection.getTableInfo().setFieldList(customFormDataService.getFormFieldSetting(collection.getTableInfo().getFieldList(), dmCustomform.getField_info()));
         formVO.setTableInfo(collection.getTableInfo());
