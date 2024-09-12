@@ -65,7 +65,14 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         String url = String.format("%s/initTableInfoByTableCode?tableCode=%s", urlTemplate, tableCode);
         log.info("url" + url);
 
-        if (restTemplate.getForEntity(url, DbTable.class).getBody() == null) {
+        try {
+            if (restTemplate.getForEntity(url, DbTable.class).getBody() == null) {
+                log.error("未找到表结构：" + tableCode);
+                return null;
+            }
+        }
+        catch (Exception e) {
+            log.error("未找到表结构：" + tableCode);
             return null;
         }
 
