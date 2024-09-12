@@ -283,7 +283,7 @@ public class RenderPageServiceImpl implements RenderPageService {
                 fieldBOHashMap.put(field.getCode(), field);
             }
         } catch (Exception ex) {
-            log.error(String.format("页面搜索区域配置错误，页面：%s %s，搜索条件：%s ,%s", pageEntity.getId(), pageEntity.getPage_name(), pageEntity.getSearch_filter()), ex.getMessage());
+            log.error(String.format("页面搜索区域配置错误，页面：%s %s，搜索条件：%s", pageEntity.getId(), pageEntity.getPage_name(), pageEntity.getSearch_filter()), ex.getMessage());
         }
 
         searchVO.setFieldInfo(fieldBOHashMap);
