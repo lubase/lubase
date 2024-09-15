@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.loader.jar.JarFile;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -128,13 +130,32 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
                     continue;
                 }
                 classList = moduleClassLoader.loadClassByPack(pack, AppConfig.getModuleUrl());
-                for (Class obj : classList) {
+
+                // 多线程处理检查 classList
+                Set<Class<?>> finalActiveClassList = new LinkedHashSet<Class<?>>();
+                classList.parallelStream().forEach(obj -> {
                     if (obj.isInterface() || Modifier.isAbstract(obj.getModifiers())) {
-                        continue;
+                        return;
                     }
+                    boolean isContinue = false;
+                    for (Annotation annotation : obj.getAnnotationsByType(ConditionalOnProperty.class)) {
+                        ConditionalOnProperty conditionalOnProperty = (ConditionalOnProperty) annotation;
+                        String setting = SpringUtil.getApplicationContext().getEnvironment().getProperty(conditionalOnProperty.name()[0]);
+                        if (setting == null || !setting.equals(conditionalOnProperty.havingValue())) {
+                            isContinue = true;
+                            break;
+                        }
+                    }
+                    if (isContinue) {
+                        log.info("{} is not loaded , check havingValue setting", obj.getName());
+                        return;
+                    }
+                    finalActiveClassList.add(obj);
+                });
+                for (Class obj : finalActiveClassList) {
                     registerBean(obj);
                 }
-                for (Class obj : classList) {
+                for (Class obj : finalActiveClassList) {
                     if (obj.getName().contains("Controller")) {
                         registerController(StringUtils.uncapitalize(obj.getName().substring(obj.getName().lastIndexOf(".") + 1)));
                     }
@@ -152,6 +173,7 @@ public class LoadExtendApplicationImpl implements ILoadExtendApplication, Applic
 
 
     void registerBean(Class clazz) throws Exception {
+
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
         BeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
         //设置当前bean定义对象是单利的

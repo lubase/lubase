@@ -79,6 +79,10 @@ spring:
     timeout: 5000
     database: 10
 #下面这些内容是为了让MyBatis映射
+  rabbitmq:
+    addresses: ENC(KffySpuSfOeNLJi3Fr3cFZxt1XWAeRby/X1LI3SKSx6U7fEOBUA+/s/EOvnlIEZTO+mp/bJlykERqTisKH4DQQ==)
+    username: ENC(t6dJr6PXo+7XoqbrvZwgu9wMrPr4aMzWGLEiw2/DaUAFRVb+xgWMQZcW8j2jbHct)
+    password: ENC(Xbf442TV+VZTmks1OPm3N3yN006f/5/nAX76ko1vwSL7daeSdEYpD7abSb36rxud)
 mybatis:
   #指定Mybatis的Mapper文件
   mapper-locations: classpath:mapper/*xml
@@ -105,7 +109,10 @@ lubase:
   #jwt密钥
   jwt-secret:
   # 如果配置此路径，则从此路径获取扩展jar包
-  extend-path:
+  extend-path: D:\coding\lubase\wfengine-module\target
+  # 流程引擎 使用的消息队列类型，支持rabbitmq、rocketmq 两种
+  wf-engine:
+    mq-type: rabbitmq
   file-upload:
     # default: localFileStorageService
     storage-type: localFileStorageService

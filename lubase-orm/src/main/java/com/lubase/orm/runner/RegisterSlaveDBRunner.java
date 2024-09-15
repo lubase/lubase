@@ -60,21 +60,27 @@ public class RegisterSlaveDBRunner implements ApplicationRunner {
             System.out.println("业务应用模式启动，应用ID:" + appId);
         }
         List<String> appointDatabaseList = StringUtils.isEmpty(appointDatabase) ? new ArrayList<>() : List.of(appointDatabase.split(","));
-        for (DmDatabaseEntity dmDatabaseEntity : coll) {
+
+        coll.parallelStream().forEach(dmDatabaseEntity -> {
             // 因为默认数据源就是主数据源，所以不用再次注册
             if (dmDatabaseEntity.getId() == 0L) {
-                continue;
+                return;
             }
             if (!StringUtils.isEmpty(appointDatabase) && !appointDatabaseList.contains(dmDatabaseEntity.getDatabase_name())) {
-                continue;
+                return;
             }
             DatabaseConnectModel database = databaseConnectBuilder.buildConnectModel(dmDatabaseEntity);
-            Boolean result = dynamicDataSource.createDataSourceWithCheck(database);
-            System.out.println(String.format("注册数据源：%s,注册结果：%s", database.getAliasCode(), result));
+            Boolean result = null;
+            try {
+                result = dynamicDataSource.createDataSourceWithCheck(database);
+                System.out.println(String.format("注册数据源：%s,注册结果：%s", database.getAliasCode(), result));
+                DBContextHolder.setDataSourceCode(dmDatabaseEntity.getId().toString());
+                multiDatabaseMapper.initMonster(dmDatabaseEntity.getDatabase_name());
 
-            DBContextHolder.setDataSourceCode(dmDatabaseEntity.getId().toString());
-            multiDatabaseMapper.initMonster(dmDatabaseEntity.getDatabase_name());
-        }
+            } catch (Exception e) {
+                log.error("注册数据源失败" + database.getAliasCode(), e);
+            }
+        });
 
         System.out.println("数据源创建完成…………");
     }
