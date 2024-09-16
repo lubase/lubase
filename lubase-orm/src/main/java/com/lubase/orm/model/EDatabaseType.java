@@ -7,8 +7,10 @@ import org.springframework.util.StringUtils;
  */
 public enum EDatabaseType {
     Sqlserver("sqlserver"),
-
     Mysql("mysql"),
+    Oracle("oracle"),
+    Sqlite("sqlite"),
+    H2("h2"),
 
     Postgresql("postgresql");
 
@@ -33,6 +35,12 @@ public enum EDatabaseType {
             return EDatabaseType.Sqlserver;
         } else if (type.equals("postgresql")) {
             return EDatabaseType.Postgresql;
+        } else if (type.equals("oracle")) {
+            return EDatabaseType.Oracle;
+        } else if (type.equals("sqlite")) {
+            return EDatabaseType.Sqlite;
+        } else if (type.equals("h2")) {
+            return EDatabaseType.H2;
         }
         return null;
     }
