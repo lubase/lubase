@@ -46,6 +46,15 @@ public class DatabaseConnectBuilder {
             case "sqlserver":
                 driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
                 break;
+            case "sqlite":
+                driverClass = "org.sqlite.JDBC";
+                break;
+            case "oracle":
+                driverClass = "oracle.jdbc.driver.OracleDriver";
+                break;
+            case "postgresql":
+                driverClass = "org.postgresql.Driver";
+                break;
             default:
                 break;
         }
@@ -71,6 +80,9 @@ public class DatabaseConnectBuilder {
                     url += String.format("/%s", dataSource.getDatabase_name());
                 }
                 url += String.format("?%s", "allowMultiQueries=true&useSSL=false&serverTimezone=" + System.getProperty("user.timezone"));
+                break;
+            case "sqlite":
+                url = String.format("jdbc:sqlite:%s", dataSource.getHost());
                 break;
             default:
                 break;

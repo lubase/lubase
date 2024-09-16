@@ -6,7 +6,6 @@ import com.lubase.orm.multiDataSource.DBContextHolder;
 import com.lubase.orm.multiDataSource.DatabaseConnectBuilder;
 import com.lubase.orm.multiDataSource.DatabaseConnectModel;
 import com.lubase.orm.multiDataSource.DynamicDataSource;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,8 +74,9 @@ public class RegisterSlaveDBRunner implements ApplicationRunner {
                 result = dynamicDataSource.createDataSourceWithCheck(database);
                 System.out.println(String.format("注册数据源：%s,注册结果：%s", database.getAliasCode(), result));
                 DBContextHolder.setDataSourceCode(dmDatabaseEntity.getId().toString());
-                multiDatabaseMapper.initMonster(dmDatabaseEntity.getDatabase_name());
-
+                multiDatabaseMapper.dropMonster(dmDatabaseEntity.getDatabase_name());
+                multiDatabaseMapper.initMonsterTable(dmDatabaseEntity.getDatabase_name());
+                multiDatabaseMapper.initMonsterData(dmDatabaseEntity.getDatabase_name());
             } catch (Exception e) {
                 log.error("注册数据源失败" + database.getAliasCode(), e);
             }

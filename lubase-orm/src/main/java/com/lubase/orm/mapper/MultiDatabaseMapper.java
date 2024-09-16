@@ -13,9 +13,14 @@ import java.util.List;
 @Mapper
 public interface MultiDatabaseMapper {
 
-    @Update("DROP TABLE if EXISTS monster; create table  monster (monster_name varchar(23));\n" +
-            "insert into monster select '${databaseCode}';")
-    Integer initMonster(String databaseCode);
+    @Update("DROP TABLE if EXISTS monster")
+    Integer dropMonster(String databaseCode);
+
+    @Update("create table  monster (monster_name text)")
+    Integer initMonsterTable(String databaseCode);
+
+    @Update("insert into monster select '${databaseCode}'")
+    Integer initMonsterData(String databaseCode);
 
     /**
      * 获取当前数据库连接所有使用的库名字
