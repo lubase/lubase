@@ -26,7 +26,7 @@ public class FileInfoController {
             return new ArrayList<>();
         }
         String key = String.format("%s_%s", dataId, fileKey);
-        return fileInfoService.getFileDisplayNameByFileKey(key);
+        return fileInfoService.getFileDisplayNameByFileKey2(key);
     }
 
     @GetMapping("/getFileDisplayNameByFileKey2")

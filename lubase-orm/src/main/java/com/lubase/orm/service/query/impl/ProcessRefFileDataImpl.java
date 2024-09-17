@@ -53,12 +53,12 @@ public class ProcessRefFileDataImpl implements ProcessCollectionService {
                     }
                     //文件关联字段，从sd_file_relation表检索文件记录
                     String key = String.format("%s_%s", dataId, fileKey);
-                    List<DbEntity> files = registerColumnInfoService.getFileDisplayNameByFileKey2(key);
+                    List<DbEntity> files = registerColumnInfoService.getFileDisplayNameByFileKey(key);
                     if (files.size() > 0) {
                         String fileDisplayName = "";
                         // 暂时用把文件名字的逗号进行替换，兼容以前的数据 20230914
                         for (DbEntity file : files) {
-                            fileDisplayName += String.format(",%s|%s", file.get("file_name").toString().replace(",",""), file.getId().toString());
+                            fileDisplayName += String.format(",%s|%s", file.get("file_name").toString().replace(",", ""), file.getId().toString());
                         }
                         if (fileDisplayName.startsWith(",")) {
                             fileDisplayName = fileDisplayName.substring(1);

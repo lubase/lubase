@@ -1,10 +1,8 @@
 package com.lubase.orm;
 
-import com.lubase.orm.QueryOption;
-import com.lubase.orm.TableFilter;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.service.DataAccess;
-import com.lubase.orm.service.impl.registerColumnInfoServiceApiImpl;
+import com.lubase.orm.service.impl.RegisterColumnInfoServiceApiImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 public class registerColumnInfoServiceApiImplTest {
 
     @Autowired
-    registerColumnInfoServiceApiImpl apiService;
+    RegisterColumnInfoServiceApiImpl apiService;
 
     @Test
     void test1() {

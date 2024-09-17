@@ -82,6 +82,4 @@ public interface RegisterColumnInfoService {
      * @return
      */
     List<DbEntity> getFileDisplayNameByFileKey(String fileKey);
-
-    List<DbEntity> getFileDisplayNameByFileKey2(String fileKey);
 }

@@ -10,8 +10,8 @@ import com.lubase.model.DbTable;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
@@ -22,27 +22,35 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @CacheConfig(cacheNames = "tableStruct")
 @Service("registerColumnInfoServiceApi")
 @Slf4j
-public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoService {
+public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoService {
 
     @Autowired
     RestTemplate restTemplate;
-    @Qualifier("registerColumnInfoServiceApi")
-    @Autowired
-    registerColumnInfoServiceApiImpl registerColumnInfoService;
+
     private String urlTemplate;
 
     private String fileUrlTemplate;
 
-    public registerColumnInfoServiceApiImpl(Environment environment) {
+    @Autowired
+    CacheManager cacheManager;
+
+    public RegisterColumnInfoServiceApiImpl(Environment environment) {
         log.info("初始化url" + environment.toString());
         this.urlTemplate = String.format("%s/registerColumnInfo", environment.getProperty("lubase.cache-server"));
         this.fileUrlTemplate = String.format("%s/fileInfo", environment.getProperty("lubase.cache-server"));
         log.info("初始化url" + urlTemplate);
+    }
+
+    private String getCacheKey(String pre, String dataId) {
+        return (pre + dataId).replace("'", "");
+    }
+
+    private Cache getCache() {
+        return cacheManager.getCache(CacheConst.CACHE_NAME_TABLE_STRUCT);
     }
 
     @Cacheable(key = CacheConst.PRE_CACHE_TABLE + "+#tableId")
@@ -52,7 +60,12 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         if (restTemplate.getForEntity(url, DbTable.class).getBody() == null) {
             return null;
         }
-        return registerColumnInfoService.initTableInfoByTableId(tableId);
+        Cache cache = getCache();
+        if (cache != null) {
+            return cache.get(getCacheKey(CacheConst.PRE_CACHE_TABLE, tableId.toString()), DbTable.class);
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows
@@ -70,13 +83,16 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
                 log.error("未找到表结构：" + tableCode);
                 return null;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("未找到表结构：" + tableCode);
             return null;
         }
-
-        return registerColumnInfoService.initTableInfoByTableCode(tableCode);
+        Cache cache = getCache();
+        if (cache != null) {
+            return cache.get(getCacheKey(CacheConst.PRE_CACHE_TABLE, tableCode), DbTable.class);
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows
@@ -87,7 +103,12 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         if (restTemplate.getForEntity(url, Long.class).getBody() == null) {
             throw new WarnCommonException(String.format("表缓存获取失败：%s", tableCode));
         }
-        return registerColumnInfoService.getTableIdByTableCode(tableCode);
+        Cache cache = getCache();
+        if (cache != null) {
+            return cache.get(getCacheKey(CacheConst.PRE_CACHE_TABLE_NAME, tableCode), String.class);
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows
@@ -98,7 +119,12 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         if (restTemplate.getForEntity(url, String.class).getBody() == null) {
             throw new WarnCommonException(String.format("表缓存获取失败：%s", tableId));
         }
-        return registerColumnInfoService.getTableCodeByTableId(tableId);
+        Cache cache = getCache();
+        if (cache != null) {
+            return cache.get(getCacheKey(CacheConst.PRE_CACHE_TABLE_NAME, tableId.toString()), String.class);
+        } else {
+            return null;
+        }
     }
 
     @Cacheable(key = CacheConst.PRE_CACHE_COLUMN + "+#columnId")
@@ -108,15 +134,28 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         if (restTemplate.getForEntity(url, DbField.class).getBody() == null) {
             return null;
         }
-        return registerColumnInfoService.getColumnInfoByColumnId(columnId);
+        Cache cache = getCache();
+        if (cache != null) {
+            return cache.get(getCacheKey(CacheConst.PRE_CACHE_COLUMN, columnId.toString()), DbField.class);
+        } else {
+            return null;
+        }
     }
 
     @Cacheable(key = CacheConst.PRE_CACHE_COLUMNS + "+#tableId")
     @Override
     public List<DbField> getColumnsByTableId(Long tableId) {
         String url = String.format("%s/getColumnsByTableId?tableId=%s", urlTemplate, tableId);
-        Arrays.asList(Objects.requireNonNull(restTemplate.getForEntity(url, DbField[].class).getBody()));
-        return registerColumnInfoService.getColumnsByTableId(tableId);
+        restTemplate.getForEntity(url, DbField[].class).getBody();
+
+        Cache cache = getCache();
+        if (cache != null) {
+            DbField[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_COLUMNS, tableId.toString()), DbField[].class);
+            if (tmpList != null) {
+                return Arrays.asList(tmpList);
+            }
+        }
+        return null;
     }
 
     @Cacheable(key = CacheConst.PRE_CACHE_CONTROLLED_TABLE_LIST)
@@ -126,7 +165,14 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         if (restTemplate.getForEntity(url, long[].class).getBody() == null) {
             return new ArrayList<>();
         }
-        return registerColumnInfoService.getControlledTableList();
+        Cache cache = getCache();
+        if (cache != null) {
+            String[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_CONTROLLED_TABLE_LIST, ""), String[].class);
+            if (tmpList != null) {
+                return Arrays.asList(tmpList);
+            }
+        }
+        return null;
     }
 
     @Cacheable(key = CacheConst.PRE_CACHE_CODE_DATA + "+#codeTypeId")
@@ -136,28 +182,32 @@ public class registerColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         if (restTemplate.getForEntity(url, DbCode[].class).getBody() == null) {
             return new ArrayList<>();
         }
-        return registerColumnInfoService.getCodeListByTypeId(codeTypeId);
+        Cache cache = getCache();
+        if (cache != null) {
+            DbCode[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_CODE_DATA, codeTypeId), DbCode[].class);
+            if (tmpList != null) {
+                return Arrays.asList(tmpList);
+            }
+        }
+        return null;
     }
+
 
     @Cacheable(value = "uploadFile", key = CacheConst.PRE_CACHE_FILE_DATA + "+#fileKey")
     @Override
     public List<DbEntity> getFileDisplayNameByFileKey(String fileKey) {
         String _dataId = fileKey.split("_")[0];
-        String _fileKey = fileKey.split("_")[1];
-        String url = String.format("%s/getFileDisplayNameByFileKey?dataId=%s&fileKey=%s", fileUrlTemplate, _dataId, _fileKey);
-        log.info(url);
-        Arrays.asList(Objects.requireNonNull(restTemplate.getForEntity(url, DbEntity[].class).getBody()));
-        return registerColumnInfoService.getFileDisplayNameByFileKey(fileKey);
-    }
-
-    @Cacheable(value = "uploadFile", key = CacheConst.PRE_CACHE_FILE_DATA + "+#fileKey")
-    @Override
-    public List<DbEntity> getFileDisplayNameByFileKey2(String fileKey) {
-        String _dataId = fileKey.split("_")[0];
         String _fileKey = fileKey.substring(fileKey.indexOf("_") + 1);
         String url = String.format("%s/getFileDisplayNameByFileKey2?dataId=%s&fileKey=%s", fileUrlTemplate, _dataId, _fileKey);
-        log.info(url);
-        Arrays.asList(Objects.requireNonNull(restTemplate.getForEntity(url, DbEntity[].class).getBody()));
-        return registerColumnInfoService.getFileDisplayNameByFileKey2(fileKey);
+
+        restTemplate.getForEntity(url, DbEntity[].class).getBody();
+        Cache cache = cacheManager.getCache("uploadFile");
+        if (cache != null) {
+            DbEntity[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_FILE_DATA, fileKey), DbEntity[].class);
+            if (tmpList != null) {
+                return Arrays.asList(tmpList);
+            }
+        }
+        return null;
     }
 }

@@ -1,5 +1,6 @@
 package com.lubase.orm.extend.remote;
 
+import com.lubase.model.SsCacheEntity;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.constant.CacheConst;
 import com.lubase.orm.extend.IColumnRemoteService;
@@ -10,12 +11,16 @@ import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.model.DbEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 
 @CacheConfig(cacheNames = CacheConst.CACHE_NAME_USER_INFO)
 @Service("deptInfoServiceImpl")
@@ -28,7 +33,7 @@ public class DeptInfoServiceImpl implements IColumnRemoteService {
     private String urlTemplate;
 
     @Autowired
-    DeptInfoServiceImpl currentService;
+    CacheManager cacheManager;
 
     public DeptInfoServiceImpl(Environment environment) {
         this.urlTemplate = String.format("%s/userInfo", environment.getProperty("lubase.cache-server"));
@@ -55,20 +60,24 @@ public class DeptInfoServiceImpl implements IColumnRemoteService {
             if (StringUtils.isEmpty(restTemplate.getForEntity(url, DbEntity.class).getBody())) {
                 return getDefaultEntity(key);
             }
-            return currentService.getCacheDataByKey(key);
+            Cache cache = cacheManager.getCache(CacheConst.CACHE_NAME_USER_INFO);
+            String cacheKey = "dept:id:" + key;
+            if (cache != null) {
+                return cache.get(cacheKey, DbEntity.class);
+            }
         } catch (Exception exception) {
             log.error("请求缓存报错" + url, exception);
-            return null;
         }
+        return null;
     }
 
     @Override
     public DbCollection getAllData() {
-        return getDataByFilter(null,"");
+        return getDataByFilter(null, "");
     }
 
     @Override
-    public DbCollection getDataByFilter(QueryOption clientQuery,String clientMacroStr) {
+    public DbCollection getDataByFilter(QueryOption clientQuery, String clientMacroStr) {
         QueryOption queryOption = new QueryOption("sa_organization");
         queryOption.setFixField("id,org_name");
         TableFilterWrapper filterWrapper = TableFilterWrapper.and();

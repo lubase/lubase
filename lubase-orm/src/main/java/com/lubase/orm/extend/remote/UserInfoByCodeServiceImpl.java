@@ -8,6 +8,8 @@ import com.lubase.orm.service.DataAccess;
 import com.lubase.model.DbEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
@@ -25,7 +27,7 @@ public class UserInfoByCodeServiceImpl implements IColumnRemoteService {
     DataAccess dataAccess;
     private String urlTemplate;
     @Autowired
-    UserInfoByCodeServiceImpl currentService;
+    CacheManager cacheManager;
     @Autowired
     UserColumnServiceImpl userColumnService;
 
@@ -64,11 +66,15 @@ public class UserInfoByCodeServiceImpl implements IColumnRemoteService {
             if (StringUtils.isEmpty(restTemplate.getForEntity(url, DbEntity.class).getBody())) {
                 return getDefaultEntity(key);
             }
-            return currentService.getCacheDataByKey(key);
+            Cache cache = cacheManager.getCache(CacheConst.CACHE_NAME_USER_INFO);
+            String cacheKey = "u:code:" + key;
+            if (cache != null) {
+                return cache.get(cacheKey, DbEntity.class);
+            }
         } catch (Exception exception) {
             log.error("请求缓存报错" + url, exception);
-            return null;
         }
+        return null;
     }
 
     @Override
@@ -77,7 +83,7 @@ public class UserInfoByCodeServiceImpl implements IColumnRemoteService {
     }
 
     @Override
-    public DbCollection getDataByFilter(QueryOption clientQuery,String clientMacroStr) {
-        return userColumnService.getDataByFilter(clientQuery,"");
+    public DbCollection getDataByFilter(QueryOption clientQuery, String clientMacroStr) {
+        return userColumnService.getDataByFilter(clientQuery, "");
     }
 }

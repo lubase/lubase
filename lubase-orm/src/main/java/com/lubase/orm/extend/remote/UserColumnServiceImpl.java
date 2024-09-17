@@ -10,6 +10,8 @@ import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.model.DbEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
@@ -27,7 +29,7 @@ public class UserColumnServiceImpl implements IColumnRemoteService {
     DataAccess dataAccess;
     private String urlTemplate;
     @Autowired
-    UserColumnServiceImpl currentService;
+    CacheManager cacheManager;
 
     public UserColumnServiceImpl(Environment environment) {
         this.urlTemplate = String.format("%s/userInfo", environment.getProperty("lubase.cache-server"));
@@ -44,11 +46,15 @@ public class UserColumnServiceImpl implements IColumnRemoteService {
             if (StringUtils.isEmpty(restTemplate.getForEntity(url, DbEntity.class).getBody())) {
                 return getDefaultEntity(key);
             }
-            return currentService.getCacheDataByKey(key);
+            Cache cache = cacheManager.getCache(CacheConst.CACHE_NAME_USER_INFO);
+            String cacheKey = "u:id:" + key;
+            if (cache != null) {
+                return cache.get(cacheKey, DbEntity.class);
+            }
         } catch (Exception exception) {
             log.error("请求缓存报错" + url, exception);
-            return null;
         }
+        return null;
     }
 
     @Override
