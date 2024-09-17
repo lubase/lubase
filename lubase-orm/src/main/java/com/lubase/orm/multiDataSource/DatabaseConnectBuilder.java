@@ -37,7 +37,7 @@ public class DatabaseConnectBuilder {
         return databaseConnectModel;
     }
 
-    private String getDriveClass(String databaseType) {
+    public String getDriveClass(String databaseType) {
         String driverClass = "";
         switch (databaseType) {
             case "mysql":
