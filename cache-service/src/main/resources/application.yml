@@ -2,7 +2,7 @@ server:
   port: 8083
 spring:
   application:
-    name: lcp.core
+    name: lubase.cache.module
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(Rx8r5NRdYWq12ylxVp2eNY9hGtf1UwSnRuCwyGNuhJdPViVLlYhEoFbYurZiIo09)
