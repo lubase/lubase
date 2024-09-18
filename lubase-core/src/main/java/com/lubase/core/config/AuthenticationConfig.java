@@ -12,17 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class AuthenticationConfig implements WebMvcConfigurer {
-
-    @Autowired
-    AuthenticationInterceptorInterceptor authenticationInterceptorInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authenticationInterceptorInterceptor).addPathPatterns("/**");
-    }
-
-    @Bean
-    public AuthenticationInterceptorInterceptor authenticationInterceptorInterceptor() {
-        return new AuthenticationInterceptorInterceptor();
+        registry.addInterceptor(new AuthenticationInterceptorInterceptor()).addPathPatterns("/**");
     }
 }

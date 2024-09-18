@@ -2,7 +2,7 @@ package com.lubase.core;
 
 
 import com.lubase.orm.multiDataSource.ChangeDataSourceService;
-import com.lubase.core.service.userright.mapper.UserOrgRightMapper;
+import com.lubase.core.service.userright.mapper.UserRightMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,12 +14,12 @@ public class UserOrgRightMapperTest {
     ChangeDataSourceService changeDataSourceService;
 
     @Autowired
-    UserOrgRightMapper userOrgRightMapper;
+    UserRightMapper userRightMapper;
 
 
     @Test
     void test1() {
         changeDataSourceService.changeDataSourceByTableCode("ss_app");
-        userOrgRightMapper.getRoleListByOrgId("1");
+        userRightMapper.getRoleListByOrgId("1");
     }
 }

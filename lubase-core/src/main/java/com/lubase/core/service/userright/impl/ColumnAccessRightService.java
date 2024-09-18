@@ -7,7 +7,7 @@ import com.lubase.model.DbField;
 import com.lubase.model.EAccessGrade;
 import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.service.AppHolderService;
-import com.lubase.orm.service.DataAccess;
+import com.lubase.orm.service.RegisterColumnInfoService;
 import com.lubase.orm.service.query.DataAccessColumnRightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,9 @@ public class ColumnAccessRightService implements DataAccessColumnRightService {
     UserRightService userRightService;
     @Autowired
     AppHolderService appHolderService;
+
     @Autowired
-    DataAccess dataAccess;
+    RegisterColumnInfoService registerColumnInfoService;
 
     @Override
     public List<DbField> checkAccessRight(List<DbField> fieldList) {
@@ -68,7 +69,7 @@ public class ColumnAccessRightService implements DataAccessColumnRightService {
      * @return
      */
     Boolean enableColumnAccessControl(String tableId) {
-        return dataAccess.getControlledTableList().contains(tableId);
+        return registerColumnInfoService.getControlledTableList().contains(tableId);
     }
 
     List<ColumnRightModelVO> getUserColRightList() {
