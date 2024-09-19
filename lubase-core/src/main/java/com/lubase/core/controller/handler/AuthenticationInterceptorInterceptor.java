@@ -5,7 +5,6 @@ import com.lubase.orm.service.AppHolderService;
 import com.lubase.core.config.PassToken;
 import com.lubase.core.service.UserInfoService;
 import org.apache.tomcat.websocket.AuthenticationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,11 +19,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AuthenticationInterceptorInterceptor implements HandlerInterceptor {
 
-    @Autowired
     AppHolderService appHolderService;
 
-    @Autowired
     UserInfoService userService;
+
+    public AuthenticationInterceptorInterceptor(UserInfoService userService, AppHolderService appHolderService) {
+        this.appHolderService = appHolderService;
+        this.userService = userService;
+    }
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

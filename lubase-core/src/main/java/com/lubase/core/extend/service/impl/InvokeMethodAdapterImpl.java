@@ -29,9 +29,24 @@ public class InvokeMethodAdapterImpl implements ExtendAppLoadCompleteService, In
     @Override
     public void LoadCompleted(ApplicationContext applicationContext) {
         if (invokeMethodList == null) {
-            invokeMethodList = new ArrayList<>(applicationContext.getBeansOfType(IInvokeMethod.class).values());
-            getLeftDataServiceList = new ArrayList<>(applicationContext.getBeansOfType(IGetLeftDataService.class).values());
-            getMainDataServiceList = new ArrayList<>(applicationContext.getBeansOfType(IGetMainDataService.class).values());
+            invokeMethodList=new ArrayList<>();
+            getLeftDataServiceList=new ArrayList<>();
+            getMainDataServiceList=new ArrayList<>();
+            for (IInvokeMethod invokeMethod : applicationContext.getBeansOfType(IInvokeMethod.class).values()) {
+                if (invokeMethodList.stream().noneMatch(m -> invokeMethod.getId().equals(m.getId()))) {
+                    invokeMethodList.add(invokeMethod);
+                }
+            }
+            for (IGetLeftDataService getLeftDataService : applicationContext.getBeansOfType(IGetLeftDataService.class).values()) {
+                if (getLeftDataServiceList.stream().noneMatch(m -> getLeftDataService.getId().equals(m.getId()))) {
+                    getLeftDataServiceList.add(getLeftDataService);
+                }
+            }
+            for (IGetMainDataService getMainDataService : applicationContext.getBeansOfType(IGetMainDataService.class).values()) {
+                if (getMainDataServiceList.stream().noneMatch(m -> getMainDataService.getId().equals(m.getId()))) {
+                    getMainDataServiceList.add(getMainDataService);
+                }
+            }
         }
     }
 
