@@ -118,7 +118,8 @@ public class RegisterColumnInfoServiceDbImpl implements RegisterColumnInfoServic
     @Cacheable(key = CacheConst.PRE_CACHE_CONTROLLED_TABLE_LIST)
     @Override
     public List<String> getControlledTableList() {
-        return coreTableMapper.getControlledTableList();
+        List<String> list= coreTableMapper.getControlledTableList();
+        return list;
     }
 
     @Cacheable(key = CacheConst.PRE_CACHE_CODE_DATA + "+#codeTypeId")
