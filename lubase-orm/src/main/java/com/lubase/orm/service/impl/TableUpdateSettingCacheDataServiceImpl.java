@@ -1,9 +1,9 @@
 package com.lubase.orm.service.impl;
 
-import com.lubase.orm.constant.CacheConst;
-import com.lubase.orm.service.TableUpdateSettingCacheDataService;
 import com.lubase.model.DbEntity;
 import com.lubase.model.SsCacheEntity;
+import com.lubase.orm.constant.CacheConst;
+import com.lubase.orm.service.TableUpdateSettingCacheDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -12,7 +12,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -39,9 +38,9 @@ public class TableUpdateSettingCacheDataServiceImpl implements TableUpdateSettin
         Cache cache = cacheManager.getCache(CacheConst.CACHE_NAME_TABLE_TRIGGER);
         String key = CacheConst.PRE_CACHE_TABLE_CACHE_LIST.replace("'", "");
         if (cache != null) {
-            SsCacheEntity[] tmpList = cache.get(key, SsCacheEntity[].class);
-            if (tmpList != null) {
-                return Arrays.asList(tmpList);
+            Cache.ValueWrapper obj = cache.get(key);
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<SsCacheEntity>) obj.get();
             }
         }
         return null;
@@ -56,9 +55,9 @@ public class TableUpdateSettingCacheDataServiceImpl implements TableUpdateSettin
         Cache cache = cacheManager.getCache(CacheConst.CACHE_NAME_TABLE_TRIGGER);
         String key = CacheConst.PRE_CACHE_TABLE_RELATE_LIST.replace("'", "");
         if (cache != null) {
-            DbEntity[] tmpList = cache.get(key, DbEntity[].class);
-            if (tmpList != null) {
-                return Arrays.asList(tmpList);
+            Cache.ValueWrapper obj = cache.get(key);
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<DbEntity>) obj.get();
             }
         }
         return null;

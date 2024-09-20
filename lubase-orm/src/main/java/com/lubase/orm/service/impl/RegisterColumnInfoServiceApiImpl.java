@@ -1,12 +1,12 @@
 package com.lubase.orm.service.impl;
 
-import com.lubase.orm.constant.CacheConst;
-import com.lubase.orm.exception.WarnCommonException;
-import com.lubase.orm.service.RegisterColumnInfoService;
 import com.lubase.model.DbCode;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
 import com.lubase.model.DbTable;
+import com.lubase.orm.constant.CacheConst;
+import com.lubase.orm.exception.WarnCommonException;
+import com.lubase.orm.service.RegisterColumnInfoService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @CacheConfig(cacheNames = "tableStruct")
