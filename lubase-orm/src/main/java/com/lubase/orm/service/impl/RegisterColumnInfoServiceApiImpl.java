@@ -150,9 +150,9 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
 
         Cache cache = getCache();
         if (cache != null) {
-            DbField[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_COLUMNS, tableId.toString()), DbField[].class);
-            if (tmpList != null) {
-                return Arrays.asList(tmpList);
+            Cache.ValueWrapper obj = cache.get(getCacheKey(CacheConst.PRE_CACHE_COLUMNS, tableId.toString()));
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<DbField>) obj.get();
             }
         }
         return null;
@@ -167,9 +167,9 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         }
         Cache cache = getCache();
         if (cache != null) {
-            String[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_CONTROLLED_TABLE_LIST, ""), String[].class);
-            if (tmpList != null) {
-                return Arrays.asList(tmpList);
+            Cache.ValueWrapper obj = cache.get(getCacheKey(CacheConst.PRE_CACHE_CONTROLLED_TABLE_LIST, ""));
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<String>) obj.get();
             }
         }
         return null;
@@ -184,9 +184,9 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         }
         Cache cache = getCache();
         if (cache != null) {
-            DbCode[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_CODE_DATA, codeTypeId), DbCode[].class);
-            if (tmpList != null) {
-                return Arrays.asList(tmpList);
+            Cache.ValueWrapper obj = cache.get(getCacheKey(CacheConst.PRE_CACHE_CODE_DATA, codeTypeId));
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<DbCode>) obj.get();
             }
         }
         return null;
@@ -203,9 +203,9 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         restTemplate.getForEntity(url, DbEntity[].class).getBody();
         Cache cache = cacheManager.getCache("uploadFile");
         if (cache != null) {
-            DbEntity[] tmpList = cache.get(getCacheKey(CacheConst.PRE_CACHE_FILE_DATA, fileKey), DbEntity[].class);
-            if (tmpList != null) {
-                return Arrays.asList(tmpList);
+            Cache.ValueWrapper obj = cache.get(getCacheKey(CacheConst.PRE_CACHE_FILE_DATA, fileKey));
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<DbEntity>) obj.get();
             }
         }
         return null;
