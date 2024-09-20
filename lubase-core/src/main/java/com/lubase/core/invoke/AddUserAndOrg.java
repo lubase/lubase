@@ -1,16 +1,22 @@
 package com.lubase.core.invoke;
 
+import com.alibaba.fastjson.JSON;
 import com.lubase.core.extend.IInvokeMethod;
 import com.lubase.core.model.SelectUserModel;
 import com.lubase.core.service.UserInfoService;
 import com.lubase.orm.exception.WarnCommonException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@Slf4j
+@Component
 public class AddUserAndOrg implements IInvokeMethod {
     @Autowired
     UserInfoService userInfoService;
@@ -39,17 +45,22 @@ public class AddUserAndOrg implements IInvokeMethod {
         List<SelectUserModel> userList = new ArrayList<>();
         if (!listMapParam.isEmpty()) {
             for (HashMap<String, String> map : listMapParam) {
-                SelectUserModel user = new SelectUserModel();
-                user.setId(map.get("id"));
-                user.setUserCode(map.get("userCode"));
-                user.setUserName(map.get("userName"));
-                user.setDeptId(map.get("deptId"));
-                user.setDeptName(map.get("deptName"));
+                SelectUserModel user = null;
+                try {
+                    user = JSON.parseObject(JSON.toJSONString(map), SelectUserModel.class);
+                } catch (Exception exception) {
+                    log.warn("参数传递错误", exception);
+                }
                 // 判断属性不能为空或者空字符串
-                if (user.getId() == null || user.getId().isEmpty() || user.getUserCode() == null || user.getUserCode().isEmpty() || user.getUserName() == null || user.getUserName().isEmpty() || user.getDeptId() == null || user.getDeptId().isEmpty() || user.getDeptName() == null || user.getDeptName().isEmpty()) {
+                if (user == null || StringUtils.isEmpty(user.getId())
+                        || StringUtils.isEmpty(user.getUserCode())
+                        || StringUtils.isEmpty(user.getUserName())
+                        || StringUtils.isEmpty(user.getDeptId())
+                        || StringUtils.isEmpty(user.getDeptName())) {
                     throw new WarnCommonException("参数传递错误");
                 }
-                if (userList.stream().anyMatch(x -> x.getId().equals(user.getId()))) {
+                String userId = user.getId();
+                if (userList.stream().anyMatch(x -> x.getId().equals(userId))) {
                     continue;
                 }
                 userList.add(user);
