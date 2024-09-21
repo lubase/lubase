@@ -12,10 +12,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ExtendFileServiceImpl implements ExtendFileService {
@@ -69,6 +67,7 @@ public class ExtendFileServiceImpl implements ExtendFileService {
                     fileModel.setGroupId(String.format(defaultGroupIdPre, f.getName().split("-")[0]));
                 }
                 fileModel.setFilePath(f.getParent());
+                fileModel.setLastModifiedTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(f.lastModified())));
                 fileModel.setFileName(f.getName());
                 fileModelList.add(fileModel);
             }

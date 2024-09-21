@@ -9,6 +9,7 @@ public class ExtendFileModel {
     private String groupId;
     private String filePath;
     private String fileName;
+    private String lastModifiedTime;
     /**
      * 加载状态
      */
