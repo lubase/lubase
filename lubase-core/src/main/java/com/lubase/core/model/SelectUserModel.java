@@ -1,5 +1,6 @@
 package com.lubase.core.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -10,12 +11,19 @@ import lombok.Data;
 public class SelectUserModel {
     private String id;
     //设置json序列化后别名为user_code
+    @JSONField(name = "user_code")
     @JsonProperty("user_code")
     private String userCode;
+
+    @JSONField(name = "user_name")
     @JsonProperty("user_name")
     private String userName;
+
     @JsonProperty("organization_id")
+    @JSONField(name = "organization_id")
     private String deptId;
+
     private String parentDeptId;
+
     private String deptName;
 }
