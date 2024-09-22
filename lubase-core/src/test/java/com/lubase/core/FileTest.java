@@ -1,6 +1,11 @@
 package com.lubase.core;
 
+import com.lubase.orm.QueryOption;
+import com.lubase.orm.TableFilter;
+import com.lubase.orm.model.DbCollection;
+import com.lubase.orm.service.DataAccess;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
@@ -14,8 +19,21 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-@SpringBootTest
+@SpringBootTest(classes = LubaseCoreApplication.class)
 public class FileTest {
+
+    @Autowired
+    DataAccess dataAccess;
+
+    @Test
+    void testServerMacro() {
+        String macroName = "@@S.lubase";
+        QueryOption queryOption = new QueryOption("sa_account");
+        queryOption.setTableFilter(new TableFilter("user_code", macroName));
+        DbCollection coll = dataAccess.queryAllData(queryOption);
+        System.out.println(coll.getData().size());
+    }
+
     @Test
     public void folderTest() {
         File file = new File("D:\\a\\a\\a");
@@ -31,11 +49,11 @@ public class FileTest {
 
     void getJarName(String jarFile) throws Exception {
 
-        try{
+        try {
             //通过将给定路径名字符串转换为抽象路径名来创建一个新File实例
             File f = new File(jarFile);
             URL url1 = f.toURI().toURL();
-            URLClassLoader myClassLoader = new URLClassLoader(new URL[]{url1},Thread.currentThread().getContextClassLoader());
+            URLClassLoader myClassLoader = new URLClassLoader(new URL[]{url1}, Thread.currentThread().getContextClassLoader());
 
             //通过jarFile和JarEntry得到所有的类
             JarFile jar = new JarFile(jarFile);
@@ -44,15 +62,15 @@ public class FileTest {
             JarEntry entry;
 
             //测试此枚举是否包含更多的元素
-            while(enumFiles.hasMoreElements()){
-                entry = (JarEntry)enumFiles.nextElement();
-                if(entry.getName().indexOf("META-INF")<0){
+            while (enumFiles.hasMoreElements()) {
+                entry = (JarEntry) enumFiles.nextElement();
+                if (entry.getName().indexOf("META-INF") < 0) {
                     String classFullName = entry.getName();
-                    if(!classFullName.endsWith(".class")){
-                        classFullName = classFullName.substring(0,classFullName.length()-1);
-                    } else{
+                    if (!classFullName.endsWith(".class")) {
+                        classFullName = classFullName.substring(0, classFullName.length() - 1);
+                    } else {
                         //去掉后缀.class
-                        String className = classFullName.substring(0,classFullName.length()-6).replace("/", ".");
+                        String className = classFullName.substring(0, classFullName.length() - 6).replace("/", ".");
                         Class<?> myclass = myClassLoader.loadClass(className);
                         //打印类名
                         System.out.println("*****************************");
@@ -74,14 +92,14 @@ public class FileTest {
                     }
                 }
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
     @Test
-    public void loadFile2() throws  Exception {
+    public void loadFile2() throws Exception {
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         String filePath = "D:\\java\\projects\\kuozhandemo\\target\\invokemethod-0.0.1-SNAPSHOT.jar";
         boolean recursive = true;

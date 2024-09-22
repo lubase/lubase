@@ -4,8 +4,8 @@ import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.service.AppHolderService;
 import com.lubase.core.config.PassToken;
 import com.lubase.core.service.UserInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.websocket.AuthenticationException;
-import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -52,11 +52,15 @@ public class AuthenticationInterceptorInterceptor implements HandlerInterceptor 
             throw new AuthenticationException("用户信息已经失效");
         }
         String ssoToken = request.getHeader("ssoToken");
-        if (StringUtils.isEmpty(ssoToken)) {
+        if (!StringUtils.isEmpty(ssoToken)) {
             ssoToken = request.getParameter("ssoToken");
             if (!StringUtils.isEmpty(ssoToken)) {
                 user.setSsoToken(ssoToken);
             }
+        }
+        String appId = request.getHeader("appId");
+        if (StringUtils.isEmpty(appId)) {
+            user.setId(Long.parseLong(appId));
         }
         appHolderService.setUser(user);
         return true;

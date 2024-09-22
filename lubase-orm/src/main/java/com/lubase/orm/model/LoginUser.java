@@ -19,6 +19,10 @@ public class LoginUser {
     private String token;
     private String ssoToken;
     /**
+     * 当前会话所处的appId
+     */
+    private Long sessionAppId;
+    /**
      * 用户部门id
      */
     private String orgId;
