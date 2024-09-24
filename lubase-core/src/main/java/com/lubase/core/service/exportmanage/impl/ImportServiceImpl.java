@@ -6,6 +6,7 @@ import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.fastjson.JSON;
 import com.lubase.core.entity.DmCustomFormEntity;
+import com.lubase.core.entity.DmTableRelationEntity;
 import com.lubase.core.entity.SsPageEntity;
 import com.lubase.core.model.customForm.ChildTableSetting;
 import com.lubase.core.service.AppFuncDataService;
@@ -21,6 +22,7 @@ import com.lubase.orm.extend.remote.UserInfoByCodeServiceImpl;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.EColumnType;
 import com.lubase.orm.service.DataAccess;
+import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.orm.util.TypeConverterUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -100,6 +102,9 @@ public class ImportServiceImpl implements ImportService {
             }
             if (filed.getEleType().equals(EColumnType.Document.getIndex().toString())
                     || filed.getEleType().equals(EColumnType.Image.getIndex().toString())) {
+                continue;
+            }
+            if (filed.getFieldAccess().equals(EAccessGrade.Invisible)) {
                 continue;
             }
             List<String> tmpName = new ArrayList();
@@ -194,28 +199,54 @@ public class ImportServiceImpl implements ImportService {
         }
         SsPageEntity pageEntity = appFuncDataService.getPageById(pageId);
         String tableName = JSON.parseObject(pageEntity.getGrid_query(), QueryOption.class).getTableName();
-        return importTableData(tableName, file);
+        return importTableData(tableName, file, new HashMap<>());
     }
 
     @SneakyThrows
     @Override
-    public boolean importSubPageTable(String formId, String serialNum, String clientMacroStr, MultipartFile file) {
-        if (StringUtils.isEmpty(formId) || StringUtils.isEmpty(serialNum)) {
-            throw new ParameterNotFoundException("formId or serialNum");
+    public boolean importSubPageTable(String pageId, String formId, String serialNum, String dataId, String clientMacroStr, MultipartFile file) {
+        if (StringUtils.isEmpty(formId) || StringUtils.isEmpty(serialNum) || StringUtils.isEmpty(pageId) || StringUtils.isEmpty(dataId)) {
+            throw new ParameterNotFoundException("formId or serialNum or pageId or dataId");
         }
         //1、获取表单子表查询对象
         DmCustomFormEntity formEntity = customFormDataService.selectById(formId);
         //2、获取表单主表与子表关联关系
         ChildTableSetting childTable = customFormDataService.getChildTableFromSettingStr(formEntity.getChild_table(), serialNum);
-        if (org.apache.commons.lang3.StringUtils.isBlank(formEntity.getChild_table()) || childTable == null || childTable.getQueryOption() == null) {
+
+        Long childTableId = childTable.getQueryOption().getTableId();
+        Long mainTableId = formEntity.getTable_id();
+        //查询主从表对应关系
+        DbEntity tableRelation = getTableRelation(mainTableId, childTableId);
+        if (tableRelation == null) {
+            throw new WarnCommonException("主从表关系设置不正确，请检查");
+        }
+        String fkColumn = tableRelation.get("fk_column_code").toString();
+        if (StringUtils.isBlank(formEntity.getChild_table()) || childTable.getQueryOption() == null) {
             throw new WarnCommonException("表单未设置子表配置信息，请检查");
         }
         DbTable table = dataAccess.initTableInfoByTableId(childTable.getQueryOption().getTableId());
-        return importTableData(table.getCode(), file);
+        if (table == null) {
+            throw new WarnCommonException("子表" + childTable.getTitle() + childTable.getQueryOption().getTableName() + "已经删除请调整表单");
+        }
+        HashMap<String, Object> mapDefaultValue = new HashMap<>();
+        mapDefaultValue.put(fkColumn, dataId);
+        return importTableData(table.getCode(), file, mapDefaultValue);
+    }
+
+    private DmTableRelationEntity getTableRelation(Long mainTableId, Long childTableId) {
+        DmTableRelationEntity entity = null;
+        QueryOption queryOption = new QueryOption("dm_table_relation");
+        TableFilterWrapper filterWrapper = TableFilterWrapper.and().eq("main_table_id", mainTableId).eq("child_table_id", childTableId);
+        queryOption.setTableFilter(filterWrapper.build());
+        List<DmTableRelationEntity> relationEntityList = dataAccess.query(queryOption).getGenericData(DmTableRelationEntity.class);
+        if (relationEntityList.size() == 1) {
+            entity = relationEntityList.get(0);
+        }
+        return entity;
     }
 
     @SneakyThrows
-    private boolean importTableData(String tableName, MultipartFile file) {
+    private boolean importTableData(String tableName, MultipartFile file, HashMap<String, Object> defaultValueMap) {
         InputStream inputStream = null;
         inputStream = file.getInputStream();
         DbCollection importCollect = dataAccess.getEmptyData(tableName);
@@ -252,6 +283,9 @@ public class ImportServiceImpl implements ImportService {
             List<DbEntity> entityList = new ArrayList<>();
             for (LinkedHashMap<String, String> stringStringLinkedHashMap : objectList) {
                 DbEntity en = new DbEntity();
+                for (String key : defaultValueMap.keySet()) {
+                    en.put(key, defaultValueMap.get(key));
+                }
                 for (int line = 0; line < stringStringLinkedHashMap.size(); line++) {
                     String cell = TypeConverterUtils.object2String(stringStringLinkedHashMap.get(line));
                     if (cell != null) {

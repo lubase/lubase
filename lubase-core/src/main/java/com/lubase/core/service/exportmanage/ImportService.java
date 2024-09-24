@@ -39,5 +39,5 @@ public interface ImportService {
      * @param clientMacroStr
      * @param file
      */
-    boolean importSubPageTable(String formId, String serialNo, String clientMacroStr, MultipartFile file);
+    boolean importSubPageTable(String pageId, String formId, String serialNo, String dataId, String clientMacroStr, MultipartFile file);
 }

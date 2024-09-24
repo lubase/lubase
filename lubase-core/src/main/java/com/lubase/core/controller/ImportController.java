@@ -42,6 +42,12 @@ public class ImportController extends BaseCommonController {
         }
     }
 
+    /**
+     * @param pageId         页面id
+     * @param clientMacroStr 客户端宏变量
+     * @param file           导入文件
+     * @return
+     */
     @SneakyThrows
     @RequestMapping(value = "/importMainTableData", method = RequestMethod.POST)
     public ResponseData<Boolean> importMainTableData(@RequestParam String pageId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
@@ -77,11 +83,22 @@ public class ImportController extends BaseCommonController {
         }
     }
 
+    /**
+     * 导入子表列表
+     *
+     * @param pageId         页面id
+     * @param serialNum      子表id
+     * @param formId         表单id
+     * @param dataId         主数据id
+     * @param clientMacroStr 客户端宏变量
+     * @param file           附件
+     * @return
+     */
     @SneakyThrows
     @RequestMapping(value = "/importSubTableData", method = RequestMethod.POST)
-    public ResponseData<Boolean> importSubTableData(@RequestParam String serialNum, @RequestParam String formId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
+    public ResponseData<Boolean> importSubTableData(@RequestParam String pageId, @RequestParam String serialNum, @RequestParam String formId, @RequestParam String dataId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
         try {
-            return ResponseData.success(importService.importSubPageTable(formId, serialNum, clientMacroStr, file));
+            return ResponseData.success(importService.importSubPageTable(pageId, formId, serialNum, dataId, clientMacroStr, file));
         } catch (Exception e) {
             return ResponseData.error("数据导入失败：" + e.getMessage());
         }
