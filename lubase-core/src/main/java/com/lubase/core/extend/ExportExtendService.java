@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  */
 public interface ExportExtendService {
     /**
-     * 获取列表标识
+     * 获取列表标识。一级页面去pageId，子表去serialnum
      *
      * @return
      */
