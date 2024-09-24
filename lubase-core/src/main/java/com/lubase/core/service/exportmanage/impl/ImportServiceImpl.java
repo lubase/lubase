@@ -56,6 +56,7 @@ public class ImportServiceImpl implements ImportService {
     @Autowired
     DeptInfoServiceImpl deptInfoService;
 
+    private String[] notImportField = new String[]{"id", "create_by", "create_time", "update_time", "update_by"};
 
     @SneakyThrows
     @Override
@@ -93,18 +94,9 @@ public class ImportServiceImpl implements ImportService {
         List<List<String>> headList = new ArrayList<List<String>>();
         List<List<String>> contentList = new ArrayList<List<String>>();
 
-        String[] continueField = new String[]{"id", "create_by", "create_time", "update_time", "update_by"};
-
         for (DbField filed : importCollect.tableInfo.getFieldList()) {
             //跳过不导出的列
-            if (Arrays.stream(continueField).anyMatch(d -> d.equals(filed.getCode()))) {
-                continue;
-            }
-            if (filed.getEleType().equals(EColumnType.Document.getIndex().toString())
-                    || filed.getEleType().equals(EColumnType.Image.getIndex().toString())) {
-                continue;
-            }
-            if (filed.getFieldAccess().equals(EAccessGrade.Invisible)) {
+            if (!isImport(filed)) {
                 continue;
             }
             List<String> tmpName = new ArrayList();
@@ -150,6 +142,21 @@ public class ImportServiceImpl implements ImportService {
             map.put("message", "下载文件失败" + e.getMessage());
             response.getWriter().println(JSON.toJSONString(map));
         }
+    }
+
+    private Boolean isImport(DbField filed) {
+        //跳过不导出的列
+        if (Arrays.stream(notImportField).anyMatch(d -> d.equals(filed.getCode()))) {
+            return false;
+        }
+        if (filed.getEleType().equals(EColumnType.Document.getIndex().toString())
+                || filed.getEleType().equals(EColumnType.Image.getIndex().toString())) {
+            return false;
+        }
+        if (filed.getFieldAccess().equals(EAccessGrade.Invisible)) {
+            return false;
+        }
+        return true;
     }
 
     private String GetTip(DbField filed) {
@@ -261,8 +268,8 @@ public class ImportServiceImpl implements ImportService {
         //系统服务表
         Map<String, String> sysTemMap = MapUtils.newHashMap();
         for (DbField filed : importCollect.tableInfo.getFieldList()) {
-            //跳过主键
-            if (filed.getName().equals("主键") || filed.getCode().equals("create_by") || filed.getCode().equals("create_time") || filed.getCode().equals("update_time") || filed.getCode().equals("update_by") || filed.getEleType().equals("8") || filed.getEleType().equals("9")) {
+            //跳过不导出的列
+            if (!isImport(filed)) {
                 continue;
             }
             List<String> tmp = new ArrayList<>(1);
