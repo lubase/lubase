@@ -113,7 +113,7 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
                 collection.setTotalCount(collection.getData().size());
                 collection.setPageSize(0);
             }
-        } catch (BadSqlGrammarException badSqlGrammarException) {
+        } catch (Exception badSqlGrammarException) {
             System.out.println("查询数据错误：" + badSqlGrammarException.getMessage());
             String monster = "";
             try {
@@ -127,9 +127,6 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
             log.error(msg);
             System.out.println(msg);
             throw badSqlGrammarException;
-        } catch (Exception ex) {
-            System.out.println("查询数据错误：" + ex.getMessage());
-            throw ex;
         }
         return collection;
     }
