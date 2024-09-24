@@ -59,8 +59,8 @@ public class AuthenticationInterceptorInterceptor implements HandlerInterceptor 
             }
         }
         String appId = request.getHeader("appId");
-        if (StringUtils.isEmpty(appId)) {
-            user.setId(Long.parseLong(appId));
+        if (!StringUtils.isEmpty(appId)) {
+            user.setSessionAppId(Long.parseLong(appId));
         }
         appHolderService.setUser(user);
         return true;
