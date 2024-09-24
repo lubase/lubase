@@ -2,6 +2,7 @@ package com.lubase.core.controller;
 
 
 import com.lubase.core.model.InvokeMethodParamDTO;
+import com.lubase.core.response.ResponseData;
 import com.lubase.core.service.exportmanage.ImportService;
 import com.lubase.orm.exception.WarnCommonException;
 import lombok.SneakyThrows;
@@ -43,11 +44,11 @@ public class ImportController extends BaseCommonController {
 
     @SneakyThrows
     @RequestMapping(value = "/importMainTableData", method = RequestMethod.POST)
-    public void importMainTableData(@RequestParam String pageId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
+    public ResponseData<Boolean> importMainTableData(@RequestParam String pageId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
         try {
-            importService.importMainPageTable(pageId, clientMacroStr, file);
+            return ResponseData.success(importService.importMainPageTable(pageId, clientMacroStr, file));
         } catch (Exception e) {
-            throw new WarnCommonException("数据导入失败：" + e.getMessage());
+            return ResponseData.error("数据导入失败：" + e.getMessage());
         }
     }
 
@@ -78,11 +79,11 @@ public class ImportController extends BaseCommonController {
 
     @SneakyThrows
     @RequestMapping(value = "/importSubTableData", method = RequestMethod.POST)
-    public void importSubTableData(@RequestParam String serialNum, @RequestParam String formId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
+    public ResponseData<Boolean> importSubTableData(@RequestParam String serialNum, @RequestParam String formId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
         try {
-            importService.importSubPageTable(formId, serialNum, clientMacroStr, file);
+            return ResponseData.success(importService.importSubPageTable(formId, serialNum, clientMacroStr, file));
         } catch (Exception e) {
-            throw new WarnCommonException("数据导入失败：" + e.getMessage());
+            return ResponseData.error("数据导入失败：" + e.getMessage());
         }
     }
 }
