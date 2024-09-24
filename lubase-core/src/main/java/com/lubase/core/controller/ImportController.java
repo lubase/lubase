@@ -43,12 +43,7 @@ public class ImportController extends BaseCommonController {
 
     @SneakyThrows
     @RequestMapping(value = "/importMainTableData", method = RequestMethod.POST)
-    public void importMainTableData(@RequestBody Map<String, String> map, @RequestParam MultipartFile file) {
-        //1、
-        String pageId = getParam("pageId", map, true);
-        String clientMacroStr = getParam("clientMacro", map, true);
-
-        //2、导出
+    public void importMainTableData(@RequestParam String pageId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
         try {
             importService.importMainPageTable(pageId, clientMacroStr, file);
         } catch (Exception e) {
@@ -83,18 +78,9 @@ public class ImportController extends BaseCommonController {
 
     @SneakyThrows
     @RequestMapping(value = "/importSubTableData", method = RequestMethod.POST)
-    public void importSubTableData(@RequestBody InvokeMethodParamDTO methodParamModel, @RequestParam MultipartFile file) {
-        if (methodParamModel == null || StringUtils.isEmpty(methodParamModel.getMethodId())
-                || StringUtils.isEmpty(methodParamModel.getPageId()) || methodParamModel.getData() == null) {
-            throw new WarnCommonException("methodId or pageId or data");
-        }
-        if (methodParamModel.getAppId() != null && methodParamModel.getAppId() > 0) {
-            methodParamModel.getData().put("appId", methodParamModel.getAppId().toString());
-        }
-        String serialNum = getParam("serialNum", methodParamModel.getData(), true);
-        String formId = getParam("formId", methodParamModel.getData(), true);
+    public void importSubTableData(@RequestParam String serialNum, @RequestParam String formId, @RequestParam String clientMacroStr, @RequestParam MultipartFile file) {
         try {
-            importService.importSubPageTable(formId, serialNum, methodParamModel.getClientMacro(), file);
+            importService.importSubPageTable(formId, serialNum, clientMacroStr, file);
         } catch (Exception e) {
             throw new WarnCommonException("数据导入失败：" + e.getMessage());
         }
