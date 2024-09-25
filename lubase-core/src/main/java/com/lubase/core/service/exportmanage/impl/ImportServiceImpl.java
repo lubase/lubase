@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +42,7 @@ import java.util.*;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "lubase.import.disable-default-service", havingValue = "0", matchIfMissing = true)
 public class ImportServiceImpl implements ImportService {
 
     @Autowired
