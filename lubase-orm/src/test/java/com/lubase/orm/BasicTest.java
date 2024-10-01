@@ -5,11 +5,14 @@ import com.lubase.model.DbEntity;
 import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.EDatabaseType;
 import com.lubase.orm.service.DataAccess;
+import com.lubase.orm.util.ServerMacroService;
 import com.lubase.orm.util.TypeConverterUtils;
 import com.lubase.model.DbField;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +22,13 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class BasicTest {
+    @Autowired
+    ServerMacroService service;
+    @Test
+    void testLanguage() {
+        String msg = service.testLanguage();
+        System.out.println(msg);
+    }
 
     @Autowired
     DataAccess dataAccess;
