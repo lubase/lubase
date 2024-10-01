@@ -23,14 +23,6 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class BasicTest {
     @Autowired
-    ServerMacroService service;
-    @Test
-    void testLanguage() {
-        String msg = service.testLanguage();
-        System.out.println(msg);
-    }
-
-    @Autowired
     DataAccess dataAccess;
 
     @Test

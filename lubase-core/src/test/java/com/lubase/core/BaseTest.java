@@ -26,12 +26,8 @@ public class BaseTest {
     @Qualifier("core")
     private MessageSource messageSource;
 
-    @Autowired
-    ServerMacroService service;
-
     @Test
     void testLanguage() {
-        System.out.println(service.testLanguage());
 
         String msg = messageSource.getMessage("core.lubase.hello", new Object[]{"world"}, LocaleContextHolder.getLocale());
         System.out.println(msg);
