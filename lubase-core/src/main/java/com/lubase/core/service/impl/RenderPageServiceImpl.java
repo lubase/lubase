@@ -14,6 +14,7 @@ import com.lubase.core.service.RenderTableExtendService;
 import com.lubase.core.service.userright.UserRightService;
 import com.lubase.core.service.userright.model.UserRightInfo;
 import com.lubase.core.util.ClientMacro;
+import com.lubase.core.util.MultilingualToolUtil;
 import com.lubase.model.DbEntity;
 import com.lubase.model.DbField;
 import com.lubase.orm.QueryOption;
@@ -60,6 +61,8 @@ public class RenderPageServiceImpl implements RenderPageService {
 
     @Autowired
     ServerMacroService serverMacroService;
+    @Autowired
+    MultilingualToolUtil multilingualToolUtil;
 
     @Override
     public List<NavVO> getAppAllNavData() {
@@ -80,7 +83,9 @@ public class RenderPageServiceImpl implements RenderPageService {
             if (TypeConverterUtils.object2Integer(appInfo.get("web_deploy_type"), 0).equals(1)) {
                 continue;
             }
-            allNavVOList.addAll(appNavDataService.getNavDataByAppId(appId));
+            List<NavVO> allRightNavVOList = appNavDataService.getNavDataByAppId(appId);
+            multilingualToolUtil.processCurrentLanguage(allRightNavVOList, appId.toString());
+            allNavVOList.addAll(allRightNavVOList);
         }
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
         List<NavVO> allRightNavVOList = new ArrayList<>();
@@ -89,6 +94,7 @@ public class RenderPageServiceImpl implements RenderPageService {
                 allRightNavVOList.add(navVO);
             }
         }
+
         return allRightNavVOList;
     }
 
@@ -103,7 +109,7 @@ public class RenderPageServiceImpl implements RenderPageService {
                 allRightNavVOList.add(navVO);
             }
         }
-
+        multilingualToolUtil.processCurrentLanguage(allRightNavVOList, appId.toString());
         return allRightNavVOList;
     }
 

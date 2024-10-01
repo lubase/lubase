@@ -20,6 +20,7 @@ import com.lubase.core.service.UserInfoService;
 import com.lubase.core.service.VerifyCodeService;
 import com.lubase.core.service.userright.UserRightService;
 import com.lubase.core.service.userright.model.UserRightInfo;
+import com.lubase.core.util.MultilingualToolUtil;
 import com.lubase.core.util.StringEncodeUtil;
 import com.lubase.model.DbEntity;
 import com.lubase.model.EDBEntityState;
@@ -87,13 +88,13 @@ public class UserInfoServiceImpl implements UserInfoService {
     AppNavDataService appNavDataService;
     @Autowired
     VerifyCodeService verifyCodeService;
+    @Autowired
+    MultilingualToolUtil multilingualToolUtil;
+
     /**
      * jwt 默认的secret
      */
     public static String secretKey;
-
-    @Autowired
-    RegisterColumnInfoService registerColumnInfoService;
 
     @Value("${lubase.jwt-secret:abcdef}")
     public void setSecretKey(String preSecretKey) {
@@ -380,20 +381,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     private void processCurrentLanguage(List<NavVO> navList, String appId) {
-        Locale locale = LocaleContextHolder.getLocale();
-        if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
-            return;
-        }
-        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId);
-        if (resourceList == null || resourceList.isEmpty()) {
-            return;
-        }
-        navList.parallelStream().forEach(field -> {
-            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
-            if (resourceDataModel != null) {
-                field.setName(resourceDataModel.getMsg());
-            }
-        });
+        multilingualToolUtil.processCurrentLanguage(navList, appId);
     }
 
     @SneakyThrows
