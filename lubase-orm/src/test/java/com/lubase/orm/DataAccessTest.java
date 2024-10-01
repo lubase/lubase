@@ -22,12 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -41,6 +39,14 @@ public class DataAccessTest {
 
     @Autowired
     List<ProcessCollectionService> processCollectionServices;
+
+    @Test
+    void testUserLanguage() {
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+        QueryOption queryOption = new QueryOption("ss_resource");
+        DbCollection coll = dataAccess.query(queryOption);
+        System.out.println(JSON.toJSONString(coll.getTableInfo().getFieldList()));
+    }
 
 
     @Test

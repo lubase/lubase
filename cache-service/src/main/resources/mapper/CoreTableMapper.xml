@@ -2,6 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lubase.cache.mapper.CacheCoreTableMapper">
 
+    <resultMap id="resourceDataModel" type="com.lubase.model.ResourceDataModel">
+        <result column="table_id" property="tableId"/>
+        <result column="data_id" property="dataId"/>
+        <result column="field" property="field"/>
+        <result column="user_language" property="userLanguage"/>
+        <result column="msg" property="msg"/>
+    </resultMap>
     <resultMap id="tableInfo" type="com.lubase.model.DbTable">
         <result column="id" property="id"/>
         <result column="table_code" property="code"/>
@@ -87,5 +94,8 @@
         select *
         from dm_code
         where code_type_id = #{typeId}
+    </select>
+    <select id="getResourceList" parameterType="string" resultMap="resourceDataModel">
+        select table_id,data_id,field,user_language,msg from ss_resource where app_id=#{appId}
     </select>
 </mapper>

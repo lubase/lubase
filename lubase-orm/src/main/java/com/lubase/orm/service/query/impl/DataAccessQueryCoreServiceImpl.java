@@ -1,5 +1,6 @@
 package com.lubase.orm.service.query.impl;
 
+import com.lubase.model.ResourceDataModel;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.constant.CommonConst;
 import com.lubase.orm.exception.InvokeCommonException;
@@ -167,6 +168,16 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
             return;
         }
 
+        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(userTable.getAppId().toString());
+        if (resourceList == null || resourceList.isEmpty()) {
+            return;
+        }
+        userTable.getFieldList().parallelStream().forEach(field -> {
+            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
+            if (resourceDataModel != null) {
+                field.setName(resourceDataModel.getMsg());
+            }
+        });
     }
 
     @SneakyThrows
