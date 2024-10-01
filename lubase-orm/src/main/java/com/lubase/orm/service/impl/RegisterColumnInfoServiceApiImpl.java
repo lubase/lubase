@@ -1,9 +1,6 @@
 package com.lubase.orm.service.impl;
 
-import com.lubase.model.DbCode;
-import com.lubase.model.DbEntity;
-import com.lubase.model.DbField;
-import com.lubase.model.DbTable;
+import com.lubase.model.*;
 import com.lubase.orm.constant.CacheConst;
 import com.lubase.orm.exception.WarnCommonException;
 import com.lubase.orm.service.RegisterColumnInfoService;
@@ -191,6 +188,25 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         return null;
     }
 
+    @Cacheable(key = CacheConst.PRE_CACHE_RESOURCE_DATA + "+#codeTypeId")
+    @Override
+    public List<ResourceDataModel> getResourceList(String appId) {
+        if (StringUtils.isEmpty(appId)) {
+            return new ArrayList<>();
+        }
+        String url = String.format("%s/getResourceByAppId?appId=%s", urlTemplate, appId);
+        if (restTemplate.getForEntity(url, DbCode[].class).getBody() == null) {
+            return new ArrayList<>();
+        }
+        Cache cache = getCache();
+        if (cache != null) {
+            Cache.ValueWrapper obj = cache.get(getCacheKey(CacheConst.PRE_CACHE_RESOURCE_DATA, appId));
+            if (obj != null && obj.get() instanceof List<?>) {
+                return (List<ResourceDataModel>) obj.get();
+            }
+        }
+        return null;
+    }
 
     @Cacheable(value = "uploadFile", key = CacheConst.PRE_CACHE_FILE_DATA + "+#fileKey")
     @Override

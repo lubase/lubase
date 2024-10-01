@@ -26,6 +26,10 @@ public class CacheConst {
      */
     public static final String PRE_CACHE_CODE_DATA = "'dm:cd:'";
     /**
+     * 多语言缓存
+     */
+    public static final String PRE_CACHE_RESOURCE_DATA = "'dm:r:'";
+    /**
      * 附件显示名称
      */
     public static final String PRE_CACHE_FILE_DATA = "'file:'";

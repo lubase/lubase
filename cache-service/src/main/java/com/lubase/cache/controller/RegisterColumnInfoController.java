@@ -77,4 +77,9 @@ public class RegisterColumnInfoController {
     public List<DbCode> getControlledTableList(String codeTypeId) {
         return registerColumnInfoService.getCodeListByTypeId(codeTypeId);
     }
+
+    @GetMapping("/getResourceByAppId")
+    public List<ResourceDataModel> getResourceList(String appId) {
+        return registerColumnInfoService.getResourceList(appId);
+    }
 }

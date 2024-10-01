@@ -19,11 +19,23 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class BasicTest {
     @Autowired
     DataAccess dataAccess;
+
+
+    @Autowired
+    MessageSource messageSource;
+
+    @Test
+    void test() {
+        Locale locale = LocaleContextHolder.getLocale();
+        System.out.println(locale.toString());
+        assert locale.equals(Locale.CHINESE);
+    }
 
     @Test
     void testDateAdd() {

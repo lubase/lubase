@@ -1,10 +1,7 @@
 package com.lubase.orm.service;
 
 
-import com.lubase.model.DbCode;
-import com.lubase.model.DbEntity;
-import com.lubase.model.DbField;
-import com.lubase.model.DbTable;
+import com.lubase.model.*;
 
 import java.util.List;
 
@@ -82,4 +79,12 @@ public interface RegisterColumnInfoService {
      * @return
      */
     List<DbEntity> getFileDisplayNameByFileKey(String fileKey);
+
+    /**
+     * 根据应用id获取资源信息
+     *
+     * @param appId
+     * @return
+     */
+    List<ResourceDataModel> getResourceList(String appId);
 }

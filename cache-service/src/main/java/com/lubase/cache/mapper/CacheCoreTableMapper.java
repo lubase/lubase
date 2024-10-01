@@ -91,4 +91,7 @@ public interface CacheCoreTableMapper {
 
     @Select("select id,file_name from sd_upload_file where data_id=#{dataId} and file_key=#{fileKey}")
     List<DbEntity> getFileDisplayNameById(@Param("dataId") String dataId, @Param("fileKey") String fileKey);
+
+    @Select("select table_id,data_id,field,user_language,msg from ss_resource where app_id=#{appId}")
+    List<ResourceDataModel> getResourceList(@Param("appId") String appId);
 }

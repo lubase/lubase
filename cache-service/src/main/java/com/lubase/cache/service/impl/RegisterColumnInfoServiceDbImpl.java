@@ -3,6 +3,7 @@ package com.lubase.cache.service.impl;
 import com.lubase.model.DbCode;
 import com.lubase.model.DbField;
 import com.lubase.model.DbTable;
+import com.lubase.model.ResourceDataModel;
 import com.lubase.model.util.TypeConverterUtilsMirror;
 import com.lubase.cache.constant.CacheConst;
 import com.lubase.cache.mapper.CacheCoreTableMapper;
@@ -15,7 +16,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -118,7 +121,7 @@ public class RegisterColumnInfoServiceDbImpl implements RegisterColumnInfoServic
     @Cacheable(key = CacheConst.PRE_CACHE_CONTROLLED_TABLE_LIST)
     @Override
     public List<String> getControlledTableList() {
-        List<String> list= coreTableMapper.getControlledTableList();
+        List<String> list = coreTableMapper.getControlledTableList();
         return list;
     }
 
@@ -128,5 +131,13 @@ public class RegisterColumnInfoServiceDbImpl implements RegisterColumnInfoServic
         return coreTableMapper.getCodeListByTypeId(codeTypeId);
     }
 
+    @Override
+    @Cacheable(key = CacheConst.PRE_CACHE_RESOURCE_DATA + "+#appId")
+    public List<ResourceDataModel> getResourceList(String appId) {
+        if (appId == null || StringUtils.isEmpty(appId)) {
+            return new ArrayList<>();
+        }
+        return coreTableMapper.getResourceList(appId);
+    }
 
 }

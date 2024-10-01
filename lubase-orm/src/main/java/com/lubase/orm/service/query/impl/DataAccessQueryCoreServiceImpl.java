@@ -23,6 +23,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -160,9 +161,19 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
         return dataAccessMapper.executeQueryCount(queryParam);
     }
 
+    private void processCurrentLanguage(DbTable userTable) {
+        Locale locale = LocaleContextHolder.getLocale();
+        if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
+            return;
+        }
+
+    }
+
     @SneakyThrows
     private String generateFields(QueryOption queryOption, List<QueryJoinCondition> queryJoinTables, DbCollection collection) {
         DbTable userTable = getUserTableInfo(queryOption, queryJoinTables);
+        // 处理多语言字段
+        processCurrentLanguage(userTable);
         collection.setTableInfo(userTable);
         //获取场景特定查询字段
         List<DbField> canSelectFieldList = userTable.getFieldList();

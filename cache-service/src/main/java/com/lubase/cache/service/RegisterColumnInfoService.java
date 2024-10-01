@@ -4,6 +4,7 @@ package com.lubase.cache.service;
 import com.lubase.model.DbCode;
 import com.lubase.model.DbField;
 import com.lubase.model.DbTable;
+import com.lubase.model.ResourceDataModel;
 
 import java.util.List;
 
@@ -78,5 +79,7 @@ public interface RegisterColumnInfoService {
      * @return
      */
     List<DbCode> getCodeListByTypeId(String codeTypeId);
+
+    List<ResourceDataModel> getResourceList(String appId);
 
 }
