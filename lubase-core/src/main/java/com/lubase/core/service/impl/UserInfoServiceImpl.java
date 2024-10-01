@@ -23,6 +23,7 @@ import com.lubase.core.service.userright.model.UserRightInfo;
 import com.lubase.core.util.StringEncodeUtil;
 import com.lubase.model.DbEntity;
 import com.lubase.model.EDBEntityState;
+import com.lubase.model.ResourceDataModel;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
 import com.lubase.orm.exception.ParameterNotFoundException;
@@ -31,15 +32,18 @@ import com.lubase.orm.model.DbCollection;
 import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.service.AppHolderService;
 import com.lubase.orm.service.DataAccess;
+import com.lubase.orm.service.RegisterColumnInfoService;
 import com.lubase.orm.util.TableFilterWrapper;
 import com.lubase.orm.util.TypeConverterUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Update;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.print.DocFlavor;
@@ -48,6 +52,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,6 +92,8 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     public static String secretKey;
 
+    @Autowired
+    RegisterColumnInfoService registerColumnInfoService;
 
     @Value("${lubase.jwt-secret:abcdef}")
     public void setSecretKey(String preSecretKey) {
@@ -368,7 +375,25 @@ public class UserInfoServiceImpl implements UserInfoService {
                 }
             }
         }
+        processCurrentLanguage(rightNavList, CommonConstant.SYSTEM_APP_ID.toString());
         return rightNavList;
+    }
+
+    private void processCurrentLanguage(List<NavVO> navList, String appId) {
+        Locale locale = LocaleContextHolder.getLocale();
+        if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
+            return;
+        }
+        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId);
+        if (resourceList == null || resourceList.isEmpty()) {
+            return;
+        }
+        navList.parallelStream().forEach(field -> {
+            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
+            if (resourceDataModel != null) {
+                field.setName(resourceDataModel.getMsg());
+            }
+        });
     }
 
     @SneakyThrows
@@ -399,6 +424,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 }
             }
         }
+        processCurrentLanguage(rightNavList, appId.toString());
         return rightNavList;
     }
 
@@ -414,6 +440,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
         //超级管理员无应用的具体访问权限，子管理员对自己的应用具有全部访问权限
         if (rightInfo.getIsAppAdministrator() && appNavDataService.getAppManager(appId).contains(user.getId().toString())) {
+            processCurrentLanguage(allNavVOList, appId.toString());
             return allNavVOList;
         } else {
             return new ArrayList<>();
