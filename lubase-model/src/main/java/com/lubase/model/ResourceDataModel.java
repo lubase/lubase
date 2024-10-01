@@ -7,6 +7,7 @@ import lombok.Data;
  */
 @Data
 public class ResourceDataModel {
+    private static final long serialVersionUID = 5584605365483028412L;
     private String tableId;
     private String dataId;
     private String field;
