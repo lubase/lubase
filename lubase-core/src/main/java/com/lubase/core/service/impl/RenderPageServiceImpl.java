@@ -84,7 +84,7 @@ public class RenderPageServiceImpl implements RenderPageService {
                 continue;
             }
             List<NavVO> allRightNavVOList = appNavDataService.getNavDataByAppId(appId);
-            multilingualToolUtil.processCurrentLanguage(allRightNavVOList, appId.toString());
+            multilingualToolUtil.processCurrentLanguageForNav(allRightNavVOList, appId.toString());
             allNavVOList.addAll(allRightNavVOList);
         }
         UserRightInfo rightInfo = userRightService.getUserRight(user.getId());
@@ -109,7 +109,7 @@ public class RenderPageServiceImpl implements RenderPageService {
                 allRightNavVOList.add(navVO);
             }
         }
-        multilingualToolUtil.processCurrentLanguage(allRightNavVOList, appId.toString());
+        multilingualToolUtil.processCurrentLanguageForNav(allRightNavVOList, appId.toString());
         return allRightNavVOList;
     }
 
@@ -194,12 +194,10 @@ public class RenderPageServiceImpl implements RenderPageService {
                 rightButtonList.add(buttonVO);
             }
         }
+        multilingualToolUtil.processCurrentLanguageForButton(rightButtonList, pageEntity.getId().toString());
         pageInfoVO.setBtns(rightButtonList);
         pageInfoVO.setId(pageEntity.getId());
         pageInfoVO.setName(pageEntity.getPage_name());
-        if (pageEntity.getPage_name().startsWith("group-")) {
-            pageInfoVO.setName(pageEntity.getPage_name().substring(6));
-        }
         pageInfoVO.setDes(pageEntity.getDescription());
         pageInfoVO.setTmp(pageEntity.getMaster_page());
         SearchVO searchVO = getSearchVO(pageEntity);
@@ -291,7 +289,7 @@ public class RenderPageServiceImpl implements RenderPageService {
         } catch (Exception ex) {
             log.error(String.format("页面搜索区域配置错误，页面：%s %s，搜索条件：%s", pageEntity.getId(), pageEntity.getPage_name(), pageEntity.getSearch_filter()), ex.getMessage());
         }
-
+        multilingualToolUtil.processCurrentLanguageForSearch(fieldBOHashMap, pageEntity.getApp_id().toString());
         searchVO.setFieldInfo(fieldBOHashMap);
         searchVO.setFilter(list);
         return searchVO;
