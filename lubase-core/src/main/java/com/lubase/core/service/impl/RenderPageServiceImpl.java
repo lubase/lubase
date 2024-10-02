@@ -194,7 +194,7 @@ public class RenderPageServiceImpl implements RenderPageService {
                 rightButtonList.add(buttonVO);
             }
         }
-        multilingualToolUtil.processCurrentLanguageForButton(rightButtonList, pageEntity.getId().toString());
+        multilingualToolUtil.processCurrentLanguageForButton(rightButtonList, pageEntity.getApp_id().toString());
         pageInfoVO.setBtns(rightButtonList);
         pageInfoVO.setId(pageEntity.getId());
         pageInfoVO.setName(pageEntity.getPage_name());
