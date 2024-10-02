@@ -77,6 +77,8 @@ spring:
     password: ENC(hEo3CvO9OKzK0tKcitwarHDoUc0asUZs0R2LFOmYn+oF/14mrXe6bkz6Jm21wa9i)
     timeout: 5000
     database: 10
+  web:
+    locale: zh_CN
 #下面这些内容是为了让MyBatis映射
 mybatis:
   #指定Mybatis的Mapper文件
