@@ -172,8 +172,10 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }
+        String userLanguage = locale.toString();
+        List<ResourceDataModel> currentResource = resourceList.stream().filter(x -> x.getUserLanguage().equals(userLanguage)).collect(java.util.stream.Collectors.toList());
         userTable.getFieldList().parallelStream().forEach(field -> {
-            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
+            ResourceDataModel resourceDataModel = currentResource.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
             if (resourceDataModel != null) {
                 field.setName(resourceDataModel.getMsg());
             }

@@ -37,13 +37,15 @@ public class MultilingualToolUtil {
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }
+        String userLanguage = locale.toString();
+        List<ResourceDataModel> currentResource = resourceList.stream().filter(x -> x.getUserLanguage().equals(userLanguage)).collect(java.util.stream.Collectors.toList());
         navList.parallelStream().forEach(navVO -> {
-            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(navVO.getId().toString())
+            ResourceDataModel resourceDataModel = currentResource.stream().filter(x -> x.getDataId().equals(navVO.getId().toString())
                     && x.getField().equals("page_name")).findFirst().orElse(null);
             if (resourceDataModel != null) {
                 navVO.setName(resourceDataModel.getMsg());
             }
-            resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(navVO.getId().toString())
+            resourceDataModel = currentResource.stream().filter(x -> x.getDataId().equals(navVO.getId().toString())
                     && x.getField().equals("description")).findFirst().orElse(null);
             if (resourceDataModel != null) {
                 navVO.setDes(resourceDataModel.getMsg());
@@ -66,13 +68,15 @@ public class MultilingualToolUtil {
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }
+        String userLanguage = locale.toString();
+        List<ResourceDataModel> currentResource = resourceList.stream().filter(x -> x.getUserLanguage().equals(userLanguage)).collect(java.util.stream.Collectors.toList());
         buttonVOList.parallelStream().forEach(btnVO -> {
-            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(btnVO.getId().toString())
+            ResourceDataModel resourceDataModel = currentResource.stream().filter(x -> x.getDataId().equals(btnVO.getId().toString())
                     && x.getField().equals("button_name")).findFirst().orElse(null);
             if (resourceDataModel != null) {
                 btnVO.setName(resourceDataModel.getMsg());
             }
-            resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(btnVO.getId().toString())
+            resourceDataModel = currentResource.stream().filter(x -> x.getDataId().equals(btnVO.getId().toString())
                     && x.getField().equals("group_des")).findFirst().orElse(null);
             if (resourceDataModel != null) {
                 btnVO.setGroupDes(resourceDataModel.getMsg());
@@ -95,8 +99,10 @@ public class MultilingualToolUtil {
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }
+        String userLanguage = locale.toString();
+        List<ResourceDataModel> currentResource = resourceList.stream().filter(x -> x.getUserLanguage().equals(userLanguage)).collect(java.util.stream.Collectors.toList());
         fieldBOHashMap.values().parallelStream().forEach(field -> {
-            ResourceDataModel resourceDataModel = resourceList.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
+            ResourceDataModel resourceDataModel = currentResource.stream().filter(x -> x.getDataId().equals(field.getId())).findFirst().orElse(null);
             if (resourceDataModel != null) {
                 field.setName(resourceDataModel.getMsg());
             }
