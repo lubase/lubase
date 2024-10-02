@@ -132,12 +132,12 @@ public class RegisterColumnInfoServiceDbImpl implements RegisterColumnInfoServic
     }
 
     @Override
-    @Cacheable(key = CacheConst.PRE_CACHE_RESOURCE_DATA + "+#appId")
-    public List<ResourceDataModel> getResourceList(String appId) {
-        if (appId == null || StringUtils.isEmpty(appId)) {
+    @Cacheable(value = CacheConst.CACHE_NAME_RESOURCE, key = "#appId" + "+':'" + "+#tableCode")
+    public List<ResourceDataModel> getResourceList(String appId, String tableCode) {
+        if (appId == null || StringUtils.isEmpty(appId) || tableCode == null || StringUtils.isEmpty(tableCode)) {
             return new ArrayList<>();
         }
-        return coreTableMapper.getResourceList(appId);
+        return coreTableMapper.getResourceList(appId, tableCode);
     }
 
 }

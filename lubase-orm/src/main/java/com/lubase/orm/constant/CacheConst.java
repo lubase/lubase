@@ -34,9 +34,9 @@ public class CacheConst {
      */
     public static final String PRE_CACHE_CODE_DATA = "'dm:cd:'";
     /**
-     * 多语言缓存
+     * 国际化资源缓存
      */
-    public static final String PRE_CACHE_RESOURCE_DATA = "'dm:r:'";
+    public static final String CACHE_NAME_RESOURCE = "resource";
     /**
      * 附件显示名称
      */

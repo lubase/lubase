@@ -79,7 +79,7 @@ public class RegisterColumnInfoController {
     }
 
     @GetMapping("/getResourceByAppId")
-    public List<ResourceDataModel> getResourceList(String appId) {
-        return registerColumnInfoService.getResourceList(appId);
+    public List<ResourceDataModel> getResourceList(String appId, String tableCode) {
+        return registerColumnInfoService.getResourceList(appId,tableCode);
     }
 }

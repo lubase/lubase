@@ -45,6 +45,10 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         return (pre + dataId).replace("'", "");
     }
 
+    private Cache getCache(String cacheName) {
+        return cacheManager.getCache(cacheName);
+    }
+
     private Cache getCache() {
         return cacheManager.getCache(CacheConst.CACHE_NAME_TABLE_STRUCT);
     }
@@ -188,19 +192,19 @@ public class RegisterColumnInfoServiceApiImpl implements RegisterColumnInfoServi
         return null;
     }
 
-    @Cacheable(key = CacheConst.PRE_CACHE_RESOURCE_DATA + "+#codeTypeId")
+    @Cacheable(value = CacheConst.CACHE_NAME_RESOURCE, key = "#appId" + "+':'" + "+#tableCode")
     @Override
-    public List<ResourceDataModel> getResourceList(String appId) {
-        if (StringUtils.isEmpty(appId)) {
+    public List<ResourceDataModel> getResourceList(String appId, String tableCode) {
+        if (StringUtils.isEmpty(appId) || StringUtils.isEmpty(tableCode)) {
             return new ArrayList<>();
         }
-        String url = String.format("%s/getResourceByAppId?appId=%s", urlTemplate, appId);
+        String url = String.format("%s/getResourceByAppId?appId=%s&tableCode=%s", urlTemplate, appId, tableCode);
         if (restTemplate.getForEntity(url, DbCode[].class).getBody() == null) {
             return new ArrayList<>();
         }
-        Cache cache = getCache();
+        Cache cache = getCache(CacheConst.CACHE_NAME_RESOURCE);
         if (cache != null) {
-            Cache.ValueWrapper obj = cache.get(getCacheKey(CacheConst.PRE_CACHE_RESOURCE_DATA, appId));
+            Cache.ValueWrapper obj = cache.get(String.format("%s:%s", appId, tableCode));
             if (obj != null && obj.get() instanceof List<?>) {
                 return (List<ResourceDataModel>) obj.get();
             }

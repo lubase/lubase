@@ -33,7 +33,7 @@ public class MultilingualToolUtil {
         if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
             return;
         }
-        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId);
+        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId, "ss_page");
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }
@@ -62,7 +62,7 @@ public class MultilingualToolUtil {
         if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
             return;
         }
-        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId);
+        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId, "ss_button");
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }
@@ -91,7 +91,7 @@ public class MultilingualToolUtil {
         if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
             return;
         }
-        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId);
+        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(appId, "dm_column");
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }

@@ -168,7 +168,7 @@ public class DataAccessQueryCoreServiceImpl implements DataAccessQueryCoreServic
             return;
         }
 
-        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(userTable.getAppId().toString());
+        List<ResourceDataModel> resourceList = registerColumnInfoService.getResourceList(userTable.getAppId().toString(), "dm_column");
         if (resourceList == null || resourceList.isEmpty()) {
             return;
         }

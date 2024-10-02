@@ -96,6 +96,9 @@
         where code_type_id = #{typeId}
     </select>
     <select id="getResourceList" parameterType="string" resultMap="resourceDataModel">
-        select table_id,data_id,field,user_language,msg from ss_resource where app_id=#{appId}
+        select table_id, data_id, field, user_language, msg
+        from ss_resource
+        where app_id = #{appId}
+          and table_code = #{tableCode}
     </select>
 </mapper>

@@ -86,5 +86,5 @@ public interface RegisterColumnInfoService {
      * @param appId
      * @return
      */
-    List<ResourceDataModel> getResourceList(String appId);
+    List<ResourceDataModel> getResourceList(String appId, String tableCode);
 }

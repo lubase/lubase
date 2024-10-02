@@ -80,6 +80,6 @@ public interface RegisterColumnInfoService {
      */
     List<DbCode> getCodeListByTypeId(String codeTypeId);
 
-    List<ResourceDataModel> getResourceList(String appId);
+    List<ResourceDataModel> getResourceList(String appId,String tableCode);
 
 }

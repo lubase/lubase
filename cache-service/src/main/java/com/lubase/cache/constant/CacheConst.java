@@ -13,6 +13,10 @@ public class CacheConst {
      */
     public static final String CACHE_NAME_TABLE_TRIGGER = "tableTrigger";
     /**
+     * 国际化资源缓存
+     */
+    public static final String CACHE_NAME_RESOURCE = "resource";
+    /**
      * 用户信息缓存名字
      */
     public static final String CACHE_NAME_USER_INFO = "userInfo";
@@ -25,10 +29,6 @@ public class CacheConst {
      * 代码表缓存
      */
     public static final String PRE_CACHE_CODE_DATA = "'dm:cd:'";
-    /**
-     * 多语言缓存
-     */
-    public static final String PRE_CACHE_RESOURCE_DATA = "'dm:r:'";
     /**
      * 附件显示名称
      */
