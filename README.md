@@ -50,7 +50,6 @@ LuBase是以数据模型驱动，可视化表单和页面设计，内置工作�
 |---|---|
 |  后端-主框架 | https://gitee.com/lubase/lu-base.git  |
 |后端-流程引擎| https://gitee.com/lubase/lubase-wfengine.git|
-|后端-导出模块|https://gitee.com/lubase/lubase-export.git|
 |  前端-应用端代码-Vue3版本（完善中） |  https://gitee.com/lubase/web-layui.git |
 |  前端-应用端代码-Vue2版本 |  晚点补充 |
 
