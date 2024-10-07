@@ -6,8 +6,6 @@
 #### 框架定位
 面向开发人员，针对管理软件领域，对页面交互和通用功能进行高阶封装，逐步打造成平台型、生态型开发工具。
 
-涓涓细流 ，汇聚成海，基于PBC（组件式开发）开发理念，让功能模块的复用更简单。
-
 让管理软件开发回归到对需求的深入思考和求解。
 
 #### 框架简介
@@ -52,7 +50,6 @@ LuBase是以数据模型驱动，可视化表单和页面设计，内置工作�
 |---|---|
 |  后端-主框架 | https://gitee.com/lubase/lu-base.git  |
 |后端-流程引擎| https://gitee.com/lubase/lubase-wfengine.git|
-|后端-导出模块|https://gitee.com/lubase/lubase-export.git|
 |  前端-应用端代码-Vue3版本（完善中） |  https://gitee.com/lubase/web-layui.git |
 |  前端-应用端代码-Vue2版本 |  晚点补充 |
 
