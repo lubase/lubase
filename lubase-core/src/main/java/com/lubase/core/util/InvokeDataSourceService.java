@@ -41,46 +41,6 @@ public class InvokeDataSourceService {
     @Autowired
     ChangeDataSourceService changeDataSourceService;
 
-    public SsInvokeDatasourceEntity getDataSourceEntity(Long id) {
-        List<SsInvokeDatasourceEntity> list = dataAccess.queryById("ss_invoke_datasource", id).getGenericData(SsInvokeDatasourceEntity.class);
-        if (list.size() == 1) {
-            return list.get(0);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 用于返回左侧树形数据
-     *
-     * @param pageId
-     * @param dataSourceId
-     * @return
-     */
-    public List<DbEntity> queryListBySql(Long pageId, Long dataSourceId) {
-        Object o = queryObjectByDataSource(0L, dataSourceId);
-        if (o instanceof ArrayList) {
-            return (ArrayList<DbEntity>) o;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 用于返回列表数据
-     *
-     * @param pageId
-     * @param dataSourceId
-     * @return
-     */
-    public DbCollection queryDBCollectionBySql(Long pageId, Long dataSourceId) {
-        Object o = queryObjectByDataSource(0L, dataSourceId);
-        if (o instanceof DbCollection) {
-            return (DbCollection) o;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * 免登录访问方法
@@ -179,6 +139,47 @@ public class InvokeDataSourceService {
             returnObj = null;
         }
         return returnObj;
+    }
+
+    /**
+     * 用于返回左侧树形数据
+     *
+     * @param pageId
+     * @param dataSourceId
+     * @return
+     */
+    public List<DbEntity> queryListBySql(Long pageId, Long dataSourceId) {
+        Object o = queryObjectByDataSource(0L, dataSourceId);
+        if (o instanceof ArrayList) {
+            return (ArrayList<DbEntity>) o;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 用于返回列表数据
+     *
+     * @param pageId
+     * @param dataSourceId
+     * @return
+     */
+    public DbCollection queryDBCollectionBySql(Long pageId, Long dataSourceId) {
+        Object o = queryObjectByDataSource(0L, dataSourceId);
+        if (o instanceof DbCollection) {
+            return (DbCollection) o;
+        } else {
+            return null;
+        }
+    }
+
+    private SsInvokeDatasourceEntity getDataSourceEntity(Long id) {
+        List<SsInvokeDatasourceEntity> list = dataAccess.queryById("ss_invoke_datasource", id).getGenericData(SsInvokeDatasourceEntity.class);
+        if (list.size() == 1) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
     /**
