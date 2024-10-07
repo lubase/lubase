@@ -83,6 +83,8 @@ spring:
     addresses: ENC(KffySpuSfOeNLJi3Fr3cFZxt1XWAeRby/X1LI3SKSx6U7fEOBUA+/s/EOvnlIEZTO+mp/bJlykERqTisKH4DQQ==)
     username: ENC(t6dJr6PXo+7XoqbrvZwgu9wMrPr4aMzWGLEiw2/DaUAFRVb+xgWMQZcW8j2jbHct)
     password: ENC(Xbf442TV+VZTmks1OPm3N3yN006f/5/nAX76ko1vwSL7daeSdEYpD7abSb36rxud)
+  web:
+    locale: zh_CN
 mybatis:
   #指定Mybatis的Mapper文件
   mapper-locations: classpath:mapper/*xml
