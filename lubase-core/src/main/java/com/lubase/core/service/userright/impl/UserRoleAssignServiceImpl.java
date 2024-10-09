@@ -4,6 +4,7 @@ import com.lubase.core.constant.CacheRightConstant;
 import com.lubase.core.service.userright.UserRoleAssignService;
 import com.lubase.core.service.userright.mapper.UserRightMapper;
 import com.lubase.model.DbEntity;
+import com.lubase.orm.multiDataSource.DBContextHolder;
 import com.lubase.orm.util.TypeConverterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,6 +27,7 @@ public class UserRoleAssignServiceImpl implements UserRoleAssignService {
         if (userId == null) {
             return list;
         }
+        DBContextHolder.setMainDataSourceCode();
         List<DbEntity> entities = userRightMapper.getUserAssignRoleList(userId);
         for (DbEntity entity : entities) {
             list.add(TypeConverterUtils.object2Long(entity.get("role_id")));
@@ -38,11 +40,13 @@ public class UserRoleAssignServiceImpl implements UserRoleAssignService {
         if (userId == null) {
             return new ArrayList<>();
         }
+        DBContextHolder.setMainDataSourceCode();
         Long orgId = userRightMapper.getUserOrgId(userId);
         if (orgId == null || orgId == 0) {
             return new ArrayList<>();
         }
         List<Long> list = new ArrayList<>();
+        DBContextHolder.setMainDataSourceCode();
         List<String> entities = userRightMapper.getRoleListByOrgId(orgId.toString());
         for (String roleId : entities) {
             list.add(TypeConverterUtils.object2Long(roleId));
@@ -66,6 +70,7 @@ public class UserRoleAssignServiceImpl implements UserRoleAssignService {
         for (Long roleId : list) {
             ids.append(",").append(roleId);
         }
+        DBContextHolder.setMainDataSourceCode();
         List<DbEntity> roleList=userRightMapper.getUserRoleList(ids.toString());
         List<Long> allRoleList = new ArrayList<>();
         // publicRole=2 排他角色，每个应用下只能有一个

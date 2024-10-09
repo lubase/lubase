@@ -6,6 +6,7 @@ import com.lubase.core.service.userright.mapper.UserRightMapper;
 import com.lubase.core.service.userright.model.ColumnRightModelVO;
 import com.lubase.core.service.userright.model.RoleModel;
 import com.lubase.model.DbEntity;
+import com.lubase.orm.multiDataSource.DBContextHolder;
 import com.lubase.orm.util.TypeConverterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +24,7 @@ public class RoleRightServiceImpl implements RoleRightService {
     @Override
     public RoleModel getRoleInfoById(Long roleId) {
         RoleModel roleModel = null;
+        DBContextHolder.setMainDataSourceCode();
         DbEntity entity = userRightMapper.getRoleInfoById(roleId);
         if (entity != null) {
             roleModel = new RoleModel();
@@ -38,6 +40,7 @@ public class RoleRightServiceImpl implements RoleRightService {
         if (roleId == null) {
             return new ArrayList<>();
         }
+        DBContextHolder.setMainDataSourceCode();
         return userRightMapper.getRoleFuncList(roleId);
     }
 
@@ -48,6 +51,7 @@ public class RoleRightServiceImpl implements RoleRightService {
         if (roleId == null) {
             return voList;
         }
+        DBContextHolder.setMainDataSourceCode();
         List<DbEntity> list = userRightMapper.getRoleColList(roleId);
         for (DbEntity rightEntity : list) {
             ColumnRightModelVO vo = new ColumnRightModelVO();
