@@ -7,9 +7,8 @@ import com.lubase.core.service.CodeDataService;
 import com.lubase.core.service.RenderPageService;
 import com.lubase.core.service.UserInfoService;
 import com.lubase.core.util.ClientMacro;
-import com.lubase.orm.exception.ParameterNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -110,7 +109,7 @@ public class IndexController {
         if (map.containsKey("pageId")) {
             pageId = Long.parseLong(map.get("pageId"));
         }
-        if (StringUtils.isEmpty(pageId)) {
+        if (pageId == null || StringUtils.isEmpty(pageId.toString())) {
             return ResponseData.parameterNotFound("pageId");
         }
         if (map.containsKey("clientMacro")) {
@@ -129,6 +128,10 @@ public class IndexController {
      */
     @RequestMapping(value = "/getCodeData", method = RequestMethod.GET)
     public ResponseData<Object> getCodeData(Long appId) {
-        return ResponseData.success(codeDataService.getCodeListByAppId(appId));
+        if (appId == null || appId == 0L) {
+            return ResponseData.success(codeDataService.getAllAppCodeList());
+        } else {
+            return ResponseData.success(codeDataService.getCodeListByAppId(appId));
+        }
     }
 }

@@ -5,12 +5,16 @@ import com.lubase.core.constant.CommonConstant;
 import com.lubase.core.entity.DmCodeEntity;
 import com.lubase.core.model.CodeDataTypeVO;
 import com.lubase.core.model.CodeDataVO;
+import com.lubase.core.service.AppNavDataService;
 import com.lubase.core.service.CodeDataService;
+import com.lubase.core.service.userright.UserRightService;
 import com.lubase.model.DbEntity;
 import com.lubase.orm.QueryOption;
 import com.lubase.orm.TableFilter;
 import com.lubase.orm.model.DbCollection;
+import com.lubase.orm.model.LoginUser;
 import com.lubase.orm.operate.EOperateMode;
+import com.lubase.orm.service.AppHolderService;
 import com.lubase.orm.service.DataAccess;
 import com.lubase.orm.util.QueryOptionWrapper;
 import com.lubase.orm.util.TypeConverterUtils;
@@ -34,6 +38,12 @@ public class CodeDataServiceImpl implements CodeDataService {
     DataAccess dataAccess;
     @Autowired
     PersonalizationDataServiceImpl personalizationDataService;
+    @Autowired
+    AppHolderService appHolderService;
+    @Autowired
+    UserRightService userRightService;
+    @Autowired
+    AppNavDataService appNavDataService;
 
     @Override
     public List<CodeDataTypeVO> getCodeListForAppSetting(String appId) {
@@ -95,9 +105,26 @@ public class CodeDataServiceImpl implements CodeDataService {
 
     @Override
     public List<CodeDataTypeVO> getAllAppCodeList() {
-        QueryOption queryOption = new QueryOption("dm_code");
-        DbCollection collection = dataAccess.queryAllData(queryOption);
-        return processCodeList(collection.getData());
+        LoginUser user = appHolderService.getUser();
+        List<Long> appList = userRightService.getUserAllApp(user.getId());
+        List<CodeDataTypeVO> codeList = new ArrayList<>();
+        List<DbEntity> allAppInfoList = appNavDataService.getAllAppInfo();
+        for (Long appId : appList) {
+            //排除后端应用和前端独立部署的应用
+            if (CommonConstant.SYSTEM_APP_ID.equals(appId)) {
+                continue;
+            }
+            DbEntity appInfo = allAppInfoList.stream().filter(a -> a.getId().equals(appId)).findFirst().orElse(null);
+            if (appInfo == null || TypeConverterUtils.object2String(appInfo.get("system_app_tag"), "0").equals("1")) {
+                continue;
+            }
+            //前端主框架部署不显示菜单0:主框架  1：独立部署
+            if (TypeConverterUtils.object2Integer(appInfo.get("web_deploy_type"), 0).equals(1)) {
+                continue;
+            }
+            codeList.addAll(getCodeListByAppId(appId));
+        }
+        return codeList;
     }
 
     @Cacheable(value = CacheRightConstant.CACHE_NAME_USER_RIGHT, key = CacheRightConstant.PRE_CODE_INFO + "+#typeId")
